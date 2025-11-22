@@ -40,4 +40,38 @@ namespace pozdnyakov {
     }
     output[i] = '\0';
   }
+
+  char* read_string() {
+    size_t capacity = 256;
+    size_t size = 0;
+    char* str = new(std::nothrow) char[capacity];
+
+    if (str == nullptr) {
+      std::cerr << "������: ���������� �������� ������" << std::endl;
+      std::exit(1);
+    }
+
+    int ch;
+    while ((ch = std::cin.get()) != '\n' && ch != EOF) {
+      if (size + 1 >= capacity) {
+        capacity *= 2;
+        char* new_str = new(std::nothrow) char[capacity];
+        if (new_str == nullptr) {
+          std::cerr << "������: ���������� �������� ������" << std::endl;
+          delete[] str;
+          std::exit(1);
+        }
+
+        for (size_t i = 0; i < size; ++i) {
+          new_str[i] = str[i];
+        }
+        delete[] str;
+        str = new_str;
+      }
+      str[size++] = static_cast<char>(ch);
+    }
+    str[size] = '\0';
+
+    return str;
+  }
 }
