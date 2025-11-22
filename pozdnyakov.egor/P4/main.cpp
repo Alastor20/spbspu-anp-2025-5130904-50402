@@ -131,53 +131,44 @@ namespace pozdnyakov {
 int main() {
   using namespace pozdnyakov;
 
-  char* input_str1 = read_string();
+  char* input_str = read_string();
 
-  if (string_length(input_str1) == 0) {
+  if (string_length(input_str) == 0) {
     std::cerr << "Empty input error.";
-    delete[] input_str1;
+    delete[] input_str;
     return 1;
   }
 
-  size_t len1 = string_length(input_str1);
+  size_t len1 = string_length(input_str);
   char* result1 = new(std::nothrow) char[len1 + 1];
 
   if (result1 == nullptr) {
     std::cerr << "Memory allocation error.";
-    delete[] input_str1;
+    delete[] input_str;
     return 1;
   }
 
-  replace_chars(input_str1, result1, len1 + 1, 'c', 'b');
+  replace_chars(input_str, result1, len1 + 1, 'c', 'b');
   std::cout << result1 << std::endl;
 
-  delete[] input_str1;
   delete[] result1;
-
-  char* input_str2 = read_string();
-
-  if (string_length(input_str2) == 0) {
-    std::cerr << "Empty input error.";
-    delete[] input_str2;
-    return 1;
-  }
 
   const char* second_string = "def_ghk";
 
-  size_t len2 = string_length(input_str2);
+  size_t len2 = string_length(input_str);
   size_t len3 = string_length(second_string);
   char* result2 = new(std::nothrow) char[len2 + len3 + 1];
 
   if (result2 == nullptr) {
     std::cerr << "Memory allocation error.";
-    delete[] input_str2;
+    delete[] input_str;
     return 1;
   }
 
-  merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
+  merge_latin_letters(input_str, second_string, result2, len2 + len3 + 1);
   std::cout << result2 << std::endl;
 
-  delete[] input_str2;
+  delete[] input_str;
   delete[] result2;
 
   return 0;
