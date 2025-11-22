@@ -69,7 +69,26 @@ namespace sogdanov
     res[k] = '\0';
     return res;
   }
-
+  char * rmvVow(char * str, char * res, size_t size)
+  {
+    const char * vowels = "AEIOUaeiou";
+    size_t k = 0;
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+      bool isFound = false;
+      for (size_t j = 0; vowels[j] != '\0'; ++j) {
+        if (str[i] == vowels[j] {
+          isFound = true;
+          break;
+        }
+      }
+      if (!isFound) {
+        res[k] = str[i];
+        k++;
+      }
+    }
+    res[k] = '\0';
+    return res;
+  }
 }
 int main()
 {
