@@ -81,7 +81,7 @@ namespace pozdnyakov {
     char* str = new(std::nothrow) char[capacity];
 
     if (str == nullptr) {
-      std::cerr << "Memory allocaton error.";
+      std::cerr << "Memory allocation error.";
       std::exit(1);
     }
 
@@ -91,7 +91,7 @@ namespace pozdnyakov {
         capacity *= 2;
         char* new_str = new(std::nothrow) char[capacity];
         if (new_str == nullptr) {
-          std::cerr << "Memory allocaton error.";
+          std::cerr << "Memory allocation error.";
           delete[] str;
           std::exit(1);
         }
@@ -113,13 +113,8 @@ namespace pozdnyakov {
 int main() {
   using namespace pozdnyakov;
 
-  std::cout << "String for var 10";
+  std::cout << "String for var 10: ";
   char* input_str1 = read_string();
-
-  if (input_str1 == nullptr) {
-    std::cerr << "String reading error.";
-    return 1;
-  }
 
   size_t len1 = string_length(input_str1);
   char* result1 = new(std::nothrow) char[len1 + 1];
@@ -136,13 +131,8 @@ int main() {
   delete[] input_str1;
   delete[] result1;
 
-  std::cout << "String for var 20";
+  std::cout << "String for var 20: ";
   char* input_str2 = read_string();
-
-  if (input_str2 == nullptr) {
-    std::cerr << "String reading error.";
-    return 1;
-  }
 
   const char* second_string = "def_ghk";
 
@@ -164,3 +154,4 @@ int main() {
 
   return 0;
 }
+
