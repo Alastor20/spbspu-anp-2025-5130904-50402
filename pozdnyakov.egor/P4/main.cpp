@@ -134,7 +134,7 @@ int main() {
   char* input_str1 = read_string();
 
   if (string_length(input_str1) == 0) {
-    std::cerr << "Empty input string";
+    std::cerr << "Empty input error.";
     delete[] input_str1;
     return 1;
   }
@@ -157,7 +157,7 @@ int main() {
   char* input_str2 = read_string();
 
   if (string_length(input_str2) == 0) {
-    std::cerr << "Empty input string";
+    std::cerr << "Empty input error.";
     delete[] input_str2;
     return 1;
   }
