@@ -1,6 +1,5 @@
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 namespace sogdanov
 {
   char * getline(std::istream & in, size_t & size)
@@ -51,6 +50,26 @@ namespace sogdanov
     ++size;
     return str;
   }
+  char * excSnd(char * str, const char * mask, char * res, size_t size)
+  {
+    size_t k = 0;
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+      bool isFound = false;
+      for (size_t j = 0; mask[j] != '\0'; ++j) {
+        if (str[i] == mask[j] {
+          isFound = true;
+          break;
+        }
+      }
+      if (!isFound) {
+        res[k] = str[i];
+        k++;
+      }
+    }
+    res[k] = '\0';
+    return res;
+  }
+
 }
 int main()
 {
