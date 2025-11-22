@@ -92,4 +92,19 @@ namespace sogdanov
 }
 int main()
 {
+  try {
+    size_t size = 0;
+    char * str = sogdanov::getLine(std::cin, size);
+    const char * mask = "abc";
+    char * k1 = new char[size];
+    char * k2 = new char[size];
+    char * res1 = sogdanov::excSnd(str, mask, k1, size);
+    char * res2 = sogdanov::rmvVow(str, k2, size);
+    std::cout << res1 << '\n' << res2 << '\n';
+    delete[] res1;
+    delete[] res2;
+    delete[] str;
+  } catch (const std::bad_alloc &) {
+    std::cerr << "Memory allocation failed\n";
+    return 1;
 }
