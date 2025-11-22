@@ -113,7 +113,6 @@ namespace pozdnyakov {
 int main() {
   using namespace pozdnyakov;
 
-  std::cout << "String for var 10: ";
   char* input_str1 = read_string();
 
   size_t len1 = string_length(input_str1);
@@ -126,12 +125,11 @@ int main() {
   }
 
   replace_chars(input_str1, result1, len1 + 1, 'c', 'b');
-  std::cout << "Variant 10 result: " << result1 << std::endl;
+  std::cout << result1 << std::endl;
 
   delete[] input_str1;
   delete[] result1;
 
-  std::cout << "String for var 20: ";
   char* input_str2 = read_string();
 
   const char* second_string = "def_ghk";
@@ -147,11 +145,10 @@ int main() {
   }
 
   merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
-  std::cout << "Variant 20 result: " << result2 << std::endl;
+  std::cout << result2 << std::endl;
 
   delete[] input_str2;
   delete[] result2;
 
   return 0;
 }
-
