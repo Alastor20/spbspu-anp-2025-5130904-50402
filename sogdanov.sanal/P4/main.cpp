@@ -2,9 +2,9 @@
 #include <iomanip>
 namespace sogdanov
 {
-  char * getline(std::istream & in, size_t & size)
+  char * getLine(std::istream & in, size_t & size)
   {
-    bool isSkipWs = (in.flag() & std::ios::skipws);
+    bool isSkipWs = (in.flags() & std::ios::skipws);
     if (isSkipWs) {
       in >> std::noskipws;
     }
@@ -50,13 +50,13 @@ namespace sogdanov
     ++size;
     return str;
   }
-  char * excSnd(char * str, const char * mask, char * res, size_t size)
+  char * excSnd(char * str, const char * mask, char * res)
   {
     size_t k = 0;
     for (size_t i = 0; str[i] != '\0'; ++i) {
       bool isFound = false;
       for (size_t j = 0; mask[j] != '\0'; ++j) {
-        if (str[i] == mask[j] {
+        if (str[i] == mask[j]) {
           isFound = true;
           break;
         }
@@ -69,14 +69,14 @@ namespace sogdanov
     res[k] = '\0';
     return res;
   }
-  char * rmvVow(char * str, char * res, size_t size)
+  char * rmvVow(char * str, char * res)
   {
     const char * vowels = "AEIOUaeiou";
     size_t k = 0;
     for (size_t i = 0; str[i] != '\0'; ++i) {
       bool isFound = false;
       for (size_t j = 0; vowels[j] != '\0'; ++j) {
-        if (str[i] == vowels[j] {
+        if (str[i] == vowels[j]) {
           isFound = true;
           break;
         }
@@ -98,8 +98,8 @@ int main()
     const char * mask = "abc";
     char * k1 = new char[size];
     char * k2 = new char[size];
-    char * res1 = sogdanov::excSnd(str, mask, k1, size);
-    char * res2 = sogdanov::rmvVow(str, k2, size);
+    char * res1 = sogdanov::excSnd(str, mask, k1);
+    char * res2 = sogdanov::rmvVow(str, k2);
     std::cout << res1 << '\n' << res2 << '\n';
     delete[] res1;
     delete[] res2;
@@ -107,4 +107,5 @@ int main()
   } catch (const std::bad_alloc &) {
     std::cerr << "Memory allocation failed\n";
     return 1;
+  }
 }
