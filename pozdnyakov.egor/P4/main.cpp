@@ -133,6 +133,12 @@ int main() {
 
   char* input_str1 = read_string();
 
+  if (string_length(input_str1) == 0) {
+    std::cerr << "Empty input string";
+    delete[] input_str1;
+    return 1;
+  }
+
   size_t len1 = string_length(input_str1);
   char* result1 = new(std::nothrow) char[len1 + 1];
 
@@ -150,6 +156,12 @@ int main() {
 
   char* input_str2 = read_string();
 
+  if (string_length(input_str2) == 0) {
+    std::cerr << "Empty input string";
+    delete[] input_str2;
+    return 1;
+  }
+
   const char* second_string = "def_ghk";
 
   size_t len2 = string_length(input_str2);
@@ -162,13 +174,8 @@ int main() {
     return 1;
   }
 
-  if (len2 == 0) {
-    std::cout << std::endl;
-  }
-  else {
-    merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
-    std::cout << result2 << std::endl;
-  }
+  merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
+  std::cout << result2 << std::endl;
 
   delete[] input_str2;
   delete[] result2;
