@@ -47,7 +47,7 @@ namespace pozdnyakov {
     char* str = new(std::nothrow) char[capacity];
 
     if (str == nullptr) {
-      std::cerr << "������: ���������� �������� ������" << std::endl;
+      std::cerr << "Memory allocaton error.";
       std::exit(1);
     }
 
@@ -57,7 +57,7 @@ namespace pozdnyakov {
         capacity *= 2;
         char* new_str = new(std::nothrow) char[capacity];
         if (new_str == nullptr) {
-          std::cerr << "������: ���������� �������� ������" << std::endl;
+          std::cerr << "Memory allocaton error.";
           delete[] str;
           std::exit(1);
         }
