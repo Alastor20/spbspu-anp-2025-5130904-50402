@@ -133,40 +133,52 @@ int main() {
 
   char* input_str1 = read_string();
 
-  size_t len1 = string_length(input_str1);
-  char* result1 = new(std::nothrow) char[len1 + 1];
-
-  if (result1 == nullptr) {
-    std::cerr << "Memory allocation error.";
+  if (string_length(input_str1) == 0) {
+    std::cout << std::endl;
     delete[] input_str1;
-    return 1;
   }
+  else {
+    size_t len1 = string_length(input_str1);
+    char* result1 = new(std::nothrow) char[len1 + 1];
 
-  replace_chars(input_str1, result1, len1 + 1, 'c', 'b');
-  std::cout << result1 << std::endl;
+    if (result1 == nullptr) {
+      std::cerr << "Memory allocation error.";
+      delete[] input_str1;
+      return 1;
+    }
 
-  delete[] input_str1;
-  delete[] result1;
+    replace_chars(input_str1, result1, len1 + 1, 'c', 'b');
+    std::cout << result1 << std::endl;
+
+    delete[] input_str1;
+    delete[] result1;
+  }
 
   char* input_str2 = read_string();
 
-  const char* second_string = "def_ghk";
-
-  size_t len2 = string_length(input_str2);
-  size_t len3 = string_length(second_string);
-  char* result2 = new(std::nothrow) char[len2 + len3 + 1];
-
-  if (result2 == nullptr) {
-    std::cerr << "Memory allocation error.";
+  if (string_length(input_str2) == 0) {
+    std::cout << std::endl;
     delete[] input_str2;
-    return 1;
   }
+  else {
+    const char* second_string = "def_ghk";
 
-  merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
-  std::cout << result2 << std::endl;
+    size_t len2 = string_length(input_str2);
+    size_t len3 = string_length(second_string);
+    char* result2 = new(std::nothrow) char[len2 + len3 + 1];
 
-  delete[] input_str2;
-  delete[] result2;
+    if (result2 == nullptr) {
+      std::cerr << "Memory allocation error.";
+      delete[] input_str2;
+      return 1;
+    }
+
+    merge_latin_letters(input_str2, second_string, result2, len2 + len3 + 1);
+    std::cout << result2 << std::endl;
+
+    delete[] input_str2;
+    delete[] result2;
+  }
 
   return 0;
 }
