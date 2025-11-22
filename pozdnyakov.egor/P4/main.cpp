@@ -51,13 +51,31 @@ namespace pozdnyakov {
 
     for (size_t i = 0; str1[i] && temp_index < 1023; ++i) {
       if (is_alpha_char(str1[i])) {
-        temp_buffer[temp_index++] = str1[i];
+        bool found = false;
+        for (size_t j = 0; j < temp_index; ++j) {
+          if (temp_buffer[j] == str1[i]) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          temp_buffer[temp_index++] = str1[i];
+        }
       }
     }
 
     for (size_t i = 0; str2[i] && temp_index < 1023; ++i) {
       if (is_alpha_char(str2[i])) {
-        temp_buffer[temp_index++] = str2[i];
+        bool found = false;
+        for (size_t j = 0; j < temp_index; ++j) {
+          if (temp_buffer[j] == str2[i]) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          temp_buffer[temp_index++] = str2[i];
+        }
       }
     }
     temp_buffer[temp_index] = '\0';
