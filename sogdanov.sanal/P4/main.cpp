@@ -105,6 +105,9 @@ int main()
   try {
     size_t size = 0;
     char * str = sogdanov::getLine(std::cin, size);
+    if (!str) {
+      return 1;
+    }
     const char * mask = "abc";
     size_t maskLen = sogdanov::len(mask);
     char * k1 = new char[size];
