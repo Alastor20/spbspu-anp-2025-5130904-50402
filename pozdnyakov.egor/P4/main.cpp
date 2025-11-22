@@ -41,6 +41,40 @@ namespace pozdnyakov {
     output[i] = '\0';
   }
 
+  void merge_latin_letters(const char* str1, const char* str2, char* output, size_t output_size) {
+    if (str1 == nullptr || str2 == nullptr || output == nullptr || output_size == 0) {
+      return;
+    }
+
+    char temp_buffer[1024];
+    size_t temp_index = 0;
+
+    for (size_t i = 0; str1[i] && temp_index < 1023; ++i) {
+      if (is_alpha_char(str1[i])) {
+        temp_buffer[temp_index++] = str1[i];
+      }
+    }
+
+    for (size_t i = 0; str2[i] && temp_index < 1023; ++i) {
+      if (is_alpha_char(str2[i])) {
+        temp_buffer[temp_index++] = str2[i];
+      }
+    }
+    temp_buffer[temp_index] = '\0';
+
+    for (size_t i = 0; i < temp_index; ++i) {
+      for (size_t j = i + 1; j < temp_index; ++j) {
+        if (temp_buffer[i] > temp_buffer[j]) {
+          char temp = temp_buffer[i];
+          temp_buffer[i] = temp_buffer[j];
+          temp_buffer[j] = temp;
+        }
+      }
+    }
+
+    string_copy(temp_buffer, output, output_size);
+  }
+
   char* read_string() {
     size_t capacity = 256;
     size_t size = 0;
