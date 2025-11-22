@@ -27,4 +27,17 @@ namespace pozdnyakov {
   int is_alpha_char(char c) {
     return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
   }
+
+  void replace_chars(const char* input, char* output, size_t output_size, char old_char, char new_char) {
+    if (input == nullptr || output == nullptr || output_size == 0) {
+      return;
+    }
+
+    size_t i = 0;
+    while (input[i] && i < output_size - 1) {
+      output[i] = (input[i] == old_char) ? new_char : input[i];
+      ++i;
+    }
+    output[i] = '\0';
+  }
 }
