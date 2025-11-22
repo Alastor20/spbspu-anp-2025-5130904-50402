@@ -12,8 +12,8 @@ namespace sogdanov
     char * str = nullptr;
     char ch;
     while (in >> ch && ch !='\n') {
-      if (size +1 > len) {
-        size_t newLen = len * 2;
+      if (size + 1 > len) {
+        size_t newLen = len == 0 ? 16 : len * 2;
         char * temp = new char[newLen];
         for (size_t i = 0; i < size; ++i) {
           temp[i] = str[i];
