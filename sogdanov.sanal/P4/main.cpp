@@ -13,7 +13,7 @@ namespace sogdanov
     char ch;
     while (in >> ch && ch !='\n') {
       if (size +1 > len) {
-        size_t newLen = len + 1;
+        size_t newLen = len * 2;
         char * temp = new char[newLen];
         for (size_t i = 0; i < size; ++i) {
           temp[i] = str[i];
@@ -36,16 +36,12 @@ namespace sogdanov
     if (in.eof()) {
       return nullptr;
     }
-    if (size + 1 > len) {
-      const int newLen = 1;
-      char * temp = new char[newLen];
-      for (size_t i = 0; i < size; ++i) {
-        temp[i] = str[i];
-      }
-      delete[] str;
-      str = temp;
-      len = newLen;
+    char * temp = new char[size + 1];
+    for (size_t i = 0; i < size; ++i) {
+      temp[i] = str[i];
     }
+    delete[] str;
+    str = temp;
     str[size] = '\0';
     ++size;
     return str;
