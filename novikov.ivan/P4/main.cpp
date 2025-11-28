@@ -4,10 +4,54 @@
 #include <iostream>
 #include <istream>
 
-const char literal[] = "aBS_ABC";
+const char literal[] = "abs";
+const size_t literal_size = 4;
+const size_t alphabet_size = 26;
+const size_t ascii_size = 256;
 
-size_t countLatin(const char * str, size_t size);
-size_t countSameChars(const char * str, size_t size, const char * literal);
+size_t countLatin(const char * str, size_t size)
+{
+  size_t count = 0;
+  char unique[alphabet_size] = {0};
+
+  for (size_t i = 0; i < size; ++i) {
+    if (std::isalpha(str[i])) {
+      size_t j = 0;
+      while (j < alphabet_size && unique[j] != std::tolower(str[i]) && unique[j] != 0) {
+        ++j;
+      }
+      if (unique[j] == 0) {
+        unique[j] = std::tolower(str[i]);
+        ++count;
+      }
+    }
+  }
+
+  return count;
+}
+
+size_t countSame(const char * str, size_t size, const char * literal, size_t literal_size)
+{
+  size_t count1[ascii_size] = {0};
+  size_t count2[ascii_size] = {0};
+  size_t sameCount = 0;
+
+  for (size_t i = 0; i < size; ++i) {
+    ++count1[str[i]];
+  }
+
+  for (size_t i = 0; i < literal_size; ++i) {
+    ++count2[literal[i]];
+  }
+
+  for (size_t i = 0; i < ascii_size; ++i) {
+    if (count1[i] > 0 && count2[i] > 0) {
+      sameCount += count1[i] < count2[i] ? count1[i] : count2[i];
+    }
+  }
+
+  return sameCount;
+}
 
 void extend(char ** str, size_t size, size_t & capacity)
 {
@@ -76,7 +120,7 @@ int main()
   }
 
   size_t result1 = countLatin(str, size);
-  size_t result2 = countSameChars(str, size, literal);
+  size_t result2 = countSame(str, size, literal, literal_size);
 
   std::cout << result1 << "\n";
   std::cout << result2 << "\n";
