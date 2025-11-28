@@ -37,11 +37,11 @@ size_t countSame(const char * str, size_t size, const char * literal, size_t lit
   size_t sameCount = 0;
 
   for (size_t i = 0; i < size; ++i) {
-    ++count1[str[i]];
+    ++count1[static_cast< unsigned char >(str[i])];
   }
 
   for (size_t i = 0; i < literal_size; ++i) {
-    ++count2[literal[i]];
+    ++count2[static_cast< unsigned char >(literal[i])];
   }
 
   for (size_t i = 0; i < ascii_size; ++i) {
