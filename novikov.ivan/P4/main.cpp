@@ -9,16 +9,19 @@ const char literal[] = "aBS_ABC";
 size_t countLatin(const char * str, size_t size);
 size_t countSameChars(const char * str, size_t size, const char * literal);
 
-void extend(char ** str, size_t size)
+void extend(char ** str, size_t size, size_t & capacity)
 {
   char * temp = nullptr;
-  temp = static_cast< char * >(malloc(size + 1));
-  if (temp == nullptr) {
-    * str = nullptr;
-    return;
-  }
-  for (size_t i = 0; i < size; ++i) {
-    temp[i] = (* str)[i];
+  if (size == capacity) {
+    capacity *= 2;
+    temp = static_cast< char * >(malloc(capacity));
+    if (temp == nullptr) {
+      * str = nullptr;
+      return;
+    }
+    for (size_t i = 0; i < size; ++i) {
+      temp[i] = (* str)[i];
+    }
   }
   free(* str);
   * str = temp;
@@ -31,13 +34,14 @@ char * getline(std::istream & in, size_t & size)
     in >> std::noskipws;
   }
 
-  char * str = static_cast< char * >(malloc(size + 1));
+  size_t capacity = 1;
+  char * str = static_cast< char * >(malloc(capacity * sizeof(char)));
 
   if (str == nullptr) {
     return nullptr;
   }
   while (in) {
-    extend(& str, size);
+    extend(& str, size, capacity);
     if (str == nullptr) {
       return nullptr;
     }
