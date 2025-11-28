@@ -66,9 +66,9 @@ void extend(char ** str, size_t size, size_t & capacity)
     for (size_t i = 0; i < size; ++i) {
       temp[i] = (* str)[i];
     }
+    free(* str);
+    * str = temp;
   }
-  free(* str);
-  * str = temp;
 }
 
 char * getline(std::istream & in, size_t & size)
