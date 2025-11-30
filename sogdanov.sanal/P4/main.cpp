@@ -79,15 +79,18 @@ namespace sogdanov
 
 int main()
 {
+  char * str = nullptr;
+  char * k1 = nullptr;
+  char * k2 = nullptr;
   try {
     size_t size = 0;
-    char * str = sogdanov::getLine(std::cin, size);
+    str = sogdanov::getLine(std::cin, size);
     if (!str) {
       return 1;
     }
     const char * mask = "abc";
-    char * k1 = new char[size + 1];
-    char * k2 = new char[size + 1];
+    k1 = new char[size + 1];
+    k2 = new char[size + 1];
     char * res1 = sogdanov::excSnd(str, mask, k1);
     char * res2 = sogdanov::rmvVow(str, k2);
     std::cout << res1 << '\n' << res2 << '\n';
