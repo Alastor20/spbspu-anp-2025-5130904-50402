@@ -14,11 +14,6 @@ int main(){
   size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, str1, size1);
-    if (size1 == 0) {
-      std::cerr << "Memory allocation or string allocation error";
-      delete[] str1;
-      return 1;
-    }
     str2 = new char[5];
     str2[0] = 'f';
     str2[1] = 'i';
