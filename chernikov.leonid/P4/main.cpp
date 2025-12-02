@@ -14,7 +14,12 @@ int main(){
   size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, str1, size1);
-    str2 = chernikov::getline(std::cin, str2, size2);
+    str2 = new char[5];
+    str2[0] = 'f';
+    str2[1] = 'i';
+    str2[2] = 'v';
+    str2[3] = 'e';
+    size2 = 4;
   }
   catch (...) {
     std::cerr << "Memory allocation or string allocation error";
@@ -24,7 +29,7 @@ int main(){
   }
   size_t has_sam = chernikov::hasSam(str1, str2, size1, size2);
   char* uni_two = nullptr;
-  size_t size_uni_two = 0;
+  size_t size_uni_two = size1 + size2;
   try {
     uni_two = new char[size1 + size2 + 1];
   }
@@ -55,44 +60,34 @@ char * chernikov::getline(std::istream& in, char* data, size_t & size) {
   }
   char ch;
   size = 0;
+  char * new_data = nullptr;
+  data = nullptr;
   while (in >> ch && ch != '\n') {
-    size++;
-    char * new_data = new char[size + 1];
-    if (new_data == nullptr) {
-      throw std::bad_alloc();
-    }
+    new_data = new char[size + 2];
     for (size_t i = 0; i < size; ++i) {
       new_data[i] = data[i];
     }
+    new_data[size] = ch;
+    new_data[size + 1] = '\0';
     delete[] data;
     data = new_data;
-    in >> data[size];
+    size++;
   }
-  size++;
-  char * new_data = new char[size];
-  if (new_data == nullptr) {
-    throw std::bad_alloc();
+  if (size == 0) {
+    data = new char[1];
+    data[0] = '\0';
+    size = 1;
   }
-  for (size_t i = 0; i < size - 1; ++i) {
-    new_data[i] = data[i];
-  }
-  new_data[size] = '\0';
-  delete[] data;
-  data = new_data;
   if (is_skipws) {
     in >> std::skipws;
   }
   return data;
 }
 size_t chernikov::hasSam(const char * str1, const char * str2, const size_t size1, const size_t size2) {
-  for (size_t i = 0; i < size1; ++i) {
-    if (str1[i] == '\0') {
-      break;
-    }
-    for (size_t j = 0; j < size2; ++j) {
-      if (str2[j] == '\0') {
-        break;
-      }
+  size_t len1 = (size1 > 0) ? size1 - 1 : 0;
+  size_t len2 = (size2 > 0) ? size2 - 1 : 0;
+  for (size_t i = 0; i < len1; ++i) {
+    for (size_t j = 0; j < len2; ++j) {
       if (str1[i] == str2[j]) {
         return 1;
       }
@@ -103,15 +98,11 @@ size_t chernikov::hasSam(const char * str1, const char * str2, const size_t size
 void chernikov::uniTwo(char * uni_two, const char * str1, const char * str2, size_t size1, size_t size2, size_t & size_ut) {
   size_t diff = 0;
   size_t str_flag = 0;
-  if (size1 > 0 && str1[size1 - 1] == '\0') {
-    size1--;
-  }
-  if (size1 > 0 && str2[size2 - 1] == '\0') {
-    size2--;
-  }
-  size_t size = min(size1, size2, diff, str_flag);
+  size_t len1 = (size1 > 0) ? size1 - 1 : 0;
+  size_t len2 = (size2 > 0) ? size2 - 1 : 0;
+  size_t size = min(len1, len2, diff, str_flag);
   size_t uni_index = 0;
-  for (size_t i = 0; i < size;) {
+  for (size_t i = 0; i < size; ++i) {
     uni_two[uni_index++] = str1[i];
     uni_two[uni_index++] = str2[i];
   }
@@ -121,7 +112,7 @@ void chernikov::uniTwo(char * uni_two, const char * str1, const char * str2, siz
         uni_two[uni_index++] = str1[size + i];
       }
     }
-    else {
+    else if (str_flag == 2) {
       for (size_t i = 0; i < diff; ++i) {
         uni_two[uni_index++] = str2[size + i];
       }
@@ -142,6 +133,7 @@ size_t chernikov::min(size_t size1, size_t size2, size_t & diff, size_t & flag) 
     return size2;
   }
   else {
+    flag = 0;
     diff = 0;
     return size2;
   }
