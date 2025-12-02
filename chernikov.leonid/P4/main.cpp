@@ -14,7 +14,7 @@ int main(){
   size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, str1, size1);
-    if (size1 == 0 || (size1 == 1 && str1[0] == '\0')) {
+    if (size1 == 0) {
       std::cerr << "Memory allocation or string allocation error";
       delete[] str1;
       return 1;
@@ -73,9 +73,9 @@ char * chernikov::getline(std::istream& in, char* data, size_t & size) {
   size = 0;
   char * new_data = nullptr;
   data = nullptr;
-  bool read_anything = false;
-  while (in && in >> ch && ch != '\n') {
-    read_anything = true;
+  //bool read_anything = false;
+  while (in >> ch && ch != '\n') {
+    //read_anything = true;
     new_data = new char[size + 2];
     for (size_t i = 0; i < size; ++i) {
       new_data[i] = data[i];
@@ -86,18 +86,15 @@ char * chernikov::getline(std::istream& in, char* data, size_t & size) {
     data = new_data;
     size++;
   }
-  if (!read_anything && in.eof()) {
+  /*if (!read_anything && in.eof()) {
     if (data) {
       delete[] data;
     }
     size = 0;
     data = new char[1];
     data[0] = '\0';
-  }
+  }*/
   if (size == 0) {
-    if (data) {
-      delete[] data;
-    }
     data = new char[1];
     data[0] = '\0';
     size = 1;
