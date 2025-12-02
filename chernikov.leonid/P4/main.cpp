@@ -54,6 +54,12 @@ int main(){
 }
 
 char * chernikov::getline(std::istream& in, char* data, size_t & size) {
+  if (!in) {
+    size = 0;
+    data = new char[1];
+    data[0] = '\0';
+    return data;
+  }
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws) {
     in >> std::noskipws;
@@ -62,7 +68,7 @@ char * chernikov::getline(std::istream& in, char* data, size_t & size) {
   size = 0;
   char * new_data = nullptr;
   data = nullptr;
-  while (in >> ch && ch != '\n') {
+  while (in && in >> ch && ch != '\n') {
     new_data = new char[size + 2];
     for (size_t i = 0; i < size; ++i) {
       new_data[i] = data[i];
@@ -74,6 +80,9 @@ char * chernikov::getline(std::istream& in, char* data, size_t & size) {
     size++;
   }
   if (size == 0) {
+    if (data) {
+      delete[] data;
+    }
     data = new char[1];
     data[0] = '\0';
     size = 1;
