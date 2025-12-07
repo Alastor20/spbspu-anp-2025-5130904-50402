@@ -59,6 +59,7 @@ namespace novikov {
     char * temp = nullptr;
     temp = reinterpret_cast< char * >(malloc(capacity * 2));
     if (temp == nullptr) {
+      *str = nullptr;
       return;
     }
     for (size_t i = 0; i < size; ++i) {
@@ -88,11 +89,6 @@ namespace novikov {
     while (in) {
       if (size == capacity) {
         extend(&str, size, capacity);
-        if (size > capacity) {
-          std::cerr << "Failed to allocate memory\n";
-          free(str);
-          break;
-        }
       }
       if (str == nullptr) {
         if (is_skipws) {
