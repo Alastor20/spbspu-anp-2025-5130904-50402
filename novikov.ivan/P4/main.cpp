@@ -57,7 +57,7 @@ namespace novikov {
   void extend(char ** str, size_t size, size_t & capacity)
   {
     char * temp = nullptr;
-    temp = static_cast< char * >(malloc(capacity * 2));
+    temp = reinterpret_cast< char * >(malloc(capacity * 2));
     if (temp == nullptr) {
       *str = nullptr;
       return;
@@ -78,7 +78,7 @@ namespace novikov {
     }
 
     size_t capacity = 2;
-    char * str = static_cast< char * >(malloc(capacity * sizeof(char)));
+    char * str = reinterpret_cast< char * >(malloc(capacity * sizeof(char)));
 
     if (str == nullptr) {
       if (is_skipws) {
@@ -118,6 +118,7 @@ int main()
   char * str = novikov::getline(std::cin, size);
 
   if (str == nullptr || size == 0) {
+    free(str);
     std::cerr << "Reading failed\n";
     return 1;
   }
