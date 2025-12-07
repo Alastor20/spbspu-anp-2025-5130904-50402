@@ -5,7 +5,7 @@
 #include <istream>
 
 namespace novikov {
-  const char literal[] = "abs";
+  const char literal[] = "abs\0";
   const size_t literal_size = 4;
   const size_t alphabet_size = 26;
   const size_t ascii_size = 256;
@@ -18,7 +18,7 @@ namespace novikov {
     for (size_t i = 0; i < size; ++i) {
       if (std::isalpha(str[i])) {
         size_t j = 0;
-        while (j < alphabet_size && unique[j] != std::tolower(str[i]) && unique[j] != 0) {
+        while (j < count && unique[j] != std::tolower(str[i])) {
           ++j;
         }
         if (unique[j] == 0) {
@@ -31,17 +31,17 @@ namespace novikov {
     return count;
   }
 
-  size_t countSame(const char * str, size_t size, const char * literal, size_t literal_size)
+  size_t countSame(const char * str, const char * literal)
   {
     size_t count1[ascii_size] = {0};
     size_t count2[ascii_size] = {0};
     size_t sameCount = 0;
 
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
       ++count1[static_cast< unsigned char >(str[i])];
     }
 
-    for (size_t i = 0; i < literal_size; ++i) {
+    for (size_t i = 0; literal[i] != '\0'; ++i) {
       ++count2[static_cast< unsigned char >(literal[i])];
     }
 
@@ -57,19 +57,16 @@ namespace novikov {
   void extend(char ** str, size_t size, size_t & capacity)
   {
     char * temp = nullptr;
-    if (size == capacity) {
-      capacity *= 2;
-      temp = static_cast< char * >(malloc(capacity));
-      if (temp == nullptr) {
-        * str = nullptr;
-        return;
-      }
-      for (size_t i = 0; i < size; ++i) {
-        temp[i] = (* str)[i];
-      }
-      free(* str);
-      * str = temp;
+    temp = reinterpret_cast< char * >(malloc(capacity * 2));
+    if (temp == nullptr) {
+      return;
     }
+    for (size_t i = 0; i < size; ++i) {
+      temp[i] = (*str)[i];
+    }
+    free(*str);
+    *str = temp;
+    capacity *= 2;
   }
 
   char * getline(std::istream & in, size_t & size)
@@ -79,26 +76,35 @@ namespace novikov {
       in >> std::noskipws;
     }
 
-    size_t capacity = 1;
-    char * str = static_cast< char * >(malloc(capacity * sizeof(char)));
+    size_t capacity = 2;
+    char * str = reinterpret_cast< char * >(malloc(capacity * sizeof(char)));
 
     if (str == nullptr) {
+      if (is_skipws) {
+        in >> std::noskipws;
+      }
       return nullptr;
     }
     while (in) {
-      extend(& str, size, capacity);
+      if (size == capacity) {
+        extend(&str, size, capacity);
+        if (size > capacity) {
+          std::cerr << "Failed to allocate memory\n";
+          free(str);
+          break;
+        }
+      }
       if (str == nullptr) {
+        if (is_skipws) {
+          in >> std::noskipws;
+        }
         return nullptr;
       }
       in >> str[size];
-      if (in.eof()) {
+      if (!in || str[size] == '\0') {
         break;
       }
       ++size;
-    }
-    if (in.bad() || size == 0) {
-      free(str);
-      return nullptr;
     }
 
     str[size] = '\0';
@@ -115,14 +121,13 @@ int main()
   size_t size = 0;
   char * str = novikov::getline(std::cin, size);
 
-  if (str == nullptr) {
-    free(str);
+  if (str == nullptr || size == 0) {
     std::cerr << "Reading failed\n";
     return 1;
   }
 
   size_t result1 = novikov::countLatin(str, size);
-  size_t result2 = novikov::countSame(str, size, novikov::literal, novikov::literal_size);
+  size_t result2 = novikov::countSame(str, novikov::literal);
 
   std::cout << result1 << "\n";
   std::cout << result2 << "\n";
