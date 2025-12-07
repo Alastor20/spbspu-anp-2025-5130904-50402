@@ -57,7 +57,7 @@ namespace novikov {
   void extend(char ** str, size_t size, size_t & capacity)
   {
     char * temp = nullptr;
-    temp = reinterpret_cast< char * >(malloc(capacity * 2));
+    temp = static_cast< char * >(malloc(capacity * 2));
     if (temp == nullptr) {
       *str = nullptr;
       return;
@@ -78,7 +78,7 @@ namespace novikov {
     }
 
     size_t capacity = 2;
-    char * str = reinterpret_cast< char * >(malloc(capacity * sizeof(char)));
+    char * str = static_cast< char * >(malloc(capacity * sizeof(char)));
 
     if (str == nullptr) {
       if (is_skipws) {
