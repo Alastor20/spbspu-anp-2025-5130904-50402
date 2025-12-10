@@ -16,10 +16,16 @@ namespace lavrentev
   struct Shape
   {
     virtual ~Shape() = default;
-    virtual double getArea() const;
-    virtual p_t* getFrameRect() const;
-    virtual void move(p_t c);
-    virtual void move(double d_x, double d_y);
+    virtual double getArea() const = 0;
+    virtual r_t getFrameRect() const = 0;
+    virtual void move(const p_t& c) = 0;
+    virtual void move(double d_x, double d_y) = 0;
+    virtual void scale(double coef) = 0;
+  };
+
+  struct Rectangle: Shape
+  {
+    
   };
 }
 
