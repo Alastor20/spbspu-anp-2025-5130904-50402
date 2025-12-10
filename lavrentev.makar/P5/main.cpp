@@ -25,7 +25,14 @@ namespace lavrentev
 
   struct Rectangle: Shape
   {
-    
+    private:
+      r_t data;
+    public:
+      explicit Rectangle(const r_t& dd);
+      double getArea() const override;
+      lavrentev::r_t getFrameRect() const override;
+      void move(const lavrentev::p_t& c) override;
+      void move(double d_x, double d_y) override;
   };
 }
 
@@ -33,3 +40,4 @@ int main()
 {
 
 }
+
