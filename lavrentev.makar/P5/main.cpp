@@ -23,6 +23,12 @@ namespace lavrentev
     double rOut;
   };
 
+  struct pol_t
+  {
+    p_t pos;
+    p_t* vertexes[];
+  };
+
   struct Shape
   {
     virtual ~Shape() = default;
@@ -52,6 +58,19 @@ namespace lavrentev
       ru_t data;
     public:
       explicit Rubber(const ru_t& dd);
+      double getArea() const override;
+      lavrentev::r_t getFrameRect() const override;
+      void move(const lavrentev::p_t& c) override;
+      void move(double d_x, double d_y) override;
+      void scale(double coef) override;
+  };
+
+  struct Polygon: Shape
+  {
+    private:
+      pol_t data;
+    public:
+      explicit Polygon(const pol_t& dd);
       double getArea() const override;
       lavrentev::r_t getFrameRect() const override;
       void move(const lavrentev::p_t& c) override;
