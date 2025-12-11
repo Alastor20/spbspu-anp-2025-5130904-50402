@@ -37,9 +37,15 @@ struct Shape {
 struct Rectangle : Shape {
 private:
   r_t data;
-
 public:
   explicit Rectangle(const r_t &dd);
+
+  Rectangle(const Rectangle& dd) = default;
+  Rectangle& operator=(const Rectangle& dd) = default;
+  Rectangle& operator=(Rectangle&& dd) = default;
+  Rectangle(Rectangle&& dd) = default;
+  ~Rectangle() = default;
+
   double getArea() const override;
   lavrentev::r_t getFrameRect() const override;
   void move(const lavrentev::p_t &c) override;
@@ -53,6 +59,13 @@ private:
 
 public:
   explicit Rubber(const ru_t &dd);
+
+  Rubber(const Rubber& dd) = default;
+  Rubber& operator=(const Rubber& dd) = default;
+  Rubber& operator=(Rubber&& dd) = default;
+  Rubber(Rubber&& dd) = default;
+  ~Rubber() = default;
+
   double getArea() const override;
   lavrentev::r_t getFrameRect() const override;
   void move(const lavrentev::p_t &c) override;
@@ -66,6 +79,13 @@ private:
 
 public:
   explicit Polygon(const pol_t &dd);
+
+  Polygon(const Polygon& dd) = default;
+  Polygon& operator=(const Polygon& dd) = default;
+  Polygon& operator=(Polygon&& dd) = default;
+  Polygon(Polygon&& dd) = default;
+  ~Polygon() = default;
+
   double getArea() const override;
   lavrentev::r_t getFrameRect() const override;
   void move(const lavrentev::p_t &c) override;
