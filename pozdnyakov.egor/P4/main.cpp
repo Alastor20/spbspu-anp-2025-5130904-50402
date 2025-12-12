@@ -40,7 +40,6 @@ namespace pozdnyakov
     return str;
   }
 
-
   void replaceChars(const char* input, char* output, unsigned int len, char oldChar, char newChar)
   {
     for (unsigned int i = 0; i < len; ++i)
@@ -50,8 +49,9 @@ namespace pozdnyakov
     output[len] = '\0';
   }
 
-
-  unsigned int mergeLatinLetters(const char* s1, const char* s2, char* output, 
+  unsigned int mergeLatinLetters(const char* s1,
+    const char* s2,
+    char* output,
     unsigned int outputCapacity)
   {
     int present[26];
@@ -93,7 +93,6 @@ namespace pozdnyakov
   }
 
 }
-
 
 int main()
 {
