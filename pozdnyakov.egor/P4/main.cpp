@@ -1,175 +1,118 @@
 #include <iostream>
-#include <cstdlib>
+#include <cctype>
+#include <new>
 
 namespace pozdnyakov {
 
-  size_t string_length(const char* str) {
-    const char* p = str;
-    while (*p) {
-      ++p;
-    }
-    return p - str;
-  }
+  char* read_string(std::istream& in, unsigned int& out_len) {
+    unsigned int capacity = 256;
+    unsigned int size = 0;
 
-  void string_copy(const char* source, char* destination, size_t dest_size) {
-    if (source == nullptr || destination == nullptr || dest_size == 0) {
-      return;
-    }
+    char* str = new char[capacity];
+    str[0] = '\0';
 
-    size_t i = 0;
-    while (source[i] && i < dest_size - 1) {
-      destination[i] = source[i];
-      ++i;
-    }
-    destination[i] = '\0';
-  }
-
-  int is_alpha_char(char c) {
-    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-  }
-
-  void replace_chars(const char* input, char* output, size_t output_size, char old_char, char new_char) {
-    if (input == nullptr || output == nullptr || output_size == 0) {
-      return;
-    }
-
-    size_t i = 0;
-    while (input[i] && i < output_size - 1) {
-      output[i] = (input[i] == old_char) ? new_char : input[i];
-      ++i;
-    }
-    output[i] = '\0';
-  }
-
-  void merge_latin_letters(const char* str1, const char* str2, char* output, size_t output_size) {
-    if (str1 == nullptr || str2 == nullptr || output == nullptr || output_size == 0) {
-      return;
-    }
-
-    char temp_buffer[1024];
-    size_t temp_index = 0;
-
-    for (size_t i = 0; str1[i] && temp_index < 1023; ++i) {
-      if (is_alpha_char(str1[i])) {
-        bool found = false;
-        for (size_t j = 0; j < temp_index; ++j) {
-          if (temp_buffer[j] == str1[i]) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          temp_buffer[temp_index++] = str1[i];
-        }
-      }
-    }
-
-    for (size_t i = 0; str2[i] && temp_index < 1023; ++i) {
-      if (is_alpha_char(str2[i])) {
-        bool found = false;
-        for (size_t j = 0; j < temp_index; ++j) {
-          if (temp_buffer[j] == str2[i]) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          temp_buffer[temp_index++] = str2[i];
-        }
-      }
-    }
-    temp_buffer[temp_index] = '\0';
-
-    for (size_t i = 0; i < temp_index; ++i) {
-      for (size_t j = i + 1; j < temp_index; ++j) {
-        if (temp_buffer[i] > temp_buffer[j]) {
-          char temp = temp_buffer[i];
-          temp_buffer[i] = temp_buffer[j];
-          temp_buffer[j] = temp;
-        }
-      }
-    }
-
-    string_copy(temp_buffer, output, output_size);
-  }
-
-  char* read_string() {
-    size_t capacity = 256;
-    size_t size = 0;
-    char* str = new(std::nothrow) char[capacity];
-
-    if (str == nullptr) {
-      std::cerr << "Memory allocation error.";
-      std::exit(1);
-    }
-
-    int ch;
-    while ((ch = std::cin.get()) != '\n' && ch != EOF) {
+    char ch;
+    while (in.get(ch) && ch != '\n') {
       if (size + 1 >= capacity) {
-        capacity *= 2;
-        char* new_str = new(std::nothrow) char[capacity];
-        if (new_str == nullptr) {
-          std::cerr << "Memory allocation error.";
-          delete[] str;
-          std::exit(1);
-        }
+        unsigned int new_capacity = capacity * 2;
+        char* new_str = new char[new_capacity];
 
-        for (size_t i = 0; i < size; ++i) {
+        for (unsigned int i = 0; i < size; ++i) {
           new_str[i] = str[i];
         }
+        new_str[size] = '\0';
+
         delete[] str;
         str = new_str;
+        capacity = new_capacity;
       }
-      str[size++] = static_cast<char>(ch);
-    }
-    str[size] = '\0';
 
+      str[size++] = ch;
+      str[size] = '\0';
+    }
+
+    out_len = size;
     return str;
   }
+
+
+  void replace_chars(const char* input, char* output,
+    unsigned int len, char old_ch, char new_ch)
+  {
+    for (unsigned int i = 0; i < len; ++i) {
+      output[i] = (input[i] == old_ch) ? new_ch : input[i];
+    }
+    output[len] = '\0';
+  }
+
+
+  unsigned int merge_latin_letters(const char* s1, const char* s2,
+    char* output, unsigned int output_capacity)
+  {
+    int present[26];
+    for (int i = 0; i < 26; ++i) present[i] = 0;
+
+    auto feed = [&present](const char* s) {
+      for (unsigned int i = 0; s[i] != '\0'; ++i) {
+        unsigned char uc = static_cast<unsigned char>(s[i]);
+        if (std::isalpha(uc)) {
+          char lowered = static_cast<char>(std::tolower(uc));
+          if (lowered >= 'a' && lowered <= 'z') {
+            present[lowered - 'a'] = 1;
+          }
+        }
+      }
+      };
+
+    feed(s1);
+    feed(s2);
+
+    unsigned int out_idx = 0;
+    for (int i = 0; i < 26 && out_idx + 1 < output_capacity; ++i) {
+      if (present[i]) {
+        output[out_idx++] = static_cast<char>('a' + i);
+      }
+    }
+
+    output[out_idx] = '\0';
+    return out_idx;
+  }
+
 }
 
 int main() {
   using namespace pozdnyakov;
 
-  char* input_str = read_string();
+  const char OLD_CHAR = 'c';
+  const char NEW_CHAR = 'b';
+  const char* SECOND_STRING = "def_ghk";
 
-  if (string_length(input_str) == 0) {
-    std::cerr << "Empty input error.";
+  try {
+    unsigned int input_len = 0;
+    char* input_str = read_string(std::cin, input_len);
+
+    if (input_len == 0) {
+      std::cerr << "Empty input error\n";
+      delete[] input_str;
+      return 1;
+    }
+
+    char* result1 = new char[input_len + 1];
+    replace_chars(input_str, result1, input_len, OLD_CHAR, NEW_CHAR);
+    std::cout << result1 << '\n';
+    delete[] result1;
+
+    const unsigned int BUFF2 = 27;
+    char result2[BUFF2];
+    merge_latin_letters(input_str, SECOND_STRING, result2, BUFF2);
+    std::cout << result2 << '\n';
+
     delete[] input_str;
+    return 0;
+
+  }
+  catch (const std::bad_alloc&) {
+    std::cerr << "Memory allocation error\n";
     return 1;
   }
-
-  size_t len1 = string_length(input_str);
-  char* result1 = new(std::nothrow) char[len1 + 1];
-
-  if (result1 == nullptr) {
-    std::cerr << "Memory allocation error.";
-    delete[] input_str;
-    return 1;
-  }
-
-  replace_chars(input_str, result1, len1 + 1, 'c', 'b');
-  std::cout << result1 << std::endl;
-
-  delete[] result1;
-
-  const char* second_string = "def_ghk";
-
-  size_t len2 = string_length(input_str);
-  size_t len3 = string_length(second_string);
-  char* result2 = new(std::nothrow) char[len2 + len3 + 1];
-
-  if (result2 == nullptr) {
-    std::cerr << "Memory allocation error.";
-    delete[] input_str;
-    return 1;
-  }
-
-  merge_latin_letters(input_str, second_string, result2, len2 + len3 + 1);
-  std::cout << result2 << std::endl;
-
-  delete[] input_str;
-  delete[] result2;
-
-  return 0;
 }
