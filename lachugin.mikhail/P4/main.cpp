@@ -38,7 +38,7 @@ namespace lachugin
 
   char* cut(const char* str, size_t& s)
   {
-    char* newLine = reinterpret_cast<char*>(malloc((s) * sizeof(char)));
+    char* newLine = reinterpret_cast<char*>(malloc((s + 1) * sizeof(char)));
     if (!newLine)
     {
       return nullptr;
@@ -61,7 +61,7 @@ namespace lachugin
     }
     size_t k = 0;
     bool lastSpace = false;
-    for (size_t i = 0; i < s; i++)
+    for (size_t i = 0; i < s && str[i] != '\0'; i++)
     {
       unsigned char ch = static_cast<unsigned char>(str[i]);
       if (std::isdigit(ch))
@@ -133,11 +133,11 @@ namespace lachugin
         data = helpLine;
       }
       in >> data[i];
-      if (data[i] == '\n')
+      if (!(in >> data[i]))
       {
-        input = false;
+        break;
       }
-      if (in.eof())
+      if (data[i] == '\n')
       {
         input = false;
       }
