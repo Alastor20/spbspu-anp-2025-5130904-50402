@@ -170,12 +170,6 @@ int main()
     std::cerr << "Not enough memory for string input.\n";
     return 10;
   }
-  if (std::strlen(str) == 0)
-  {
-    free(str);
-    std::cerr << "Error: no input.\n";
-    return 2;
-  }
   char* res2 = nullptr;
   const char* string = "acb";
   const size_t len = 3;
