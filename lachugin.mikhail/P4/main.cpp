@@ -1,110 +1,25 @@
 #include <iostream>
 #include <cctype>
-#include <cstring>
 
 namespace lachugin
 {
   const size_t startSize = 10;
 
-  void fopy(const char* src, size_t n, char* dst)
+  bool res1(const char* frsLine, size_t frsSize, const char* scnLine, size_t scnSize)
   {
-    for (size_t i = 0; i < n; i++)
+    size_t min = (frsSize < scnSize) ? frsSize : scnSize;
+    size_t max = (frsSize > scnSize) ? frsSize : scnSize;
+    const char* minLine = (min == frsSize) ? frsLine : scnLine;
+    const char* maxLine = (max == frsSize) ? frsLine : scnLine;
+    for (size_t i = 0; i < min; i++)
     {
-      dst[i] = src[i];
-    }
-  }
-
-  char* expand(char* oldLine, size_t oldCap, size_t& newCap)
-  {
-    newCap = oldCap + startSize;
-    char* newLine =
-      reinterpret_cast<char*>(malloc(newCap));
-
-    if (!newLine)
-    {
-      return nullptr;
-    }
-
-    fopy(oldLine, oldCap, newLine);
-    free(oldLine);
-    return newLine;
-  }
-
-  char* getline(std::istream& in, size_t& len)
-  {
-    size_t cap = startSize;
-    char* data =
-      reinterpret_cast<char*>(malloc(cap));
-
-    if (!data)
-    {
-      return nullptr;
-    }
-
-    len = 0;
-    char c;
-
-    while (in.get(c))
-    {
-      if (c == '\n')
-      {
-        break;
-      }
-      if (len + 1 >= cap)
-      {
-        char* tmp = expand(data, cap, cap);
-        if (!tmp)
-        {
-          free(data);
-          return nullptr;
-        }
-        data = tmp;
-      }
-      data[len++] = c;
-    }
-    if (len == 0 && in.eof())
-    {
-      free(data);
-      return nullptr;
-    }
-    data[len] = '\0';
-    return data;
-  }
-
-  char* latRmv(const char* str, size_t len)
-  {
-    char* tmp = reinterpret_cast<char*>(malloc(len + 1));
-
-    if (!tmp)
-    {
-      return nullptr;
-    }
-
-    size_t k = 0;
-    for (size_t i = 0; i < len; i++)
-    {
-      if (!std::isalpha(static_cast<unsigned char>(str[i])))
-      {
-        tmp[k++] = str[i];
-      }
-    }
-
-    tmp[k] = '\0';
-    return tmp;
-  }
-
-  bool res1(const char* a, size_t as, const char* b, size_t bs)
-  {
-    for (size_t i = 0; i < as; i++)
-    {
-      if (a[i] == ' ')
+      if (minLine[i] == ' ')
       {
         continue;
       }
-
-      for (size_t j = 0; j < bs; j++)
+      for (size_t j = 0; j < max; j++)
       {
-        if (a[i] == b[j])
+        if (minLine[i] == maxLine[j])
         {
           return true;
         }
@@ -112,32 +27,158 @@ namespace lachugin
     }
     return false;
   }
+
+  void fopy(const char* oldLine, size_t s, char* newLine)
+  {
+    for (size_t i = 0; i < s; i++)
+    {
+      newLine[i] = oldLine[i];
+    }
+  }
+
+  char* cut(const char* str, size_t& s)
+  {
+    char* newLine = reinterpret_cast<char*>(malloc((s) * sizeof(char)));
+    if (!newLine)
+    {
+      return nullptr;
+    }
+
+    for (size_t i = 0; i < s; i++)
+    {
+      newLine[i] = str[i];
+    }
+    newLine[s] = '\0';
+    return newLine;
+  }
+
+  char* latRmv(const char* str, size_t& s)
+  {
+    char* newLine = reinterpret_cast<char*>(malloc(s * sizeof(char)));
+    if (!newLine)
+    {
+      return nullptr;
+    }
+    size_t k = 0;
+    bool lastSpace = false;
+    for (size_t i = 0; i < s; i++)
+    {
+      unsigned char ch = static_cast<unsigned char>(str[i]);
+      if (std::isdigit(ch))
+      {
+        newLine[k++] = str[i];
+        lastSpace = false;
+      }
+      else if (std::isspace(ch))
+      {
+        if (!lastSpace)
+        {
+          newLine[k++] = ' ';
+          lastSpace = true;
+        }
+      }
+    }
+    newLine[k] = '\0';
+    s = k;
+    char* temp = cut(newLine, s);
+    free(newLine);
+
+    if (!temp)
+    {
+      return nullptr;
+    }
+
+    return temp;
+  }
+
+  char* expand(char* oldLine, size_t& oldSize)
+  {
+    size_t newSize = oldSize + startSize;
+    char* newLine = reinterpret_cast<char*>(malloc(newSize * sizeof(char)));
+    if (!newLine)
+    {
+      return nullptr;
+    }
+
+    fopy(oldLine, oldSize, newLine);
+    oldSize = newSize;
+    return newLine;
+  }
+
+  char* getline(std::istream& in, size_t& s)
+  {
+    char* data = reinterpret_cast<char*>(malloc(s * sizeof(char)));
+    if (!data)
+    {
+      return nullptr;
+    }
+    bool is_skip = in.flags() & std::ios_base::skipws;
+    if (is_skip)
+    {
+      in >> std::noskipws;
+    }
+    size_t i = 0;
+    bool input = true;
+    while (input)
+    {
+      if (i >= s)
+      {
+        char* helpLine = expand(data, s);
+        if (!helpLine)
+        {
+          free(data);
+          return nullptr;
+        }
+        free(data);
+        data = helpLine;
+      }
+      in >> data[i];
+      if (data[i] == '\n')
+      {
+        input = false;
+      }
+      if (in.eof())
+      {
+        input = false;
+      }
+      i++;
+    }
+    data[i] = '\0';
+    s = i;
+    char* temp = nullptr;
+    temp = cut(data, s);
+    free(data);
+    data = temp;
+    if (!is_skip)
+    {
+      in >> std::skipws;
+    }
+    return data;
+  }
 }
 
 int main()
 {
-  size_t len = 0;
-  char* str = lachugin::getline(std::cin, len);
-
-  if (!str)
-  {
-    std::cerr << "Error: no input.\n";
-    return 1;
-  }
-
-  const char* pattern = "acb";
-  bool found = lachugin::res1(str, len, pattern, 3);
-
-  char* filtered = lachugin::latRmv(str, len);
-  if (!filtered)
+  size_t s = lachugin::startSize;
+  char* str = lachugin::getline(std::cin, s);
+  if (!str || s == 0)
   {
     free(str);
+    std::cerr << "Error: no input.\n";
     return 2;
   }
-
-  std::cout << found << '\n';
-  std::cout << filtered << '\n';
-
+  const char* string = "acb";
+  const size_t len = 3;
+  char* res2 = lachugin::latRmv(str, s);
+  if (!res2)
+  {
+    free(str);
+    std::cerr << "Not enough memory for string input.\n";
+    return 1;
+  }
+  bool res1 = lachugin::res1(str, s, string, len);
+  std::cout << res1 << '\n';
+  std::cout << res2 << '\n';
   free(str);
-  free(filtered);
+  free(res2);
 }
