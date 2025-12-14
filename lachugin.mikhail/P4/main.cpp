@@ -60,8 +60,17 @@ namespace lachugin
     size_t k = 0;
     for (size_t i = 0; i < s; i++)
     {
-      if (!std::isalpha(str[i]))
+      if (std::isdigit(str[i]))
       {
+        newLine[k] = str[i];
+        k++;
+      }
+      else if (std::isspace(str[i]))
+      {
+        if (newLine[k] == ' ')
+        {
+          continue;
+        }
         newLine[k] = str[i];
         k++;
       }
@@ -124,18 +133,18 @@ namespace lachugin
           free(data);
           return nullptr;
         }
-
         free(data);
         data = helpLine;
       }
-
       in >> data[i];
       if (in.eof()) {
         data[i] = 0;
+        s = i + 1;
         input = false;
       }
       if (data[i] == '\n')
       {
+        s = i + 1;
         data[i] = 0;
         input = false;
       }
@@ -168,6 +177,11 @@ int main()
   size_t s = lachugin::startSize;
   char* str = nullptr;
   str = lachugin::getline(std::cin, s);
+  if (s == 0) {
+    free(str);
+    std::cerr << "Error: no input.\n";
+    return 2;
+  }
   if (!str)
   {
     std::cerr << "Not enough memory for string input.\n";
