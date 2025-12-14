@@ -130,7 +130,10 @@ namespace lachugin
       }
 
       in >> data[i];
-
+      if (in.eof()) {
+        data[i] = 0;
+        input = false;
+      }
       if (data[i] == '\n')
       {
         data[i] = 0;
