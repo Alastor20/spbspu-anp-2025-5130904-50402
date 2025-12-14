@@ -120,7 +120,7 @@ int main() {
 	if (!str) {
 		std::cerr << "Not enough memory for string input.\n";\
 		free(str);
-		return 1;
+		return 10;
 	}
 	if (std::strlen(str) == 0)
 	{
@@ -136,7 +136,7 @@ int main() {
 	if (!res2) {
 		std::cerr << "Not enough memory for string input.\n";
 		free(str);
-		return 1;
+		return 3;
 	}
 	bool res1 = lachugin::res1(str, s, string, len);
   std::cout << res1 << '\n';
