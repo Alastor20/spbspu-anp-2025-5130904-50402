@@ -93,7 +93,7 @@ public:
 };
 }
 
-void polyPos(lavrentev::pol_t& pol);
+int polyPos(lavrentev::pol_t& pol);
 
 int main()
 {
@@ -130,7 +130,11 @@ int main()
   }
   pol.vertexes = vrtxs;
   
-  polyPos(lavrentev::pol_t& pol);
+  int k = polyPos(pol);
+  if (k == 1)
+  {
+    std::cerr << "Polygon not exists";
+  }
 
   delete[] vrtxs;
 }
@@ -272,6 +276,43 @@ void lavrentev::Polygon::scale(double coef) {
   }
 }
 
-void polyPos(lavrentev::pol_t& pol) {
-  std::cout << 1;
+int polyPos(lavrentev::pol_t& pol) {
+  if (pol.n < 3)
+  {
+    return 1;
+  }
+
+  double square = 0.0;
+  for(size_t i = 0; i < pol.n; ++i)
+  {
+    size_t j = (i + 1) % pol.n;
+    square += (pol.vertexes[i].x * pol.vertexes[j].y) - (pol.vertexes[j].x * pol.vertexes[i].y);
+  }
+  square *= 0.5;
+
+  if (square != 0.0)
+  {
+    double c_x = 0.0;
+    for(size_t i = 0; i < pol.n; ++i)
+    {
+      size_t j = (i + 1) % pol.n;
+      c_x += (pol.vertexes[i].x + pol.vertexes[j].x) * 
+      (pol.vertexes[i].x * pol.vertexes[j].y - pol.vertexes[j].x * pol.vertexes[i].y);
+    }
+    c_x /= (6 * square);
+
+    double c_y = 0.0;
+    for(size_t i = 0; i < pol.n; ++i)
+    {
+      size_t j = (i + 1) % pol.n;
+      c_y += (pol.vertexes[i].y + pol.vertexes[j].y) * 
+      (pol.vertexes[i].x * pol.vertexes[j].y - pol.vertexes[j].x * pol.vertexes[i].y);
+    }
+    c_y /= (6 * square);
+    pol.pos.x = c_x;
+    pol.pos.y = c_y;
+  } else {
+    return 1;
+  }
+  return 0;
 }
