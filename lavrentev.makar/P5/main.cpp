@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <new>
 #include <stdexcept>
 
 namespace lavrentev {
@@ -38,7 +39,7 @@ struct Rectangle : Shape {
 private:
   r_t data;
 public:
-  explicit Rectangle(const r_t &dd);
+  explicit Rectangle(const r_t dd);
 
   Rectangle(const Rectangle& dd) = default;
   Rectangle& operator=(const Rectangle& dd) = default;
@@ -56,9 +57,8 @@ public:
 struct Rubber : Shape {
 private:
   ru_t data;
-
 public:
-  explicit Rubber(const ru_t &dd);
+  explicit Rubber(const ru_t dd);
 
   Rubber(const Rubber& dd) = default;
   Rubber& operator=(const Rubber& dd) = default;
@@ -76,9 +76,8 @@ public:
 struct Polygon : Shape {
 private:
   pol_t data;
-
 public:
-  explicit Polygon(const pol_t &dd);
+  explicit Polygon(const pol_t dd);
 
   Polygon(const Polygon& dd) = default;
   Polygon& operator=(const Polygon& dd) = default;
@@ -94,9 +93,49 @@ public:
 };
 }
 
-int main() {}
+void polyPos(lavrentev::pol_t& pol);
 
-lavrentev::Rectangle::Rectangle(const r_t &dd) : data(dd) {
+int main()
+{
+  lavrentev::Shape* figures[3];
+
+  lavrentev::r_t re;
+  re.height = 5;
+  re.width = 8;
+  re.pos = {3, 3};
+  lavrentev::Rectangle rect(re);
+  figures[0] = &rect;
+
+  lavrentev::ru_t ru;
+  ru.pos = {-7, -2};
+  ru.rPos = 3.5;
+  ru.outCenter = {-5, 0};
+  ru.rOut = 9;
+  lavrentev::Rubber rubb(ru);
+  figures[1] = &rubb;
+
+  lavrentev::pol_t pol;
+  pol.n = 7;
+  lavrentev::p_t* vrtxs = nullptr;
+  try {
+    vrtxs = new lavrentev::p_t[pol.n] {
+        {1.2, 5.6}, {3.3, -4.7}, {1.1, 9.3}, 
+        {-5.5, -3.0}, {-7.3, -0.3}, {-2.1, 4.8}, 
+        {3.6, 8.3}
+    };
+  } catch (std::bad_alloc& e) {
+    std::cerr << "Memory allocation failed: " << e.what() << '\n';
+    delete[] vrtxs;
+    return 1;
+  }
+  pol.vertexes = vrtxs;
+  
+  polyPos(lavrentev::pol_t& pol);
+
+  delete[] vrtxs;
+}
+
+lavrentev::Rectangle::Rectangle(const r_t dd) : data(dd) {
   if (dd.width <= 0 || dd.height <= 0) {
     throw std::invalid_argument("Invalid weight or height");
   }
@@ -123,7 +162,7 @@ void lavrentev::Rectangle::scale(double coef) {
   data.height *= coef;
 }
 
-lavrentev::Rubber::Rubber(const ru_t &dd) : data(dd) {
+lavrentev::Rubber::Rubber(const ru_t dd) : data(dd) {
   if (dd.rOut <= 0 || dd.rPos <= 0) {
     throw std::invalid_argument("Invalid value of radius");
   }
@@ -156,7 +195,7 @@ void lavrentev::Rubber::scale(double coef) {
   data.rOut *= coef;
 }
 
-lavrentev::Polygon::Polygon(const pol_t &dd) : data(dd) {
+lavrentev::Polygon::Polygon(const pol_t dd) : data(dd) {
   if (dd.n <= 2) {
     throw std::invalid_argument("Invalid amount of vertexes");
   }
@@ -231,4 +270,8 @@ void lavrentev::Polygon::scale(double coef) {
     data.vertexes[i].x = d_x - data.pos.x;
     data.vertexes[i].y = d_y - data.pos.y;
   }
+}
+
+void polyPos(lavrentev::pol_t& pol) {
+  std::cout << 1;
 }
