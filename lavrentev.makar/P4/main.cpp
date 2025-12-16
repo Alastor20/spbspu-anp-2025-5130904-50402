@@ -14,10 +14,11 @@ int main()
 {
   char* s1 = nullptr;
   size_t ex = 0;
-  try{
+  try
+  {
     s1 = lavrentev::getline(std::cin, ex);
   }
-  catch(const std::bad_alloc&)
+  catch (const std::bad_alloc&)
   {
     std::cerr << "Memory allocation fail" << '\n';
     return 1;
@@ -34,6 +35,7 @@ int main()
   try
   {
     buf1 = new char[ex + 1];
+    buf1[ex] = '\0';
   }
   catch (const std::bad_alloc&)
   {
@@ -74,16 +76,13 @@ size_t lavrentev::difLat(char* s1, char* buf1)
   size_t answer = 0;
   size_t i = 0;
 
-  if (buf1 != nullptr)
-  {
-    buf1[0] = '\0';
-  }
+  buf1[0] = '\0';
 
-  while(s1[i] != '\0')
+  while (s1[i] != '\0')
   {
     bool flag = false;
 
-    for(size_t j = 0; j < answer; ++j)
+    for (size_t j = 0; j < answer; ++j)
     {
       if (buf1[j] == s1[i])
       {
@@ -118,21 +117,6 @@ void lavrentev::uniTwo(char* s1, char* s2, size_t ex, size_t ex2, char* result)
   {
     min = ex2;
     max_s_ptr = s1;
-  }
-
-  if (min == ex)
-  {
-    for (size_t i = 0; i < ex2; ++i)
-    {
-      max_s_ptr[i] = s2[i];
-    }
-  }
-  else
-  {
-    for (size_t i = 0; i < ex; ++i)
-    {
-      max_s_ptr[i] = s1[i];
-    }
   }
 
   size_t t = 0;
@@ -179,7 +163,7 @@ char* lavrentev::getline(std::istream& in, size_t& n)
       in >> std::skipws;
     }
 
-    throw std::bad_alloc();
+    throw;
   }
 
   char st;
@@ -204,7 +188,7 @@ char* lavrentev::getline(std::istream& in, size_t& n)
           in >> std::skipws;
         }
 
-        throw std::bad_alloc();
+        throw;
       }
 
       for (size_t j = 0; j < n; ++j)
