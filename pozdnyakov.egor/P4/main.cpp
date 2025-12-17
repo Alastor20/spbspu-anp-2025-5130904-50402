@@ -1,31 +1,28 @@
 #include <iostream>
 #include <cctype>
 #include <new>
+#include <cstring>
 
 namespace pozdnyakov
 {
-
-  char* readString(std::istream& in, unsigned int& outLen)
+  char* readString(std::istream& in, size_t& size)
   {
-    unsigned int capacity = 256;
-    unsigned int size = 0;
-
+    size_t capacity = 256;
+    size = 0;
     char* str = new char[capacity];
-    str[0] = '\0';
-
     char ch;
+
     while (in.get(ch) && ch != '\n')
     {
       if (size + 1 >= capacity)
       {
-        unsigned int newCapacity = capacity * 2;
+        size_t newCapacity = capacity * 2;
         char* newStr = new char[newCapacity];
 
-        for (unsigned int i = 0; i < size; ++i)
+        for (size_t i = 0; i < size; ++i)
         {
           newStr[i] = str[i];
         }
-        newStr[size] = '\0';
 
         delete[] str;
         str = newStr;
@@ -33,45 +30,42 @@ namespace pozdnyakov
       }
 
       str[size++] = ch;
-      str[size] = '\0';
     }
 
-    outLen = size;
+    str[size] = '\0';
+
+    if (size == 0)
+    {
+      delete[] str;
+      throw std::runtime_error("Empty input");
+    }
+
     return str;
   }
 
-  void replaceChars(const char* input, char* output, unsigned int len, char oldChar, char newChar)
+  void replaceChars(const char* input, char* output, char oldChar, char newChar)
   {
-    for (unsigned int i = 0; i < len; ++i)
+    size_t i = 0;
+    while (input[i] != '\0')
     {
       output[i] = (input[i] == oldChar) ? newChar : input[i];
+      ++i;
     }
-    output[len] = '\0';
+    output[i] = '\0';
   }
 
-  unsigned int mergeLatinLetters(const char* s1,
-    const char* s2,
-    char* output,
-    unsigned int outputCapacity)
+  char* mergeLatinLetters(const char* s1, const char* s2)
   {
-    int present[26];
-    for (int i = 0; i < 26; ++i)
-    {
-      present[i] = 0;
-    }
+    bool present[26] = { false };
 
     auto feed = [&present](const char* s)
       {
-        for (unsigned int i = 0; s[i] != '\0'; ++i)
+        for (size_t i = 0; s[i] != '\0'; ++i)
         {
-          unsigned char uc = static_cast< unsigned char >(s[i]);
-          if (std::isalpha(uc))
+          char ch = s[i];
+          if (std::isalpha(static_cast< unsigned char >(ch)))
           {
-            char lowered = static_cast< char >(std::tolower(uc));
-            if (lowered >= 'a' && lowered <= 'z')
-            {
-              present[lowered - 'a'] = 1;
-            }
+            present[std::tolower(static_cast< unsigned char >(ch)) - 'a'] = true;
           }
         }
       };
@@ -79,19 +73,25 @@ namespace pozdnyakov
     feed(s1);
     feed(s2);
 
-    unsigned int outIdx = 0;
-    for (int i = 0; i < 26 && outIdx + 1 < outputCapacity; ++i)
+    size_t resultSize = 0;
+    for (bool p : present)
+    {
+      if (p) ++resultSize;
+    }
+
+    char* result = new char[resultSize + 1];
+    size_t idx = 0;
+    for (size_t i = 0; i < 26; ++i)
     {
       if (present[i])
       {
-        output[outIdx++] = static_cast< char >('a' + i);
+        result[idx++] = static_cast< char >('a' + i);
       }
     }
+    result[idx] = '\0';
 
-    output[outIdx] = '\0';
-    return outIdx;
+    return result;
   }
-
 }
 
 int main()
@@ -102,34 +102,46 @@ int main()
   const char NEW_CHAR = 'b';
   const char* SECOND_STRING = "def_ghk";
 
+  char* inputStr = nullptr;
+  char* result1 = nullptr;
+  char* result2 = nullptr;
+  size_t inputSize = 0;
+
   try
   {
-    unsigned int inputLen = 0;
-    char* inputStr = readString(std::cin, inputLen);
+    inputStr = readString(std::cin, inputSize);
+    result1 = new char[inputSize + 1];
 
-    if (inputLen == 0)
-    {
-      std::cerr << "Empty input error\n";
-      delete[] inputStr;
-      return 1;
-    }
-
-    char* result1 = new char[inputLen + 1];
-    replaceChars(inputStr, result1, inputLen, OLD_CHAR, NEW_CHAR);
+    replaceChars(inputStr, result1, OLD_CHAR, NEW_CHAR);
     std::cout << result1 << '\n';
-    delete[] result1;
 
-    const unsigned int BUFF2 = 27;
-    char result2[BUFF2];
-    mergeLatinLetters(inputStr, SECOND_STRING, result2, BUFF2);
+    result2 = mergeLatinLetters(inputStr, SECOND_STRING);
     std::cout << result2 << '\n';
 
+    delete[] result1;
+    delete[] result2;
     delete[] inputStr;
+
     return 0;
   }
   catch (const std::bad_alloc&)
   {
     std::cerr << "Memory allocation error\n";
+
+    if (result1) delete[] result1;
+    if (result2) delete[] result2;
+    if (inputStr) delete[] inputStr;
+
+    return 1;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << '\n';
+
+    if (result1) delete[] result1;
+    if (result2) delete[] result2;
+    if (inputStr) delete[] inputStr;
+
     return 1;
   }
 }
