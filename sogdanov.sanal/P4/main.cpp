@@ -22,7 +22,7 @@ namespace sogdanov
           delete[] str;
           str = temp;
           capacity = newCap;
-        } catch (...) {
+        } catch (const std::bad_alloc &) {
           if (isSkipWs) {
             in >> std::skipws;
           }
