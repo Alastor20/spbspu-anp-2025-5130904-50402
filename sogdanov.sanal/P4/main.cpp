@@ -70,21 +70,7 @@ namespace sogdanov
   char * rmvVow(char * str, char * res)
   {
     const char * vowels = "AEIOUaeiou";
-    size_t k = 0;
-    for (size_t i = 0; str[i] != '\0'; ++i) {
-      bool isFound = false;
-      for (size_t j = 0; vowels[j] != '\0'; ++j) {
-        if (str[i] == vowels[j]) {
-          isFound = true;
-          break;
-        }
-      }
-      if (!isFound) {
-        res[k] = str[i];
-        k++;
-      }
-    }
-    res[k] = '\0';
+    excSnd(str, vowels, res);
     return res;
   }
 }
@@ -97,8 +83,8 @@ int main()
   const char * mask = "abc";
   try {
     str = sogdanov::getLine(std::cin, size);
-    k1 = new char[size + 1];
-    k2 = new char[size + 1];
+    k1 = new char[size];
+    k2 = new char[size];
   } catch (const std::bad_alloc &) {
     delete[] k1;
     delete[] k2;
