@@ -100,7 +100,7 @@ public:
 int polyPos(pol_t &pol);
 lavrentev::r_t fullFrame(lavrentev::Shape *const *figures, size_t n);
 void userShape(lavrentev::Shape *figures, p_t user_dot, double coef);
-} // namespace lavrentev
+}
 
 int main() {
 
@@ -123,7 +123,7 @@ int main() {
                                       {-5.5, -3.0}, {-7.3, -0.3}, {-2.1, 4.8},
                                       {3.6, 8.3}};
   } catch (std::bad_alloc &e) {
-    std::cerr << "Memory allocation failed: " << e.what() << '\n';
+    //std::cerr << "Memory allocation failed: " << e.what() << '\n';
     delete[] vrtxs;
     return 1;
   }
@@ -132,7 +132,8 @@ int main() {
 
   int k = polyPos(pol);
   if (k == 1) {
-    std::cerr << "Polygon not exists";
+    //std::cerr << "Polygon not exists";
+    return 1;
   }
 
   lavrentev::Shape *figures[lavrentev::n] = {};
@@ -146,17 +147,6 @@ int main() {
     delete figures[2];
   }
 
-  double x, y, coef;
-  std::cin >> x >> y >> coef;
-  if (std::cin.fail()) {
-    std::cerr << "Invalid input" << '\n';
-    return 1;
-  }
-  if (coef <= 0) {
-    std::cerr << "Incorrect ratio" << '\n';
-    return 1;
-  }
-  lavrentev::p_t user_dot = {x, y};
 
   std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
   std::cout << "Площадь Rubber: " << figures[1]->getArea() << '\n';
@@ -194,6 +184,17 @@ int main() {
   std::cout << '\t' << "Длина: " << ff.width << '\n';
   std::cout << '\t' << "Высота: " << ff.height << "\n\n";
 
+  double x, y, coef;
+  std::cin >> x >> y >> coef;
+  if (std::cin.fail()) {
+    //std::cerr << "Invalid input" << '\n';
+    return 1;
+  }
+  if (coef <= 0) {
+    //std::cerr << "Incorrect ratio" << '\n';
+    return 1;
+  }
+  lavrentev::p_t user_dot = {x, y};
   lavrentev::userShape(*figures, user_dot, coef);
 
   std::cout << "Новые данные: " << "\n\n";
