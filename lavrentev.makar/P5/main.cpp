@@ -345,8 +345,31 @@ int polyPos(lavrentev::pol_t& pol) {
 
 lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n)
 {
+  double left = 0.0, right = 0.0, up = 0.0, down = 0.0;
   for(size_t i = 0; i < n; ++i)
   {
-    
+    lavrentev::r_t buf = figures[i].getFrameRect();
+    if (buf.pos.x - buf.width * 0.5 < left)
+    {
+      left = buf.pos.x - buf.width * 0.5;
+    }
+    if (buf.pos.x + buf.width * 0.5 > right)
+    {
+      right = buf.pos.x + buf.width * 0.5;
+    }
+    if (buf.pos.y - buf.height * 0.5 < down)
+    {
+      down = buf.pos.y - buf.height * 0.5;
+    }
+    if (buf.pos.y + buf.height * 0.5 > up)
+    {
+      up = buf.pos.y + buf.height * 0.5;
+    }
   }
+  lavrentev::r_t ff;
+  ff.height = up - down;
+  ff.width = right - left;
+  ff.pos.y = (up + down) * 0.5;
+  ff.pos.x = (right + left) * 0.5;
+  return ff;
 }
