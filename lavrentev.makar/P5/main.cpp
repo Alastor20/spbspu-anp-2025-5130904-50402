@@ -184,6 +184,10 @@ int main() {
 
   double x, y, coef;
   std::cin >> x >> y >> coef;
+  if (std::cin.fail()) {
+    std::cerr << "Invalid input" << '\n';
+    return 1;
+  }
   if (coef <= 0) {
     std::cerr << "Incorrect ratio" << '\n';
     return 1;
