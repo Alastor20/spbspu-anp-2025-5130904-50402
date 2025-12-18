@@ -4,6 +4,8 @@
 #include <stdexcept>
 
 namespace lavrentev {
+const size_t n = 3;
+
 struct p_t {
   double x, y;
 };
@@ -91,30 +93,25 @@ public:
   void move(double d_x, double d_y) override;
   void scale(double coef) override;
 };
-}
 
-int polyPos(lavrentev::pol_t& pol);
-lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n);
+int polyPos(pol_t& pol);
+lavrentev::r_t fullFrame(lavrentev::Shape* const* figures, size_t n);
+void userShape(lavrentev::Shape* figures, p_t user_dot, double coef);
+}
 
 int main()
 {
-  size_t n = 3;
-  lavrentev::Shape* figures[n];
 
   lavrentev::r_t re;
   re.height = 5;
   re.width = 8;
   re.pos = {3, 3};
-  lavrentev::Rectangle rect(re);
-  figures[0] = &rect;
 
   lavrentev::ru_t ru;
   ru.pos = {-7, -2};
   ru.rPos = 3.5;
   ru.outCenter = {-5, 0};
   ru.rOut = 9;
-  lavrentev::Rubber rubb(ru);
-  figures[1] = &rubb;
 
   lavrentev::pol_t pol;
   pol.n = 7;
@@ -132,8 +129,6 @@ int main()
   }
 
   pol.vertexes = vrtxs;
-  lavrentev::Polygon polyg(pol);
-  figures[2] = &polyg;
 
   int k = polyPos(pol);
   if (k == 1)
@@ -141,29 +136,91 @@ int main()
     std::cerr << "Polygon not exists";
   }
 
-  std::cout << "Площадь Rectangle: " << rect.getArea() << '\n';
-  std::cout << "Площадь Rubber: " << rubb.getArea() << '\n';
-  std::cout << "Площадь Polygon " << polyg.getArea() << '\n';
-  std::cout << "Суммарная площадь: " << rect.getArea() + rubb.getArea() + polyg.getArea() << "\n\n";
+  lavrentev::Shape* figures[lavrentev::n] = {};
+  try
+  {
+    figures[0] = new lavrentev::Rectangle(re);
+    figures[1] = new lavrentev::Rubber(ru);
+    figures[2] = new lavrentev::Polygon(pol);
+  }catch (...)
+  {
+    delete figures[0];
+    delete figures[1];
+    delete figures[2];
+  }
 
-  lavrentev::r_t rg = rect.getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Rectangle: " << '\n';
+  std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
+  std::cout << "Площадь Rubber: " << figures[1]->getArea() << '\n';
+  std::cout << "Площадь Polygon " << figures[2]->getArea() << '\n';
+  std::cout << "Суммарная площадь: " << figures[0]->getArea() + figures[1]->getArea() + figures[2]->getArea() << "\n\n";
+
+  lavrentev::r_t rg = figures[0]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rectangle:" << '\n';
   std:: cout << '\t' << "Центр: {" << rg.pos.x << ", " << rg.pos.y << '}' << '\n';
   std::cout << '\t' << "Длина: " << rg.width << '\n';
   std::cout << '\t' << "Высота: " << rg.height << '\n';
 
-  lavrentev::r_t rug = rubb.getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Rubber: " << '\n';
+  lavrentev::r_t rug = figures[1]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rubber:" << '\n';
   std:: cout << '\t' << "Центр: {" << rug.pos.x << ", " << rug.pos.y << '}' << '\n';
   std::cout << '\t' << "Длина: " << rug.width << '\n';
   std::cout << '\t' << "Высота: " << rug.height << '\n';
 
-  lavrentev::r_t pg = polyg.getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Polygon: " << '\n';
+  lavrentev::r_t pg = figures[2]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Polygon:" << '\n';
   std:: cout << '\t' << "Центр: {" << pg.pos.x << ", " << pg.pos.y << '}' << '\n';
   std::cout << '\t' << "Длина: " << pg.width << '\n';
-  std::cout << '\t' << "Высота: " << pg.height << '\n';
+  std::cout << '\t' << "Высота: " << pg.height << "\n\n";
 
+  lavrentev::r_t ff = lavrentev::fullFrame(figures, lavrentev::n);
+  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
+  std:: cout << '\t' << "Центр: {" << ff.pos.x << ", " << ff.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << ff.width << '\n';
+  std::cout << '\t' << "Высота: " << ff.height << "\n\n";
+
+  double x, y, coef;
+  std::cin >> x >> y >> coef;
+  if (coef <= 0)
+  {
+    std::cerr << "Incorrect ratio" << '\n';
+    return 1;
+  }
+  lavrentev::p_t user_dot = {x, y};
+  lavrentev::userShape(*figures, user_dot, coef);
+
+  std::cout << "Новые данные: " << "\n\n";
+  std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
+  std::cout << "Площадь Rubber: " << figures[1]->getArea() << '\n';
+  std::cout << "Площадь Polygon " << figures[2]->getArea() << '\n';
+  std::cout << "Суммарная площадь: " << figures[0]->getArea() + figures[1]->getArea() + figures[2]->getArea() << "\n\n";
+
+  rg = figures[0]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rectangle:" << '\n';
+  std:: cout << '\t' << "Центр: {" << rg.pos.x << ", " << rg.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << rg.width << '\n';
+  std::cout << '\t' << "Высота: " << rg.height << '\n';
+
+  rug = figures[1]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rubber:" << '\n';
+  std:: cout << '\t' << "Центр: {" << rug.pos.x << ", " << rug.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << rug.width << '\n';
+  std::cout << '\t' << "Высота: " << rug.height << '\n';
+
+  pg = figures[2]->getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Polygon:" << '\n';
+  std:: cout << '\t' << "Центр: {" << pg.pos.x << ", " << pg.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << pg.width << '\n';
+  std::cout << '\t' << "Высота: " << pg.height << "\n\n";
+
+  ff = lavrentev::fullFrame(figures, lavrentev::n);
+  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
+  std:: cout << '\t' << "Центр: {" << ff.pos.x << ", " << ff.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << ff.width << '\n';
+  std::cout << '\t' << "Высота: " << ff.height << "\n\n";
+
+  delete figures[0];
+  delete figures[1];
+  delete figures[2];
   delete[] vrtxs;
 }
 
@@ -246,7 +303,7 @@ double lavrentev::Polygon::getArea() const {
 }
 
 lavrentev::r_t lavrentev::Polygon::getFrameRect() const {
-  p_t l_u, r_b;
+  p_t l_u = data.vertexes[0], r_b = data.vertexes[0];
   for(size_t i = 0; i < data.n; ++i) {
     if (data.vertexes[i].x < l_u.x)
     {
@@ -297,12 +354,12 @@ void lavrentev::Polygon::scale(double coef) {
     double d_y = data.vertexes[i].y - data.pos.y;
     d_x *= coef;
     d_y *= coef;
-    data.vertexes[i].x = d_x - data.pos.x;
-    data.vertexes[i].y = d_y - data.pos.y;
+    data.vertexes[i].x = data.pos.x + d_x;
+    data.vertexes[i].y = data.pos.y + d_y;
   }
 }
 
-int polyPos(lavrentev::pol_t& pol) {
+int lavrentev::polyPos(lavrentev::pol_t& pol) {
   if (pol.n < 3)
   {
     return 1;
@@ -343,12 +400,12 @@ int polyPos(lavrentev::pol_t& pol) {
   return 0;
 }
 
-lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n)
+lavrentev::r_t lavrentev::fullFrame(lavrentev::Shape* const* figures, size_t n)
 {
   double left = 0.0, right = 0.0, up = 0.0, down = 0.0;
   for(size_t i = 0; i < n; ++i)
   {
-    lavrentev::r_t buf = figures[i].getFrameRect();
+    lavrentev::r_t buf = figures[i]->getFrameRect();
     if (buf.pos.x - buf.width * 0.5 < left)
     {
       left = buf.pos.x - buf.width * 0.5;
@@ -372,4 +429,9 @@ lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n)
   ff.pos.y = (up + down) * 0.5;
   ff.pos.x = (right + left) * 0.5;
   return ff;
+}
+
+void lavrentev::userShape(lavrentev::Shape* figures, p_t user_dot, double coef)
+{
+
 }
