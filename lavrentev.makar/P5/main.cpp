@@ -94,10 +94,12 @@ public:
 }
 
 int polyPos(lavrentev::pol_t& pol);
+lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n);
 
 int main()
 {
-  lavrentev::Shape* figures[3];
+  size_t n = 3;
+  lavrentev::Shape* figures[n];
 
   lavrentev::r_t re;
   re.height = 5;
@@ -128,13 +130,39 @@ int main()
     delete[] vrtxs;
     return 1;
   }
+
   pol.vertexes = vrtxs;
-  
+  lavrentev::Polygon polyg(pol);
+  figures[2] = &polyg;
+
   int k = polyPos(pol);
   if (k == 1)
   {
     std::cerr << "Polygon not exists";
   }
+
+  std::cout << "Площадь Rectangle: " << rect.getArea() << '\n';
+  std::cout << "Площадь Rubber: " << rubb.getArea() << '\n';
+  std::cout << "Площадь Polygon " << polyg.getArea() << '\n';
+  std::cout << "Суммарная площадь: " << rect.getArea() + rubb.getArea() + polyg.getArea() << "\n\n";
+
+  lavrentev::r_t rg = rect.getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rectangle: " << '\n';
+  std:: cout << '\t' << "Центр: {" << rg.pos.x << ", " << rg.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << rg.width << '\n';
+  std::cout << '\t' << "Высота: " << rg.height << '\n';
+
+  lavrentev::r_t rug = rubb.getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Rubber: " << '\n';
+  std:: cout << '\t' << "Центр: {" << rug.pos.x << ", " << rug.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << rug.width << '\n';
+  std::cout << '\t' << "Высота: " << rug.height << '\n';
+
+  lavrentev::r_t pg = polyg.getFrameRect();
+  std::cout << "Ограничивающий прямоугольник Polygon: " << '\n';
+  std:: cout << '\t' << "Центр: {" << pg.pos.x << ", " << pg.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << pg.width << '\n';
+  std::cout << '\t' << "Высота: " << pg.height << '\n';
 
   delete[] vrtxs;
 }
@@ -206,15 +234,13 @@ lavrentev::Polygon::Polygon(const pol_t dd) : data(dd) {
 }
 
 double lavrentev::Polygon::getArea() const {
-  double buf1, buf2, s = 0;
-  size_t i = 0;
-  while(i < data.n) {
+  double buf1 = 0.0, buf2 = 0.0, s = 0.0;
+  for(size_t i = 0; i < data.n - 1; ++i) {
     buf1 += (data.vertexes[i].x * data.vertexes[i + 1].y);
     buf2 += (data.vertexes[i].y * data.vertexes[i + 1].x);
-    ++i;
   }
-  buf1 += (data.vertexes[i].x * data.vertexes[0].y);
-  buf2 += (data.vertexes[i].y * data.vertexes[0].x);
+  buf1 += data.vertexes[data.n - 1].x * data.vertexes[0].y;
+  buf2 += data.vertexes[data.n - 1].y * data.vertexes[0].x;
   s = 0.5 * abs(buf1 - buf2);
   return s;
 }
@@ -315,4 +341,12 @@ int polyPos(lavrentev::pol_t& pol) {
     return 1;
   }
   return 0;
+}
+
+lavrentev::r_t fullFrame(lavrentev::Shape* figures, size_t n)
+{
+  for(size_t i = 0; i < n; ++i)
+  {
+    
+  }
 }
