@@ -146,6 +146,18 @@ int main() {
     delete figures[2];
   }
 
+  double x, y, coef;
+  std::cin >> x >> y >> coef;
+  if (std::cin.fail()) {
+    std::cerr << "Invalid input" << '\n';
+    return 1;
+  }
+  if (coef <= 0) {
+    std::cerr << "Incorrect ratio" << '\n';
+    return 1;
+  }
+  lavrentev::p_t user_dot = {x, y};
+
   std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
   std::cout << "Площадь Rubber: " << figures[1]->getArea() << '\n';
   std::cout << "Площадь Polygon " << figures[2]->getArea() << '\n';
@@ -182,17 +194,6 @@ int main() {
   std::cout << '\t' << "Длина: " << ff.width << '\n';
   std::cout << '\t' << "Высота: " << ff.height << "\n\n";
 
-  double x, y, coef;
-  std::cin >> x >> y >> coef;
-  if (std::cin.fail()) {
-    std::cerr << "Invalid input" << '\n';
-    return 1;
-  }
-  if (coef <= 0) {
-    std::cerr << "Incorrect ratio" << '\n';
-    return 1;
-  }
-  lavrentev::p_t user_dot = {x, y};
   lavrentev::userShape(*figures, user_dot, coef);
 
   std::cout << "Новые данные: " << "\n\n";
