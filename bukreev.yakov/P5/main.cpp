@@ -12,11 +12,11 @@ namespace bukreev
 
   struct Shape
   {
-    virtual double getArea() const;
-    virtual rectangle_t getFrameRect() const;
-    virtual void move(point_t newPos);
-    virtual void move(double dX, double dY);
-    virtual void scale(double k);
+    virtual double getArea() const = 0;
+    virtual rectangle_t getFrameRect() const = 0;
+    virtual void move(point_t newPos) = 0;
+    virtual void move(double dX, double dY) = 0;
+    virtual void scale(double k) = 0;
   }
 }
 
