@@ -70,8 +70,7 @@ namespace sogdanov
   char * rmvVow(char * str, char * res)
   {
     const char * vowels = "AEIOUaeiou";
-    excSnd(str, vowels, res);
-    return res;
+    return excSnd(str, vowels, res);
   }
 }
 int main()
