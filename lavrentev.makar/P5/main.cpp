@@ -99,7 +99,7 @@ public:
 
 int polyPos(pol_t &pol);
 lavrentev::r_t fullFrame(lavrentev::Shape *const *figures, size_t n);
-void userShape(lavrentev::Shape *figures, p_t user_dot, double coef);
+void userShape(lavrentev::Shape **figures, p_t user_dot, double coef, const size_t n);
 }
 
 int main() {
@@ -203,7 +203,7 @@ int main() {
     return 1;
   }
   lavrentev::p_t user_dot = {x, y};
-  lavrentev::userShape(*figures, user_dot, coef);
+  lavrentev::userShape(figures, user_dot, coef, lavrentev::n);
 
   std::cout << "Новые данные: " << "\n\n";
   std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
@@ -444,9 +444,14 @@ lavrentev::r_t lavrentev::fullFrame(lavrentev::Shape *const *figures,
   return ff;
 }
 
-void lavrentev::userShape(lavrentev::Shape *figures, p_t user_dot,
-                          double coef) {
-  (void)figures;
-  (void)user_dot;
-  (void)coef;
+void lavrentev::userShape(lavrentev::Shape **figures, p_t user_dot,
+                          double coef, const size_t n) {
+  for(size_t i = 0; i < n; ++i) {
+    p_t point1 = figures[i]->getFrameRect().pos;
+    figures[i]->move(user_dot);
+    p_t delta = {user_dot.x - point1.x, user_dot.y - point1.y};
+    figures[i]->scale(coef);
+    p_t res = {user_dot.x - delta.x * coef, user_dot.y - delta.y * coef};
+    figures[i]->move(res);
+  }
 }
