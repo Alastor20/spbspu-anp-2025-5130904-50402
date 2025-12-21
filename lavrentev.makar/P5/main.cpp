@@ -88,7 +88,7 @@ public:
   Polygon &operator=(const Polygon &dd) = default;
   Polygon &operator=(Polygon &&dd) = default;
   Polygon(Polygon &&dd) = default;
-  ~Polygon() = default;
+  ~Polygon();
 
   double getArea() const override;
   lavrentev::r_t getFrameRect() const override;
@@ -132,6 +132,7 @@ int main() {
   int k = polyPos(pol);
   if (k == 1) {
     std::cerr << "Polygon not exists";
+    delete[] vrtxs;
     return 1;
   }
 
@@ -238,7 +239,8 @@ int main() {
   delete figures[0];
   delete figures[1];
   delete figures[2];
-  delete[] vrtxs;
+
+  return 0;
 }
 
 lavrentev::Rectangle::Rectangle(const r_t dd) : data(dd) {
@@ -366,6 +368,10 @@ void lavrentev::Polygon::scale(double coef) {
     data.vertexes[i].x = data.pos.x + d_x;
     data.vertexes[i].y = data.pos.y + d_y;
   }
+}
+
+lavrentev::Polygon::~Polygon() {
+  delete[] data.vertexes;
 }
 
 int lavrentev::polyPos(lavrentev::pol_t &pol) {
