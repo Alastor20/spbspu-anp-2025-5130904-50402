@@ -190,10 +190,16 @@ int main() {
   std::cin >> x >> y >> coef;
   if (std::cin.fail()) {
     std::cerr << "Invalid input" << '\n';
+    for (size_t i = 0; i < lavrentev::n; ++i) {
+      delete figures[i];
+    }
     return 1;
   }
   if (coef <= 0) {
     std::cerr << "Incorrect ratio" << '\n';
+    for (size_t i = 0; i < lavrentev::n; ++i) {
+      delete figures[i];
+    }
     return 1;
   }
   lavrentev::p_t user_dot = {x, y};
@@ -236,10 +242,9 @@ int main() {
   std::cout << '\t' << "Длина: " << ff.width << '\n';
   std::cout << '\t' << "Высота: " << ff.height << "\n\n";
 
-  delete figures[0];
-  delete figures[1];
-  delete figures[2];
-
+  for (size_t i = 0; i < lavrentev::n; ++i) {
+    delete figures[i];
+  }
   return 0;
 }
 
