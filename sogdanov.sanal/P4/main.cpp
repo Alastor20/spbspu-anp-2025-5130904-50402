@@ -82,8 +82,10 @@ int main()
   const char * mask = "abc";
   try {
     str = sogdanov::getLine(std::cin, size);
-    k1 = new char[size];
-    k2 = new char[size];
+    k1 = new char[size + 1];
+    k1[0] = '\0';
+    k2 = new char[size + 1];
+    k2[0] = '\0';
   } catch (const std::bad_alloc &) {
     delete[] k1;
     delete[] k2;
