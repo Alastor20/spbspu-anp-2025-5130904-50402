@@ -42,7 +42,7 @@ namespace lavrentev {
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    
+
   private:
     void scaleImpl(double coef) override;
 
@@ -58,7 +58,6 @@ namespace lavrentev {
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    
   private:
     void scaleImpl(double coef) override;
 
@@ -77,7 +76,7 @@ namespace lavrentev {
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    
+
   private:
     void scaleImpl(double coef) override;
 
@@ -289,9 +288,9 @@ void lavrentev::Polygon::move(const lavrentev::point_t &c) noexcept
 {
   double dx = c.x - pos_.x;
   double dy = c.y - pos_.y;
-  
+
   pos_ = c;
-  
+
   for (size_t i = 0; i < n_; ++i) {
     vertexes_[i].x += dx;
     vertexes_[i].y += dy;
@@ -302,7 +301,7 @@ void lavrentev::Polygon::move(double d_x, double d_y) noexcept
 {
   pos_.x += d_x;
   pos_.y += d_y;
-  
+
   for (size_t i = 0; i < n_; ++i) {
     vertexes_[i].x += d_x;
     vertexes_[i].y += d_y;
@@ -330,8 +329,7 @@ int lavrentev::polyPos(point_t &pos, size_t n, point_t *vertexes)
   double square = 0.0;
   for (size_t i = 0; i < n; ++i) {
     size_t j = (i + 1) % n;
-    square += (vertexes[i].x * vertexes[j].y) -
-              (vertexes[j].x * vertexes[i].y);
+    square += (vertexes[i].x * vertexes[j].y) - (vertexes[j].x * vertexes[i].y);
   }
   square *= 0.5;
 
