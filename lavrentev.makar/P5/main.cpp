@@ -15,16 +15,26 @@ namespace lavrentev {
     point_t pos;
   };
 
-  struct Shape {
+  class Shape {
+  public:
     virtual ~Shape() noexcept = default;
     virtual double getArea() const noexcept = 0;
     virtual rectangle_t getFrameRect() const noexcept = 0;
     virtual void move(const point_t &c) noexcept = 0;
     virtual void move(double d_x, double d_y) noexcept = 0;
-    virtual void scale(double coef) = 0;
+
+    void scale(double coef) {
+      if (coef <= 0) {
+        throw std::invalid_argument("Coef must be positive");
+      }
+      scaleImpl(coef);
+    }
+
+  private:
+    virtual void scaleImpl(double coef) = 0;
   };
 
-  struct Rectangle final: Shape {
+  class Rectangle final: public Shape {
   public:
     explicit Rectangle(point_t pos, double width, double height);
 
@@ -32,13 +42,15 @@ namespace lavrentev {
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    void scale(double coef) override;
+    
   private:
+    void scaleImpl(double coef) override;
+
     point_t pos_;
     double width_, height_;
   };
 
-  struct Rubber final: Shape {
+  class Rubber final: public Shape {
   public:
     explicit Rubber(point_t pos, point_t outCenter, double rPos, double rOut);
 
@@ -46,24 +58,29 @@ namespace lavrentev {
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    void scale(double coef) override;
+    
   private:
+    void scaleImpl(double coef) override;
+
     point_t pos_;
     point_t outCenter_;
     double rPos_;
     double rOut_;
   };
 
-  struct Polygon final: Shape {
+  class Polygon final: public Shape {
   public:
     explicit Polygon(point_t *vertexes, size_t n);
+    ~Polygon();
 
     double getArea() const noexcept override;
     lavrentev::rectangle_t getFrameRect() const noexcept override;
     void move(const lavrentev::point_t &c) noexcept override;
     void move(double d_x, double d_y) noexcept override;
-    void scale(double coef) override;
+    
   private:
+    void scaleImpl(double coef) override;
+
     point_t pos_;
     size_t n_;
     point_t *vertexes_;
@@ -151,11 +168,8 @@ void lavrentev::Rectangle::move(double d_x, double d_y) noexcept
   pos_.y += d_y;
 }
 
-void lavrentev::Rectangle::scale(double coef)
+void lavrentev::Rectangle::scaleImpl(double coef)
 {
-  if (coef <= 0) {
-    throw std::invalid_argument("Coef must be positive");
-  }
   width_ *= coef;
   height_ *= coef;
 }
@@ -196,11 +210,8 @@ void lavrentev::Rubber::move(double d_x, double d_y) noexcept
   pos_.y += d_y;
 }
 
-void lavrentev::Rubber::scale(double coef)
+void lavrentev::Rubber::scaleImpl(double coef)
 {
-  if (coef <= 0) {
-    throw std::invalid_argument("Coef must be positive");
-  }
   rPos_ *= coef;
   rOut_ *= coef;
 }
@@ -221,9 +232,15 @@ lavrentev::Polygon::Polygon(point_t *vertexes, size_t n): vertexes_(vertexes), n
   point_t pos = {};
   int k = polyPos(pos, n, vertexes_);
   if (k == 1) {
-    throw std::logic_error("Polygon not exists");
     delete[] vertexes_;
+    throw std::logic_error("Polygon not exists");
   }
+  pos_ = pos;
+}
+
+lavrentev::Polygon::~Polygon()
+{
+  delete[] vertexes_;
 }
 
 double lavrentev::Polygon::getArea() const noexcept
@@ -270,20 +287,30 @@ lavrentev::rectangle_t lavrentev::Polygon::getFrameRect() const noexcept
 
 void lavrentev::Polygon::move(const lavrentev::point_t &c) noexcept
 {
+  double dx = c.x - pos_.x;
+  double dy = c.y - pos_.y;
+  
   pos_ = c;
+  
+  for (size_t i = 0; i < n_; ++i) {
+    vertexes_[i].x += dx;
+    vertexes_[i].y += dy;
+  }
 }
 
 void lavrentev::Polygon::move(double d_x, double d_y) noexcept
 {
   pos_.x += d_x;
   pos_.y += d_y;
+  
+  for (size_t i = 0; i < n_; ++i) {
+    vertexes_[i].x += d_x;
+    vertexes_[i].y += d_y;
+  }
 }
 
-void lavrentev::Polygon::scale(double coef)
+void lavrentev::Polygon::scaleImpl(double coef)
 {
-  if (coef <= 0) {
-    throw std::invalid_argument("Coef must be positive");
-  }
   for (size_t i = 0; i < n_; ++i) {
     double d_x = vertexes_[i].x - pos_.x;
     double d_y = vertexes_[i].y - pos_.y;
@@ -312,9 +339,9 @@ int lavrentev::polyPos(point_t &pos, size_t n, point_t *vertexes)
     double c_x = 0.0;
     for (size_t i = 0; i < n; ++i) {
       size_t j = (i + 1) % n;
-      size_t buf_1 = vertexes[i].x + vertexes[j].x;
-      size_t buf_2 = vertexes[i].x * vertexes[j].y;
-      size_t buf_3 = vertexes[j].x * vertexes[i].y;
+      double buf_1 = vertexes[i].x + vertexes[j].x;
+      double buf_2 = vertexes[i].x * vertexes[j].y;
+      double buf_3 = vertexes[j].x * vertexes[i].y;
       c_x += buf_1 * (buf_2 - buf_3);
     }
     c_x /= (6 * square);
@@ -322,9 +349,9 @@ int lavrentev::polyPos(point_t &pos, size_t n, point_t *vertexes)
     double c_y = 0.0;
     for (size_t i = 0; i < n; ++i) {
       size_t j = (i + 1) % n;
-      size_t buf_1 = vertexes[i].y + vertexes[j].y;
-      size_t buf_2 = vertexes[i].x * vertexes[j].y;
-      size_t buf_3 = vertexes[j].x * vertexes[i].y;
+      double buf_1 = vertexes[i].y + vertexes[j].y;
+      double buf_2 = vertexes[i].x * vertexes[j].y;
+      double buf_3 = vertexes[j].x * vertexes[i].y;
       c_y += buf_1 * (buf_2 - buf_3);
     }
     c_y /= (6 * square);
