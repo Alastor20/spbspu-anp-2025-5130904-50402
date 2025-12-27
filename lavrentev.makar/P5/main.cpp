@@ -89,7 +89,7 @@ namespace lavrentev {
   rectangle_t fullFrame(Shape *const *figures, size_t n);
   void userShape(Shape **figures, point_t user_dot, double coef, const size_t n);
   void printInfo(Shape **figures);
-} 
+}
 
 int main()
 {
