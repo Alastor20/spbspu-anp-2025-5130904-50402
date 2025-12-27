@@ -227,7 +227,8 @@ lavrentev::Polygon::Polygon(point_t *vertexes, size_t n):
     vertexes_ = new lavrentev::point_t[n]{
       {1.2, 5.6}, {3.3, -4.7},
       {1.1, 9.3}, {-5.5, -3.0},
-      {-7.3, -0.3}, {-2.1, 4.8}, {3.6, 8.3}};
+      {-7.3, -0.3}, {-2.1, 4.8}, {3.6, 8.3}
+    };
   } catch (std::bad_alloc &e) {
     throw std::bad_alloc();
   }
