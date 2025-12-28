@@ -116,8 +116,17 @@ int main()
     }
     return 1;
   }
-  lavrentev::point_t user_dot = {x, y};
-  lavrentev::userShape(figures, user_dot, coef, lavrentev::n);
+  
+  try {
+    lavrentev::point_t user_dot = {x, y};
+    lavrentev::userShape(figures, user_dot, coef, lavrentev::n);
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    for (size_t i = 0; i < lavrentev::n; ++i) {
+      delete figures[i];
+    }
+    return 2;
+  }
 
   std::cout << "Новые данные: " << "\n\n";
   lavrentev::printInfo(figures);
@@ -398,6 +407,10 @@ void lavrentev::userShape(
   double coef,
   const size_t n)
 {
+  if (coef <= 0) {
+    throw std::invalid_argument("Coef must be positive");
+  }
+  
   for (size_t i = 0; i < n; ++i) {
     point_t point1 = figures[i]->getFrameRect().pos;
     figures[i]->move(user_dot);
