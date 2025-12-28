@@ -51,6 +51,7 @@ int main()
   try
   {
     result = new char[ex + ex2 + 1];
+    result[ex + ex2] = '\0';
   }
   catch (const std::bad_alloc&)
   {
