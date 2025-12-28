@@ -217,8 +217,8 @@ void lavrentev::Rubber::scaleImpl(double coef) {
 }
 
 lavrentev::Polygon::Polygon(point_t *vertexes, size_t n):
-  vertexes_(vertexes),
-  n_(n)
+  n_(n),
+  vertexes_(vertexes)
 {
   if (n_ <= 2) {
     throw std::invalid_argument("Invalid amount of vertexes");
