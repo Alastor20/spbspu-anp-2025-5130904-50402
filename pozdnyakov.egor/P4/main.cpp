@@ -7,9 +7,7 @@ namespace pozdnyakov
 {
   void fillCharMap(const char* str, bool* map)
   {
-    size_t i = 0;
-
-    while (str[i] != '\0')
+    for (size_t i = 0; str[i] != '\0'; ++i)
     {
       if (std::isalpha(static_cast< unsigned char >(str[i])))
       {
@@ -17,7 +15,6 @@ namespace pozdnyakov
         char lowerCh = static_cast< char >(std::tolower(uCh));
         map[lowerCh - 'a'] = true;
       }
-      ++i;
     }
   }
 
@@ -66,10 +63,10 @@ namespace pozdnyakov
 
     str[size] = '\0';
 
-    if (size == 0)
+    if (!in && !in.eof())
     {
       delete[] str;
-      throw std::runtime_error("Empty input");
+      throw std::runtime_error("Input stream error");
     }
 
     return str;
@@ -136,11 +133,18 @@ int main()
   {
     inputStr = readString(std::cin, inputSize);
 
+    if (inputStr[0] == '\0')
+    {
+      throw std::runtime_error("Empty input");
+    }
+
     result1 = new char[inputSize + 1];
+    result1[inputSize] = '\0';
     replaceChars(inputStr, result1, OLD_CHAR, NEW_CHAR);
     std::cout << result1 << '\n';
 
     result2 = new char[27];
+    result2[26] = '\0';
     mergeLatinLetters(inputStr, SECOND_STRING, result2);
     std::cout << result2 << '\n';
 
@@ -154,18 +158,9 @@ int main()
   {
     std::cerr << "Memory allocation error\n";
 
-    if (result1)
-    {
-      delete[] result1;
-    }
-    if (result2)
-    {
-      delete[] result2;
-    }
-    if (inputStr)
-    {
-      delete[] inputStr;
-    }
+    delete[] result1;
+    delete[] result2;
+    delete[] inputStr;
 
     return 1;
   }
@@ -173,14 +168,9 @@ int main()
   {
     std::cerr << "Error: " << e.what() << '\n';
 
-    if (inputStr)
-    {
-      delete[] inputStr;
-    }
-    if (result1)
-    {
-      delete[] result1;
-    }
+    delete[] inputStr;
+    delete[] result1;
+    delete[] result2;
 
     return 1;
   }
