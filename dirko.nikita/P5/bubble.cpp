@@ -22,7 +22,7 @@ void dirko::Bubble::move(double dx, double dy) noexcept
   dot_.x += dx;
   dot_.y += dy;
 }
-void dirko::Bubble::scale(double coef) noexcept
+void dirko::Bubble::scale_(double coef) noexcept
 {
   r_ *= coef;
 }

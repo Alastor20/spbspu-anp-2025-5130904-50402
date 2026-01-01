@@ -16,7 +16,7 @@ namespace dirko
   private:
     double w_, h_;
     p_t mid_;
-    void scale(double coef) noexcept override;
+    void scale_(double coef) noexcept override;
   };
   struct Polygon final: Shape
   {
@@ -30,7 +30,7 @@ namespace dirko
     size_t size_;
     p_t *pts_;
     p_t mid_;
-    void scale(double coef) noexcept override;
+    void scale_(double coef) noexcept override;
   };
   struct Bubble final: Shape
   {
@@ -43,7 +43,7 @@ namespace dirko
   private:
     double r_;
     p_t dot_;
-    void scale(double coef) noexcept override;
+    void scale_(double coef) noexcept override;
   };
 }
 #endif

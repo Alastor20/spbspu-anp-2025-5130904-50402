@@ -24,7 +24,7 @@ namespace dirko
     void doScaleSafe(double coef);
 
   private:
-    virtual void scale(double coef) noexcept = 0;
+    virtual void scale_(double coef) noexcept = 0;
   };
   void scaleFromPoint(Shape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(const Shape *const *shps, size_t size);

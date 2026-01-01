@@ -22,7 +22,7 @@ void dirko::Rectangle::move(double dx, double dy) noexcept
   mid_.x += dx;
   mid_.y += dy;
 }
-void dirko::Rectangle::scale(double coef) noexcept
+void dirko::Rectangle::scale_(double coef) noexcept
 {
   w_ *= coef;
   h_ *= coef;

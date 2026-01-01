@@ -4,14 +4,14 @@
 
 void dirko::Shape::doScale(double coef) noexcept
 {
-  scale(coef);
+  scale_(coef);
 }
 void dirko::Shape::doScaleSafe(double coef)
 {
   if (coef <= 0) {
     throw std::invalid_argument("Non positive coef");
   }
-  scale(coef);
+  scale_(coef);
 }
 void dirko::scaleFromPoint(Shape **shps, size_t size, p_t point, double coef)
 {

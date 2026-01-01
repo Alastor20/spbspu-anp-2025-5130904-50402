@@ -69,7 +69,7 @@ void dirko::Polygon::move(p_t point) noexcept
   double dy = point.y - mid_.y;
   move(dx, dy);
 }
-void dirko::Polygon::scale(double coef) noexcept
+void dirko::Polygon::scale_(double coef) noexcept
 {
   double dx = 0, dy = 0;
   for (size_t i = 0; i < size_; ++i) {
