@@ -5,6 +5,8 @@
 
 namespace pozdnyakov
 {
+  constexpr size_t ALPHABET_SIZE = 26;
+
   void fillCharMap(const char* str, bool* map)
   {
     for (size_t i = 0; str[i] != '\0'; ++i)
@@ -93,9 +95,9 @@ namespace pozdnyakov
 
   void mergeLatinLetters(const char* s1, const char* s2, char* dest)
   {
-    bool present[26];
+    bool present[ALPHABET_SIZE];
 
-    for (size_t k = 0; k < 26; ++k)
+    for (size_t k = 0; k < ALPHABET_SIZE; ++k)
     {
       present[k] = false;
     }
@@ -104,7 +106,7 @@ namespace pozdnyakov
     fillCharMap(s2, present);
     size_t idx = 0;
 
-    for (size_t i = 0; i < 26; ++i)
+    for (size_t i = 0; i < ALPHABET_SIZE; ++i)
     {
       if (present[i])
       {
@@ -135,7 +137,9 @@ int main()
 
     if (inputStr[0] == '\0')
     {
-      throw std::runtime_error("Empty input");
+      std::cerr << "Empty input\n";
+      delete[] inputStr;
+      return 1;
     }
 
     result1 = new char[inputSize + 1];
@@ -143,8 +147,8 @@ int main()
     replaceChars(inputStr, result1, OLD_CHAR, NEW_CHAR);
     std::cout << result1 << '\n';
 
-    result2 = new char[27];
-    result2[26] = '\0';
+    result2 = new char[ALPHABET_SIZE + 1];
+    result2[ALPHABET_SIZE] = '\0';
     mergeLatinLetters(inputStr, SECOND_STRING, result2);
     std::cout << result2 << '\n';
 
