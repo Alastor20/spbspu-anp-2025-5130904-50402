@@ -86,6 +86,39 @@ namespace bukreev
     point_t mCenter;
     double mDiagWidth;
   };
+
+  struct Square : Shape
+  {
+    Square(point_t center, double width):
+      mCenter(center),
+      mWidth(width)
+    {}
+    double getArea() const override
+    {
+      return mWidth * mWidth;
+    }
+    rectangle_t getFrameRect() const override
+    {
+      return rectangle_t {mCenter, mWidth, mWidth};
+    }
+    void move(point_t newPos) override
+    {
+      mCenter = newPos;
+    }
+    void move(double dX, double dY) override
+    {
+      mCenter.x += dX;
+      mCenter.y += dY;
+    }
+    void scale(double k) override
+    {
+      mWidth *= k;
+    }
+
+  private:
+    point_t mCenter;
+    double mWidth;
+  };
 }
 
 int main()
