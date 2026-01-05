@@ -1,3 +1,5 @@
+#include <iostream>
+
 namespace bukreev
 {
   struct point_t
@@ -119,7 +121,28 @@ namespace bukreev
     point_t mCenter;
     double mWidth;
   };
+
+  void scaleShapes(Shape** shapes, size_t shapeCount, point_t base, double k)
+  {
+    for (size_t i = 0; i < shapeCount; i++)
+    {
+      Shape* shape = shapes[i];
+      point_t pos = shape->getFrameRect().pos;
+
+      double X = (pos.x - base.x) * k + base.x;
+      double Y = (pos.y - base.y) * k + base.x;
+      shape->move({X, Y});
+      shape->scale(k);
+    }
+  }
 }
 
 int main()
-{}
+{
+  bukreev::Rectangle rect({0, 0}, 100, 80);
+  bukreev::Xquare xqr({20, 30}, 48);
+  bukreev::Square sqr({-7, 14}, 20);
+
+  bukreev::Shape* shapes[] = {&rect, &xqr, &sqr};
+  bukreev::scaleShapes(shapes, 3, {0, 0}, 1.5f);
+}
