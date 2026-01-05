@@ -129,11 +129,42 @@ namespace bukreev
       Shape* shape = shapes[i];
       point_t pos = shape->getFrameRect().pos;
 
-      double X = (pos.x - base.x) * k + base.x;
-      double Y = (pos.y - base.y) * k + base.x;
-      shape->move({X, Y});
+      double x = (pos.x - base.x) * k + base.x;
+      double y = (pos.y - base.y) * k + base.x;
+      shape->move({x, y});
       shape->scale(k);
     }
+  }
+
+  rectangle_t getFrameRect(Shape** shapes, size_t shapeCount)
+  {
+    rectangle_t frame = shapes[0]->getFrameRect();
+
+    double minLeft = frame.pos.x - frame.width / 2;
+    double maxRight = frame.pos.x + frame.width / 2;
+    double maxTop = frame.pos.y + frame.height / 2;
+    double minBottom = frame.pos.y - frame.height / 2;
+
+    for (size_t i = 1; i < shapeCount; i++)
+    {
+      frame = shapes[i]->getFrameRect();
+
+      double left = frame.pos.x - frame.width / 2;
+      double right = frame.pos.x + frame.width / 2;
+      double top = frame.pos.y + frame.height / 2;
+      double bottom = frame.pos.y - frame.height / 2;
+
+      minLeft = std::min(minLeft, left);
+      maxRight = std::max(maxRight, right);
+      maxTop = std::max(maxTop, top);
+      minBottom = std::min(minBottom, bottom);
+    }
+
+    double x = (minLeft + maxRight) / 2;
+    double y = (minBottom + maxTop) / 2;
+    double w = maxRight - minLeft;
+    double h = maxTop - minBottom;
+    return rectangle_t {{x, y}, w, h};
   }
 }
 
