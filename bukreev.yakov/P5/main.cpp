@@ -53,6 +53,39 @@ namespace bukreev
     point_t mCenter;
     double mWidth, mHeight;
   };
+
+  struct Xquare : Shape
+  {
+    Xquare(point_t center, double diagWidth):
+      mCenter(center),
+      mDiagWidth(diagWidth)
+    {}
+    double getArea() const override
+    {
+      return (mDiagWidth * mDiagWidth) / 2;
+    }
+    rectangle_t getFrameRect() const override
+    {
+      return rectangle_t {mCenter, mDiagWidth, mDiagWidth};
+    }
+    void move(point_t newPos) override
+    {
+      mCenter = newPos;
+    }
+    void move(double dX, double dY) override
+    {
+      mCenter.x += dX;
+      mCenter.y += dY;
+    }
+    void scale(double k) override
+    {
+      mDiagWidth *= k;
+    }
+
+  private:
+    point_t mCenter;
+    double mDiagWidth;
+  };
 }
 
 int main()
