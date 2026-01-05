@@ -7,6 +7,11 @@ namespace pozdnyakov
 {
   constexpr size_t ALPHABET_SIZE = 26;
 
+  int isSeparator(int ch)
+  {
+    return std::isspace(ch);
+  }
+
   void fillCharMap(const char* str, bool* map)
   {
     for (size_t i = 0; str[i] != '\0'; ++i)
@@ -20,16 +25,41 @@ namespace pozdnyakov
     }
   }
 
-  char* readString(std::istream& in, size_t& size)
+  void cleanupWords(char** words, size_t count)
   {
-    size_t capacity = 256;
-    size = 0;
+    for (size_t i = 0; i < count; ++i)
+    {
+      delete[] words[i];
+    }
+    delete[] words;
+  }
+
+  char* readWord(std::istream& in, int (*check)(int))
+  {
+    size_t capacity = 16;
+    size_t size = 0;
     char* str = new char[capacity];
     char ch;
 
     while (in.get(ch))
     {
-      if (ch == '\n')
+      if (!check(ch))
+      {
+        str[size] = ch;
+        ++size;
+        break;
+      }
+    }
+
+    if (size == 0)
+    {
+      delete[] str;
+      return nullptr;
+    }
+
+    while (in.get(ch))
+    {
+      if (check(ch))
       {
         break;
       }
@@ -64,20 +94,12 @@ namespace pozdnyakov
     }
 
     str[size] = '\0';
-
-    if (!in && !in.eof())
-    {
-      delete[] str;
-      throw std::runtime_error("Input stream error");
-    }
-
     return str;
   }
 
   void replaceChars(const char* input, char* output, char oldChar, char newChar)
   {
     size_t i = 0;
-
     while (input[i] != '\0')
     {
       if (input[i] == oldChar)
@@ -104,8 +126,8 @@ namespace pozdnyakov
 
     fillCharMap(s1, present);
     fillCharMap(s2, present);
-    size_t idx = 0;
 
+    size_t idx = 0;
     for (size_t i = 0; i < ALPHABET_SIZE; ++i)
     {
       if (present[i])
@@ -122,60 +144,99 @@ int main()
 {
   using namespace pozdnyakov;
 
-  const char OLD_CHAR = 'c';
-  const char NEW_CHAR = 'b';
-  const char* SECOND_STRING = "def_ghk";
-
-  char* inputStr = nullptr;
-  char* result1 = nullptr;
-  char* result2 = nullptr;
-  size_t inputSize = 0;
+  char** words = nullptr;
+  size_t wordsCount = 0;
 
   try
   {
-    inputStr = readString(std::cin, inputSize);
-
-    if (inputStr[0] == '\0')
+    while (true)
     {
-      std::cerr << "Empty input\n";
-      delete[] inputStr;
-      return 1;
+      char* currentWord = readWord(std::cin, isSeparator);
+      if (currentWord == nullptr)
+      {
+        break;
+      }
+
+      char** newWords = nullptr;
+      try
+      {
+        newWords = new char* [wordsCount + 1];
+      }
+      catch (const std::bad_alloc&)
+      {
+        delete[] currentWord;
+        throw;
+      }
+
+      for (size_t i = 0; i < wordsCount; ++i)
+      {
+        newWords[i] = words[i];
+      }
+
+      newWords[wordsCount] = currentWord;
+      ++wordsCount;
+
+      delete[] words;
+      words = newWords;
     }
-
-    result1 = new char[inputSize + 1];
-    result1[inputSize] = '\0';
-    replaceChars(inputStr, result1, OLD_CHAR, NEW_CHAR);
-    std::cout << result1 << '\n';
-
-    result2 = new char[ALPHABET_SIZE + 1];
-    result2[ALPHABET_SIZE] = '\0';
-    mergeLatinLetters(inputStr, SECOND_STRING, result2);
-    std::cout << result2 << '\n';
-
-    delete[] result1;
-    delete[] result2;
-    delete[] inputStr;
-
-    return 0;
   }
   catch (const std::bad_alloc&)
   {
     std::cerr << "Memory allocation error\n";
-
-    delete[] result1;
-    delete[] result2;
-    delete[] inputStr;
-
+    cleanupWords(words, wordsCount);
     return 1;
   }
-  catch (const std::runtime_error& e)
+
+  if (wordsCount == 0)
   {
-    std::cerr << "Error: " << e.what() << '\n';
-
-    delete[] inputStr;
-    delete[] result1;
-    delete[] result2;
-
+    std::cerr << "Empty input\n";
     return 1;
   }
+
+  const char OLD_CHAR = 'c';
+  const char NEW_CHAR = 'b';
+  const char* SECOND_STRING = "def_ghk";
+
+  char* result1 = nullptr;
+  char* result2 = nullptr;
+
+  try
+  {
+    for (size_t i = 0; i < wordsCount; ++i)
+    {
+      char* currentWord = words[i];
+      size_t len = std::strlen(currentWord);
+
+      result1 = new char[len + 1];
+      result1[len] = '\0';
+      replaceChars(currentWord, result1, OLD_CHAR, NEW_CHAR);
+      std::cout << result1 << '\n';
+      delete[] result1;
+      result1 = nullptr;
+
+      result2 = new char[ALPHABET_SIZE + 1];
+      result2[ALPHABET_SIZE] = '\0';
+      mergeLatinLetters(currentWord, SECOND_STRING, result2);
+      std::cout << result2 << '\n';
+      delete[] result2;
+      result2 = nullptr;
+    }
+  }
+  catch (const std::bad_alloc&)
+  {
+    std::cerr << "Memory allocation error\n";
+    if (result1)
+    {
+      delete[] result1;
+    }
+    if (result2)
+    {
+      delete[] result2;
+    }
+    cleanupWords(words, wordsCount);
+    return 1;
+  }
+
+  cleanupWords(words, wordsCount);
+  return 0;
 }
