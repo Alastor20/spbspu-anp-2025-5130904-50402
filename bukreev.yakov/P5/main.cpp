@@ -28,28 +28,11 @@ namespace bukreev
       mWidth(width),
       mHeight(height)
     {}
-    double getArea() const override
-    {
-      return mWidth * mHeight;
-    }
-    rectangle_t getFrameRect() const override
-    {
-      return rectangle_t{mCenter, mWidth, mHeight};
-    }
-    void move(point_t newPos) override
-    {
-      mCenter = newPos;
-    }
-    void move(double dX, double dY) override
-    {
-      mCenter.x += dX;
-      mCenter.y += dY;
-    }
-    void scale(double k) override
-    {
-      mWidth *= k;
-      mHeight *= k;
-    }
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(point_t newPos) override;
+    void move(double dX, double dY) override;
+    void scale(double k) override;
 
   private:
     point_t mCenter;
@@ -62,27 +45,11 @@ namespace bukreev
       mCenter(center),
       mDiagWidth(diagWidth)
     {}
-    double getArea() const override
-    {
-      return (mDiagWidth * mDiagWidth) / 2;
-    }
-    rectangle_t getFrameRect() const override
-    {
-      return rectangle_t {mCenter, mDiagWidth, mDiagWidth};
-    }
-    void move(point_t newPos) override
-    {
-      mCenter = newPos;
-    }
-    void move(double dX, double dY) override
-    {
-      mCenter.x += dX;
-      mCenter.y += dY;
-    }
-    void scale(double k) override
-    {
-      mDiagWidth *= k;
-    }
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(point_t newPos) override;
+    void move(double dX, double dY) override;
+    void scale(double k) override;
 
   private:
     point_t mCenter;
@@ -95,77 +62,19 @@ namespace bukreev
       mCenter(center),
       mWidth(width)
     {}
-    double getArea() const override
-    {
-      return mWidth * mWidth;
-    }
-    rectangle_t getFrameRect() const override
-    {
-      return rectangle_t {mCenter, mWidth, mWidth};
-    }
-    void move(point_t newPos) override
-    {
-      mCenter = newPos;
-    }
-    void move(double dX, double dY) override
-    {
-      mCenter.x += dX;
-      mCenter.y += dY;
-    }
-    void scale(double k) override
-    {
-      mWidth *= k;
-    }
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(point_t newPos) override;
+    void move(double dX, double dY) override;
+    void scale(double k) override;
 
   private:
     point_t mCenter;
     double mWidth;
   };
 
-  void scaleShapes(Shape** shapes, size_t shapeCount, point_t base, double k)
-  {
-    for (size_t i = 0; i < shapeCount; i++)
-    {
-      Shape* shape = shapes[i];
-      point_t pos = shape->getFrameRect().pos;
-
-      double x = (pos.x - base.x) * k + base.x;
-      double y = (pos.y - base.y) * k + base.x;
-      shape->move({x, y});
-      shape->scale(k);
-    }
-  }
-
-  rectangle_t getFrameRect(Shape** shapes, size_t shapeCount)
-  {
-    rectangle_t frame = shapes[0]->getFrameRect();
-
-    double minLeft = frame.pos.x - frame.width / 2;
-    double maxRight = frame.pos.x + frame.width / 2;
-    double maxTop = frame.pos.y + frame.height / 2;
-    double minBottom = frame.pos.y - frame.height / 2;
-
-    for (size_t i = 1; i < shapeCount; i++)
-    {
-      frame = shapes[i]->getFrameRect();
-
-      double left = frame.pos.x - frame.width / 2;
-      double right = frame.pos.x + frame.width / 2;
-      double top = frame.pos.y + frame.height / 2;
-      double bottom = frame.pos.y - frame.height / 2;
-
-      minLeft = std::min(minLeft, left);
-      maxRight = std::max(maxRight, right);
-      maxTop = std::max(maxTop, top);
-      minBottom = std::min(minBottom, bottom);
-    }
-
-    double x = (minLeft + maxRight) / 2;
-    double y = (minBottom + maxTop) / 2;
-    double w = maxRight - minLeft;
-    double h = maxTop - minBottom;
-    return rectangle_t {{x, y}, w, h};
-  }
+  void scaleShapes(Shape* const* shapes, size_t shapeCount, point_t base, double k);
+  rectangle_t getFrameRect(const Shape* const* shapes, size_t shapeCount);
 }
 
 int main()
@@ -176,4 +85,116 @@ int main()
 
   bukreev::Shape* shapes[] = {&rect, &xqr, &sqr};
   bukreev::scaleShapes(shapes, 3, {0, 0}, 1.5f);
+}
+
+double bukreev::Rectangle::getArea() const
+{
+  return mWidth * mHeight;
+}
+bukreev::rectangle_t bukreev::Rectangle::getFrameRect() const
+{
+  return rectangle_t{mCenter, mWidth, mHeight};
+}
+void bukreev::Rectangle::move(point_t newPos)
+{
+  mCenter = newPos;
+}
+void bukreev::Rectangle::move(double dX, double dY)
+{
+  mCenter.x += dX;
+  mCenter.y += dY;
+}
+void bukreev::Rectangle::scale(double k)
+{
+  mWidth *= k;
+  mHeight *= k;
+}
+
+double bukreev::Xquare::getArea() const
+{
+  return (mDiagWidth * mDiagWidth) / 2;
+}
+bukreev::rectangle_t bukreev::Xquare::getFrameRect() const
+{
+  return rectangle_t {mCenter, mDiagWidth, mDiagWidth};
+}
+void bukreev::Xquare::move(point_t newPos)
+{
+  mCenter = newPos;
+}
+void bukreev::Xquare::move(double dX, double dY)
+{
+  mCenter.x += dX;
+  mCenter.y += dY;
+}
+void bukreev::Xquare::scale(double k)
+{
+  mDiagWidth *= k;
+}
+
+double bukreev::Square::getArea() const
+{
+  return mWidth * mWidth;
+}
+bukreev::rectangle_t bukreev::Square::getFrameRect() const
+{
+  return rectangle_t {mCenter, mWidth, mWidth};
+}
+void bukreev::Square::move(point_t newPos)
+{
+  mCenter = newPos;
+}
+void bukreev::Square::move(double dX, double dY)
+{
+  mCenter.x += dX;
+  mCenter.y += dY;
+}
+void bukreev::Square::scale(double k)
+{
+  mWidth *= k;
+}
+
+void bukreev::scaleShapes(Shape* const* shapes, size_t shapeCount, point_t base, double k)
+{
+  for (size_t i = 0; i < shapeCount; i++)
+  {
+    Shape* shape = shapes[i];
+    point_t pos = shape->getFrameRect().pos;
+
+    double x = (pos.x - base.x) * k + base.x;
+    double y = (pos.y - base.y) * k + base.x;
+    shape->move({x, y});
+    shape->scale(k);
+  }
+}
+
+bukreev::rectangle_t bukreev::getFrameRect(const Shape* const* shapes, size_t shapeCount)
+{
+  rectangle_t frame = shapes[0]->getFrameRect();
+
+  double minLeft = frame.pos.x - frame.width / 2;
+  double maxRight = frame.pos.x + frame.width / 2;
+  double maxTop = frame.pos.y + frame.height / 2;
+  double minBottom = frame.pos.y - frame.height / 2;
+
+  for (size_t i = 1; i < shapeCount; i++)
+  {
+    frame = shapes[i]->getFrameRect();
+
+    double left = frame.pos.x - frame.width / 2;
+    double right = frame.pos.x + frame.width / 2;
+    double top = frame.pos.y + frame.height / 2;
+    double bottom = frame.pos.y - frame.height / 2;
+
+    minLeft = std::min(minLeft, left);
+    maxRight = std::max(maxRight, right);
+    maxTop = std::max(maxTop, top);
+    minBottom = std::min(minBottom, bottom);
+  }
+
+  double x = (minLeft + maxRight) / 2;
+  double y = (minBottom + maxTop) / 2;
+  double w = maxRight - minLeft;
+  double h = maxTop - minBottom;
+  return rectangle_t {{x, y}, w, h};
 }
