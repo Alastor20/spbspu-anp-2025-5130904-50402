@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <iostream>
 #include <stdexcept>
-#include "shapes.hpp"
+#include <shapes.hpp>
 
 int main()
 {
