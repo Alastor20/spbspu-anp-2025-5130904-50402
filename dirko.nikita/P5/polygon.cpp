@@ -29,12 +29,55 @@ dirko::p_t dirko::getPolMid(p_t *pts, size_t size)
 }
 dirko::Polygon::Polygon(size_t size, p_t *pts):
   size_(size),
-  pts_(pts),
+  pts_(size > 2 ? new p_t[size] : nullptr),
   mid_(getPolMid(pts, size))
 {
   if (size < 3) {
     throw std::logic_error("Cant create polygon");
   }
+  for (size_t i = 0; i < size_; ++i) {
+    pts_[i] = pts[i];
+  }
+}
+dirko::Polygon::~Polygon() noexcept
+{
+  delete[] pts_;
+}
+dirko::Polygon::Polygon(const Polygon &other)
+{
+  size_ = other.size_;
+  mid_ = other.mid_;
+  pts_ = new p_t[size_];
+  for (size_t i = 0; i < size_; ++i) {
+    pts_[i] = other.pts_[i];
+  }
+}
+dirko::Polygon::Polygon(Polygon &&r) noexcept
+{
+  pts_ = r.pts_;
+  size_ = r.size_;
+  mid_ = r.mid_;
+  r.pts_ = nullptr;
+}
+dirko::Polygon &dirko::Polygon::operator=(const Polygon &other)
+{
+  delete[] pts_;
+  size_ = other.size_;
+  mid_ = other.mid_;
+  pts_ = new p_t[size_];
+  for (size_t i = 0; i < size_; ++i) {
+    pts_[i] = other.pts_[i];
+  }
+  return *this;
+}
+dirko::Polygon &dirko::Polygon::operator=(Polygon &&r) noexcept
+{
+  delete[] pts_;
+  pts_ = r.pts_;
+  size_ = r.size_;
+  mid_ = r.mid_;
+  r.pts_ = nullptr;
+  return *this;
 }
 double dirko::Polygon::getArea() const noexcept
 {

@@ -21,6 +21,11 @@ namespace dirko
   struct Polygon final: Shape
   {
     Polygon(size_t size, p_t *pts);
+    ~Polygon() noexcept override;
+    Polygon(const Polygon &);
+    Polygon(Polygon &&) noexcept;
+    Polygon &operator=(const Polygon &);
+    Polygon &operator=(Polygon &&) noexcept;
     double getArea() const noexcept override;
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
