@@ -20,7 +20,7 @@ namespace dirko
     virtual rec_t getFrameRect() const noexcept = 0;
     virtual void move(p_t point) noexcept = 0;
     virtual void move(double dx, double dy) noexcept = 0;
-    virtual Shape *clone() const noexcept = 0;
+    virtual Shape *clone() const = 0;
     void doScale(double coef) noexcept;
     void doScaleSafe(double coef);
 

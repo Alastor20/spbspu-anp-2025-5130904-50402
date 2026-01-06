@@ -1,7 +1,7 @@
 #ifndef SHAPES
 #define SHAPES
 #include <cmath>
-#include <shapesUtil.hpp>
+#include "shapesUtil.hpp"
 namespace dirko
 {
   const double PI = std::acos(-1.0);
@@ -12,6 +12,7 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
+    Shape *clone() const override;
 
   private:
     double w_, h_;
@@ -30,6 +31,7 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
+    Shape *clone() const override;
 
   private:
     size_t size_;
@@ -44,6 +46,7 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
+    Shape *clone() const override;
 
   private:
     double r_;
