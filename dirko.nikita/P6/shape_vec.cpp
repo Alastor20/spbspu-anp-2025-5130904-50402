@@ -101,15 +101,15 @@ dirko::Shape *dirko::Shape_vec::clone() const
   throw std::runtime_error("DO NOT USE DIRECTLY ON SHAPE_VEC");
 }
 
-void dirko::Shape_vec::append(Shape *elem)
+void dirko::Shape_vec::append(const Shape *elem)
 {
   add(elem, size_ - 1);
 }
-void dirko::Shape_vec::preappend(Shape *elem)
+void dirko::Shape_vec::preappend(const Shape *elem)
 {
   add(elem, 0);
 }
-void dirko::Shape_vec::add(Shape *elem, size_t index)
+void dirko::Shape_vec::add(const Shape *elem, size_t index)
 {
   if (cap_ == size_) {
     if (cap_ == 0) {

@@ -19,9 +19,9 @@ namespace dirko
     Shape *clone() const override;
     void doScale(double coef) noexcept;
     void doScaleSafe(double coef);
-    void append(Shape *elem);
-    void preappend(Shape *elem);
-    void add(Shape *elem, size_t index);
+    void append(const Shape *elem);
+    void preappend(const Shape *elem);
+    void add(const Shape *elem, size_t index);
     Shape &last() const noexcept;
     Shape &first() const noexcept;
     const Shape &lastConst() const noexcept;
