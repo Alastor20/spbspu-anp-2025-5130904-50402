@@ -147,6 +147,21 @@ const dirko::Shape &dirko::Shape_vec::getConst(size_t index) const noexcept
 {
   return *shps_[index];
 }
+void dirko::Shape_vec::remove(size_t index)
+{
+  if (index >= size_) {
+    throw std::invalid_argument("Out of bounds");
+  }
+  for (size_t i = 0; i < size_; ++i) {
+    if (i > index) {
+      shps_[i - 1] = shps_[i];
+    } else if (i == index) {
+      delete shps_[i];
+    }
+  }
+  --size_;
+  shps_[size_] = nullptr;
+}
 void dirko::Shape_vec::dropFirst()
 {
   if (size_ == 0) {
