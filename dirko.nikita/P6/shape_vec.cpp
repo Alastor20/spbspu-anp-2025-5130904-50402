@@ -109,6 +109,30 @@ void dirko::Shape_vec::preappend(Shape *elem)
 {
   add(elem, 0);
 }
+void dirko::Shape_vec::add(Shape *elem, size_t index)
+{
+  if (cap_ == size_) {
+    if (cap_ == 0) {
+      cap_ = 20;
+    } else {
+      cap_ *= 2;
+    }
+    reserve(cap_);
+  }
+  shps_[size_] = shps_[size_ - 1];
+  for (size_t i = size_ - 1; i > 0; --i) {
+    if (i > index) {
+      shps_[i] = shps_[i - 1];
+    } else if (i == index) {
+      shps_[i] = elem->clone();
+    }
+  }
+  if (index == 0) {
+    shps_[0] = elem->clone();
+  }
+  ++size_;
+}
+
 dirko::Shape &dirko::Shape_vec::last() const noexcept
 {
   return get(size_ - 1);
