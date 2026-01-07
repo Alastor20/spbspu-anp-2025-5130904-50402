@@ -6,7 +6,8 @@
 
 dirko::Shape_vec::Shape_vec():
   shps_(nullptr),
-  size_(0)
+  size_(0),
+  cap_(0)
 {}
 
 dirko::Shape_vec::~Shape_vec() noexcept
@@ -19,7 +20,8 @@ dirko::Shape_vec::~Shape_vec() noexcept
 
 dirko::Shape_vec::Shape_vec(const Shape_vec &other):
   shps_(other.size_ > 0 ? new Shape *[other.size_]() : nullptr),
-  size_(0)
+  size_(0),
+  cap_(size_)
 {
   try {
     for (size_t i = 0; i < other.size_; ++i) {
@@ -37,7 +39,8 @@ dirko::Shape_vec::Shape_vec(const Shape_vec &other):
 
 dirko::Shape_vec::Shape_vec(Shape_vec &&r):
   shps_(r.shps_),
-  size_(r.size_)
+  size_(r.size_),
+  cap_(r.cap_)
 {
   r.shps_ = nullptr;
 }
@@ -47,14 +50,14 @@ dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&r)
   shps_ = r.shps_;
   r.shps_ = nullptr;
   size_ = r.size_;
+  cap_ = r.cap_;
   return *this;
 }
 
 dirko::Shape_vec &dirko::Shape_vec::operator=(const Shape_vec &other)
 {
   Shape_vec tmp(other);
-  std::swap(tmp.shps_, this->shps_);
-  std::swap(tmp.size_, this->size_);
+  std::swap(tmp, *this);
   return *this;
 }
 
@@ -96,4 +99,101 @@ double dirko::Shape_vec::getArea() const noexcept
 dirko::Shape *dirko::Shape_vec::clone() const
 {
   throw std::runtime_error("DO NOT USE DIRECTLY ON SHAPE_VEC");
+}
+
+void dirko::Shape_vec::append(Shape *elem)
+{
+  add(elem, size_ - 1);
+}
+void dirko::Shape_vec::preappend(Shape *elem)
+{
+  add(elem, 0);
+}
+dirko::Shape &dirko::Shape_vec::last() const noexcept
+{
+  return get(size_ - 1);
+}
+dirko::Shape &dirko::Shape_vec::first() const noexcept
+{
+  return get(0);
+}
+const dirko::Shape &dirko::Shape_vec::lastConst() const noexcept
+{
+  return getConst(size_ - 1);
+}
+const dirko::Shape &dirko::Shape_vec::firstConst() const noexcept
+{
+  return getConst(0);
+}
+dirko::Shape &dirko::Shape_vec::at(size_t index) const
+{
+  if (index >= size_) {
+    throw std::invalid_argument("Out of bounds");
+  }
+  return *shps_[index];
+}
+const dirko::Shape &dirko::Shape_vec::atConst(size_t index) const
+{
+  if (index >= size_) {
+    throw std::invalid_argument("Out of bounds");
+  }
+  return *shps_[index];
+}
+dirko::Shape &dirko::Shape_vec::get(size_t index) const noexcept
+{
+  return *shps_[index];
+}
+const dirko::Shape &dirko::Shape_vec::getConst(size_t index) const noexcept
+{
+  return *shps_[index];
+}
+void dirko::Shape_vec::dropFirst()
+{
+  if (size_ == 0) {
+    throw std::logic_error("Empty vector");
+  }
+  remove(0);
+}
+void dirko::Shape_vec::dropLast()
+{
+  if (size_ == 0) {
+    throw std::logic_error("Empty vector");
+  }
+  remove(size_ - 1);
+}
+void dirko::Shape_vec::clear() noexcept
+{
+  for (size_t i = 0; i < size_; ++i) {
+    delete shps_[i];
+  }
+  delete[] shps_;
+  size_ = 0;
+}
+size_t dirko::Shape_vec::size() const noexcept
+{
+  return size_;
+}
+bool dirko::Shape_vec::empty() const noexcept
+{
+  return size_ == 0;
+}
+size_t dirko::Shape_vec::capasity() const noexcept
+{
+  return cap_;
+}
+void dirko::Shape_vec::shrink()
+{
+  reserve(size_);
+}
+void dirko::Shape_vec::reserve(size_t newCap)
+{
+  if (newCap < size_) {
+    throw std::logic_error("To small capasity");
+  }
+  Shape **tmp = new Shape *[newCap]();
+  for (size_t i = 0; i < size_; ++i) {
+    tmp[i] = shps_[i];
+  }
+  shps_ = tmp;
+  cap_ = newCap;
 }

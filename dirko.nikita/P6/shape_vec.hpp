@@ -1,6 +1,7 @@
 #ifndef SHAPE_VEC
 #define SHAPE_VEC
 #include "../common/shapesUtil.hpp"
+#include <cstddef>
 namespace dirko
 {
   struct Shape_vec final: Shape
@@ -18,10 +19,31 @@ namespace dirko
     Shape *clone() const override;
     void doScale(double coef) noexcept;
     void doScaleSafe(double coef);
+    void append(Shape *elem);
+    void preappend(Shape *elem);
+    void add(Shape *elem, size_t index);
+    Shape &last() const noexcept;
+    Shape &first() const noexcept;
+    const Shape &lastConst() const noexcept;
+    const Shape &firstConst() const noexcept;
+    Shape &at(size_t index) const;
+    const Shape &atConst(size_t index) const;
+    Shape &get(size_t index) const noexcept;
+    const Shape &getConst(size_t index) const noexcept;
+    void remove(size_t index);
+    void dropFirst();
+    void dropLast();
+    void clear() noexcept;
+    size_t size() const noexcept;
+    bool empty() const noexcept;
+    size_t capasity() const noexcept;
+    void shrink();
+    void reserve(size_t newCap);
 
   private:
     Shape **shps_;
     size_t size_;
+    size_t cap_;
     void scale_(double coef) noexcept override;
   };
 }
