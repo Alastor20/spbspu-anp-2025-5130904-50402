@@ -236,3 +236,11 @@ void dirko::Shape_vec::reserve(size_t newCap)
   shps_ = tmp;
   cap_ = newCap;
 }
+const dirko::Shape *const *dirko::Shape_vec::getConstIterator() const noexcept
+{
+  return shps_;
+}
+dirko::Shape **dirko::Shape_vec::getIterator() const noexcept
+{
+  return shps_;
+}

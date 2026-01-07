@@ -1,6 +1,6 @@
 #ifndef SHAPE_VEC
 #define SHAPE_VEC
-#include "../common/shapesUtil.hpp"
+#include <shapesUtil.hpp>
 #include <cstddef>
 namespace dirko
 {
@@ -9,9 +9,9 @@ namespace dirko
     Shape_vec();
     Shape_vec(const Shape_vec &);
     Shape_vec(Shape_vec &&);
+    ~Shape_vec() noexcept override;
     Shape_vec &operator=(const Shape_vec &);
     Shape_vec &operator=(Shape_vec &&);
-    ~Shape_vec() noexcept override;
     double getArea() const noexcept override;
     rec_t getFrameRect() const noexcept override;
     void move(p_t point) noexcept override;
@@ -39,6 +39,8 @@ namespace dirko
     size_t capasity() const noexcept;
     void shrink();
     void reserve(size_t newCap);
+    const Shape *const *getConstIterator() const noexcept;
+    Shape **getIterator() const noexcept;
 
   private:
     Shape **shps_;
