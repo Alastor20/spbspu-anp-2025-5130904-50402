@@ -92,7 +92,7 @@ namespace lachugin
       in >> std::noskipws;
 
     size_t i = 0;
-    char hlpChar;
+    char hlpChar = ' ';
     while (!(hlpChar == '\n'))
     {
       if (i + 1 >= s)
@@ -111,7 +111,9 @@ namespace lachugin
       data[i++] = hlpChar;
     }
     data[i] = '\0';
-    char* helpLine =  cut (data, s);
+    char* helpLine =  cut (data, i);
+    s = i;
+    free(data);
     data = helpLine;
 
     if (is_skip)
