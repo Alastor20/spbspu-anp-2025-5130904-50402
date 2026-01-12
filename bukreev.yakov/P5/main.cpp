@@ -88,10 +88,29 @@ int main()
   Square sqr({-7, 14}, 20);
   Shape* shapes[] = {&rect, &xqr, &sqr};
 
+  point_t base;
+  double k;
+
+  std::cout << "Enter scaling base: ";
+  std::cin >> base.x >> base.y;
+  if (!std::cin)
+  {
+    std::cerr << "Invalid scaling base.\n";
+    return 1;
+  }
+
+  std::cout << "Enter scaling rate: ";
+  std::cin >> k;
+  if (!std::cin || k < 0)
+  {
+    std::cerr << "Invalid scaling rate.\n";
+    return 1;
+  }
+
   std::cout << "== BEFORE ==\n";
   printShapes(std::cout, shapes, 3);
 
-  scaleShapes(shapes, 3, {0, 0}, 1.5f);
+  scaleShapes(shapes, 3, base, k);
 
   std::cout << "== AFTER ==\n";
   printShapes(std::cout, shapes, 3);
