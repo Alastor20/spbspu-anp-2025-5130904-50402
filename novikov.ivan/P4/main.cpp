@@ -85,10 +85,10 @@ namespace novikov {
       return nullptr;
     }
     while (in) {
-      if (size == capacity) {
+      if (size + 1 >= capacity) {
         char * old_str = str;
         extend(&str, size, capacity);
-        if (size == capacity) {
+        if (size + 1 >= capacity) {
           std::cerr << "Failed to allocate memory\n";
           free(str);
           break;
