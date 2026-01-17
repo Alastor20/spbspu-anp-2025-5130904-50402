@@ -64,7 +64,6 @@ namespace novikov {
     for (size_t i = 0; i < size; ++i) {
       temp[i] = (*str)[i];
     }
-    free(*str);
     *str = temp;
     capacity *= 2;
   }
@@ -112,6 +111,7 @@ namespace novikov {
     if (is_skipws) {
       in >> std::skipws;
     }
+    free(str);
     return str;
   }
 }
