@@ -86,12 +86,14 @@ namespace novikov {
     }
     while (in) {
       if (size == capacity) {
+        char * old_str = str;
         extend(&str, size, capacity);
         if (size == capacity) {
           std::cerr << "Failed to allocate memory\n";
           free(str);
           break;
         }
+        free(old_str);
       }
       if (str == nullptr) {
         if (is_skipws) {
@@ -111,7 +113,6 @@ namespace novikov {
     if (is_skipws) {
       in >> std::skipws;
     }
-    free(str);
     return str;
   }
 }
