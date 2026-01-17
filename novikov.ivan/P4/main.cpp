@@ -101,7 +101,7 @@ namespace novikov {
         return nullptr;
       }
       in >> str[size];
-      if (!in || str[size] == '\0') {
+      if (!in || str[size] == '\n') {
         break;
       }
       ++size;
