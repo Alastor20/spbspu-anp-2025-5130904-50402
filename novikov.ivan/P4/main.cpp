@@ -10,7 +10,7 @@ namespace novikov {
   const size_t alphabet_size = 26;
   const size_t ascii_size = 256;
 
-  size_t countLatin(const char * str, size_t size)
+  size_t countLatin(const char * str)
   {
     size_t count = 0;
     char unique[alphabet_size] = {0};
@@ -127,7 +127,7 @@ int main()
     return 1;
   }
 
-  size_t result1 = novikov::countLatin(str, size);
+  size_t result1 = novikov::countLatin(str);
   size_t result2 = novikov::countSame(str, novikov::literal);
 
   std::cout << result1 << "\n";
