@@ -15,7 +15,7 @@ namespace novikov {
     size_t count = 0;
     char unique[alphabet_size] = {0};
 
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
       if (std::isalpha(str[i])) {
         size_t j = 0;
         while (j < count && unique[j] != std::tolower(str[i])) {
