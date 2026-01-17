@@ -127,6 +127,10 @@ int main()
   if (str == nullptr) {
     std::cerr << "Reading failed\n";
     return 1;
+  } else if (size == 0) {
+    free(str);
+    std::cerr << "String is empty\n";
+    return 1;
   }
 
   size_t result1 = novikov::countLatin(str);
