@@ -108,7 +108,9 @@ namespace novikov {
       ++size;
     }
 
-    str[size] = '\0';
+    if (str) {
+      str[size] = '\0';
+    }
 
     if (is_skipws) {
       in >> std::skipws;
@@ -122,8 +124,7 @@ int main()
   size_t size = 0;
   char * str = novikov::getline(std::cin, size);
 
-  if (str == nullptr || size == 0) {
-    free(str);
+  if (str == nullptr) {
     std::cerr << "Reading failed\n";
     return 1;
   }
