@@ -5,7 +5,7 @@
 
 namespace matveev
 {
-  char* getLine(std::istream& in, size_t* len);
+  char* getLine(std::istream& in, size_t& len);
   char* rmLat(char* dest, const char* src);
   int hasRep(const char* str);
 }
@@ -13,17 +13,25 @@ namespace matveev
 int main()
 {
   size_t len = 0;
-  char* str = matveev::getLine(std::cin, &len);
+  char* str = matveev::getLine(std::cin, len);
   if (str == nullptr) {
     std::cerr << "Error memory\n";
     return 1;
   }
-  char* res = static_cast< char* >(std::malloc(len + 1));
-  if (res == nullptr) {
+
+  size_t strLen = 0;
+  while (str[strLen] != '\0')
+  {
+    ++strLen;
+  }
+  char* res = static_cast<char*>(std::malloc(strLen + 1));
+  if (res == nullptr)
+  {
     std::free(str);
     std::cerr << "Error memory\n";
     return 1;
   }
+
   matveev::rmLat(res, str);
   std::cout << res << "\n";
   std::cout << matveev::hasRep(str) << "\n";
@@ -32,30 +40,38 @@ int main()
   return 0;
 }
 
-char* matveev::getLine(std::istream& in, size_t* len)
+char* matveev::getLine(std::istream& in, size_t& len)
 {
   size_t cap = 16;
   size_t size = 0;
-  char* buf = static_cast< char* >(std::malloc(cap));
-  if (buf == nullptr) {
+  char* buf = static_cast<char*>(std::malloc(cap));
+  if (buf == nullptr)
+  {
     return nullptr;
   }
   bool wasSkip = (in.flags() & std::ios_base::skipws);
-  if (wasSkip) {
+  if (wasSkip)
+  {
     in >> std::noskipws;
   }
   char c = '\0';
-  while (in >> c && c != '\n') {
-    if (size + 1 >= cap) {
+  while (in >> c && c != '\n')
+  {
+    if (size + 1 >= cap)
+    {
       size_t newCap = cap * 2;
-      char* newBuf = static_cast< char* >(std::realloc(buf, newCap));
-      if (newBuf == nullptr) {
+      char* newBuf = static_cast<char*>(std::malloc(newCap));
+      if (newBuf == nullptr)
+      {
         std::free(buf);
-        if (wasSkip) {
+        if (wasSkip)
+        {
           in >> std::skipws;
         }
         return nullptr;
       }
+      std::memcpy(newBuf, buf, cap);
+      std::free(buf);
       buf = newBuf;
       cap = newCap;
     }
@@ -63,9 +79,7 @@ char* matveev::getLine(std::istream& in, size_t* len)
     size++;
   }
   buf[size] = '\0';
-  if (len != nullptr) {
-    *len = size;
-  }
+  len = size;
   if (wasSkip) {
     in >> std::skipws;
   }
@@ -76,7 +90,7 @@ char* matveev::rmLat(char* dest, const char* src)
 {
   size_t j = 0;
   for (size_t i = 0; src[i] != '\0'; ++i) {
-    if (!std::isalpha(static_cast< unsigned char >(src[i]))) {
+    if (!std::isalpha(static_cast<unsigned char>(src[i]))) {
       dest[j] = src[i];
       j++;
     }
@@ -87,9 +101,8 @@ char* matveev::rmLat(char* dest, const char* src)
 
 int matveev::hasRep(const char* str)
 {
-  size_t len = std::strlen(str);
-  for (size_t i = 0; i < len; ++i) {
-    for (size_t j = i + 1; j < len; ++j) {
+  for (size_t i = 0; str[i] != '\0'; ++i) {
+    for (size_t j = i + 1; str[j] != '\0'; ++j) {
       if (str[i] == str[j]) {
         return 1;
       }
