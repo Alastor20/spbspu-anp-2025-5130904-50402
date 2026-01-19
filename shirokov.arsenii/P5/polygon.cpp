@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-shirokov::Polygon::Polygon(const point_t *vertices, size_t s) noexcept:
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s):
   center_({0, 0}),
   vertices_(new point_t[s]),
   s_(s),

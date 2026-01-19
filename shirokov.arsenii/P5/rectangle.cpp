@@ -42,8 +42,11 @@ void shirokov::Rectangle::move(double x, double y) noexcept
 
 void shirokov::Rectangle::scale(double coefficient) noexcept
 {
-  bottomLeft_ = {center_.x + coefficient * (bottomLeft_.x - center_.x),
-                 center_.y + coefficient * (bottomLeft_.y - center_.y)};
-  topRight_ = {center_.x + coefficient * (topRight_.x - center_.x),
-               center_.y + coefficient * (topRight_.y - center_.y)};
+  double tempX = center_.x + coefficient * (bottomLeft_.x - center_.x);
+  double tempY = center_.y + coefficient * (bottomLeft_.y - center_.y);
+  bottomLeft_ = {tempX, tempY};
+
+  tempX = center_.x + coefficient * (topRight_.x - center_.x);
+  tempY = center_.y + coefficient * (topRight_.y - center_.y);
+  topRight_ = {tempX, tempY};
 }

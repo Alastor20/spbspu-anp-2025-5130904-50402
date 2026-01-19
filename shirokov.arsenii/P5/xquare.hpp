@@ -15,10 +15,8 @@ namespace shirokov
     void move(double x, double y) noexcept override;
 
   private:
-    void scale(double coefficient) noexcept override;
-
-  private:
     point_t center_, top_, bottom_;
+    void scale(double coefficient) noexcept override;
   };
 }
 
