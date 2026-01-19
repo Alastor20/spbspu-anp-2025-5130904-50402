@@ -46,7 +46,7 @@ namespace lachugin
     return newLine;
   }
 
-  char* latRmv(const char* str, size_t& s, char* newLine)
+  char* latRmv(const char* str, char* newLine)
   {
     if (!newLine || !str)
     {
@@ -62,10 +62,7 @@ namespace lachugin
       }
     }
     newLine[k] = '\0';
-    s = k;
-    char* temp = newLine;
-
-    return temp;
+    return newLine;
   }
 
   char* expand(const char* oldLine, size_t& oldSize)
@@ -85,8 +82,10 @@ namespace lachugin
   {
     size_t capacity = 10;
     char* data = reinterpret_cast< char* >(malloc(capacity * sizeof(char)));
-    if (!data) return nullptr;
-
+    if (!data)
+    {
+      return nullptr;
+    }
     bool is_skip = in.flags() & std::ios_base::skipws;
     if (is_skip)
     {
@@ -112,11 +111,13 @@ namespace lachugin
         data = helpLine;
       }
       if (!(in >> hlpChar))
+      {
         break;
+      }
       data[s++] = hlpChar;
     }
     data[s] = '\0';
-    char* helpLine =  cut (data, s);
+    char* helpLine = cut(data, s);
     free(data);
     data = helpLine;
 
@@ -138,15 +139,16 @@ int main()
     std::cerr << "Error: no input.\n";
     return 2;
   }
-  const char string[] = { 'a', 'c', 'b', '\0' };
-  char* newLine = reinterpret_cast< char* >(malloc(s * sizeof(char)));
+  const char* string = "acb";
+  char* newLine = reinterpret_cast< char* >(malloc(s * sizeof(char) + 1));
   if (!newLine)
   {
-    free(newLine);
+    free(str);
     std::cerr << "Error: no input.\n";
     return 2;
   }
-  char* res2 = lachugin::latRmv(str, s, newLine);
+  newLine[s + 1] = '\0';
+  char* res2 = lachugin::latRmv(str, newLine);
 
   bool res1 = lachugin::hasSam(str, string);
   std::cout << std::boolalpha;
