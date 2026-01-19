@@ -147,7 +147,7 @@ int main()
     std::cerr << "Error: no input.\n";
     return 2;
   }
-  newLine[s + 1] = '\0';
+  newLine[s] = '\0';
   char* res2 = lachugin::latRmv(str, newLine);
 
   bool res1 = lachugin::hasSam(str, string);
