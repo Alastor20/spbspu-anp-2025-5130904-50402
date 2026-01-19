@@ -13,6 +13,7 @@ int main()
   dirko::Shape_vec shps = dirko::Shape_vec();
   shps.append(std::addressof(rec));
   shps.append(std::addressof(bub));
+  shps.append(std::addressof(pol));
   std::cout << "Before scale:\n\n";
   dirko::output(std::cout, shps.getConstIterator(), shps.size());
   dirko::point_t point = {};
