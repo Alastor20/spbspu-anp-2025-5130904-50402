@@ -103,11 +103,7 @@ dirko::Shape *dirko::Shape_vec::clone() const
 
 void dirko::Shape_vec::append(const Shape *elem)
 {
-  if (!empty()) {
-    add(elem, size_ - 1);
-  } else {
-    preappend(elem);
-  }
+  add(elem, size_);
 }
 void dirko::Shape_vec::preappend(const Shape *elem)
 {
@@ -123,14 +119,12 @@ void dirko::Shape_vec::add(const Shape *elem, size_t index)
     }
     reserve(cap_);
   }
-  if (!empty()) {
-    shps_[size_] = shps_[size_ - 1];
-    for (size_t i = size_ - 1; i > 0; --i) {
-      if (i > index) {
-        shps_[i] = shps_[i - 1];
-      } else if (i == index) {
-        shps_[i] = elem->clone();
-      }
+  shps_[size_ + 1] = shps_[size_];
+  for (size_t i = size_; i > 0; --i) {
+    if (i > index) {
+      shps_[i] = shps_[i - 1];
+    } else if (i == index) {
+      shps_[i] = elem->clone();
     }
   }
   if (index == 0) {
