@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <ctime>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 #include "shape_vec.hpp"
@@ -29,28 +30,27 @@ dirko::Shape_vec::Shape_vec(const Shape_vec &other):
       ++size_;
     }
   } catch (...) {
-    for (size_t i = 0; i < size_; ++i) {
-      delete shps_[i];
-    }
-    delete[] shps_;
+    clear();
     throw;
   }
 }
 
-dirko::Shape_vec::Shape_vec(Shape_vec &&r):
-  shps_(r.shps_),
-  size_(r.size_),
-  cap_(r.cap_)
+dirko::Shape_vec::Shape_vec(Shape_vec &&other):
+  shps_(other.shps_),
+  size_(other.size_),
+  cap_(other.cap_)
 {
-  r.shps_ = nullptr;
+  other.shps_ = nullptr;
 }
 
-dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&r)
+dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other)
 {
-  shps_ = r.shps_;
-  r.shps_ = nullptr;
-  size_ = r.size_;
-  cap_ = r.cap_;
+  if (this != std::addressof(other)) {
+    shps_ = other.shps_;
+    other.shps_ = nullptr;
+    size_ = other.size_;
+    cap_ = other.cap_;
+  }
   return *this;
 }
 
