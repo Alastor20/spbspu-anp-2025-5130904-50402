@@ -116,6 +116,7 @@ int main()
   catch (std::invalid_argument& e)
   {
     std::cerr << "Invalid scaling rate: " << e.what() << ".\n";
+    return 1;
   }
 
   std::cout << "== AFTER ==\n";
