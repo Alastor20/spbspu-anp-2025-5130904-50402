@@ -1,6 +1,6 @@
+#include "shapesUtil.hpp"
 #include <stdexcept>
 #include <iostream>
-#include "shapesUtil.hpp"
 
 void dirko::Shape::doScale(double coef) noexcept
 {

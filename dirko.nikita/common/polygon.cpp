@@ -28,8 +28,8 @@ dirko::point_t dirko::getPolMid(const point_t *pts, size_t size)
   return mid;
 }
 dirko::Polygon::Polygon(size_t size, point_t *pts):
-  size_(size),
   pts_(size > 2 ? new point_t[size] : nullptr),
+  size_(size),
   mid_(getPolMid(pts, size))
 {
   if (size < 3) {
@@ -43,25 +43,25 @@ dirko::Polygon::~Polygon() noexcept
 {
   delete[] pts_;
 }
-dirko::Polygon::Polygon(const Polygon &other)
+dirko::Polygon::Polygon(const Polygon &other):
+  pts_(other.size_ == 0 ? nullptr : new point_t[other.size_]),
+  size_(other.size_),
+  mid_(other.mid_)
 {
-  pts_ = new point_t[size_];
-  size_ = other.size_;
-  mid_ = other.mid_;
   for (size_t i = 0; i < size_; ++i) {
     pts_[i] = other.pts_[i];
   }
 }
-dirko::Polygon::Polygon(Polygon &&r) noexcept
+dirko::Polygon::Polygon(Polygon &&r) noexcept:
+  pts_(r.pts_),
+  size_(r.size_),
+  mid_(r.mid_)
 {
-  pts_ = r.pts_;
-  size_ = r.size_;
-  mid_ = r.mid_;
   r.pts_ = nullptr;
 }
 dirko::Polygon &dirko::Polygon::operator=(const Polygon &other)
 {
-  point_t *tmp = new point_t[size_];
+  point_t *tmp = new point_t[other.size_];
   delete[] pts_;
   pts_ = tmp;
   size_ = other.size_;

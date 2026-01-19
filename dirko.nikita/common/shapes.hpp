@@ -34,8 +34,8 @@ namespace dirko
     Shape *clone() const override;
 
   private:
-    size_t size_;
     point_t *pts_;
+    size_t size_;
     point_t mid_;
     void scale_(double coef) noexcept override;
   };
