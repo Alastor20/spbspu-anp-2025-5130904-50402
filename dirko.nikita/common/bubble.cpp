@@ -1,6 +1,6 @@
 #include "shapes.hpp"
 
-dirko::Bubble::Bubble(double r, p_t dot) noexcept:
+dirko::Bubble::Bubble(double r, point_t dot) noexcept:
   r_(r),
   dot_(dot)
 {}
@@ -8,12 +8,12 @@ double dirko::Bubble::getArea() const noexcept
 {
   return PI * r_ * r_;
 }
-dirko::rec_t dirko::Bubble::getFrameRect() const noexcept
+dirko::rectangle_t dirko::Bubble::getFrameRect() const noexcept
 {
-  p_t tmp = {dot_.x + r_ / 2, dot_.y};
+  point_t tmp = {dot_.x + r_ / 2, dot_.y};
   return {r_, r_, tmp};
 }
-void dirko::Bubble::move(p_t point) noexcept
+void dirko::Bubble::move(point_t point) noexcept
 {
   dot_ = point;
 }

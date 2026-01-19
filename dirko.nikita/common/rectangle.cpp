@@ -1,6 +1,6 @@
 #include "shapes.hpp"
 
-dirko::Rectangle::Rectangle(double w, double h, p_t mid) noexcept:
+dirko::Rectangle::Rectangle(double w, double h, point_t mid) noexcept:
   w_(w),
   h_(h),
   mid_(mid)
@@ -9,11 +9,11 @@ double dirko::Rectangle::getArea() const noexcept
 {
   return w_ * h_;
 }
-dirko::rec_t dirko::Rectangle::getFrameRect() const noexcept
+dirko::rectangle_t dirko::Rectangle::getFrameRect() const noexcept
 {
   return {w_, h_, mid_};
 }
-void dirko::Rectangle::move(p_t point) noexcept
+void dirko::Rectangle::move(point_t point) noexcept
 {
   mid_ = point;
 }

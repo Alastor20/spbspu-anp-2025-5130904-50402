@@ -7,51 +7,53 @@ namespace dirko
   const double PI = std::acos(-1.0);
   struct Rectangle final: Shape
   {
-    Rectangle(double w, double h, p_t mid) noexcept;
+    Rectangle(double w, double h, point_t mid) noexcept;
     double getArea() const noexcept override;
-    rec_t getFrameRect() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
-    void move(p_t point) noexcept override;
+    void move(point_t point) noexcept override;
     Shape *clone() const override;
 
   private:
     double w_, h_;
-    p_t mid_;
+    point_t mid_;
     void scale_(double coef) noexcept override;
   };
   struct Polygon final: Shape
   {
-    Polygon(size_t size, p_t *pts);
-    ~Polygon() noexcept override;
     Polygon(const Polygon &);
     Polygon(Polygon &&) noexcept;
+    Polygon(size_t size, point_t *pts);
+    ~Polygon() noexcept override;
     Polygon &operator=(const Polygon &);
     Polygon &operator=(Polygon &&) noexcept;
     double getArea() const noexcept override;
-    rec_t getFrameRect() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
-    void move(p_t point) noexcept override;
+    void move(point_t point) noexcept override;
     Shape *clone() const override;
 
   private:
     size_t size_;
-    p_t *pts_;
-    p_t mid_;
+    point_t *pts_;
+    point_t mid_;
     void scale_(double coef) noexcept override;
   };
   struct Bubble final: Shape
   {
-    Bubble(double r, p_t dot) noexcept;
+    Bubble(double r, point_t dot) noexcept;
     double getArea() const noexcept override;
-    rec_t getFrameRect() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
-    void move(p_t point) noexcept override;
+    void move(point_t point) noexcept override;
     Shape *clone() const override;
 
   private:
     double r_;
-    p_t dot_;
+    point_t dot_;
     void scale_(double coef) noexcept override;
   };
+  double getPolArea(const point_t *pts, size_t size);
+  point_t getPolMid(const point_t *pts, size_t size);
 }
 #endif

@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "shapes.hpp"
 
-double dirko::getPolArea(p_t *pts, size_t size)
+double dirko::getPolArea(const point_t *pts, size_t size)
 {
   double area = 0;
   for (size_t i = 0; i < size; ++i) {
@@ -12,10 +12,10 @@ double dirko::getPolArea(p_t *pts, size_t size)
   area = std::abs(area) / 2;
   return area;
 }
-dirko::p_t dirko::getPolMid(p_t *pts, size_t size)
+dirko::point_t dirko::getPolMid(const point_t *pts, size_t size)
 {
   double area = getPolArea(pts, size);
-  p_t mid{};
+  point_t mid{};
   double factor = 0.0;
   for (size_t i = 0; i < size; ++i) {
     size_t j = (i + 1) % size;
@@ -27,9 +27,9 @@ dirko::p_t dirko::getPolMid(p_t *pts, size_t size)
   mid.y /= (6.0 * area);
   return mid;
 }
-dirko::Polygon::Polygon(size_t size, p_t *pts):
+dirko::Polygon::Polygon(size_t size, point_t *pts):
   size_(size),
-  pts_(size > 2 ? new p_t[size] : nullptr),
+  pts_(size > 2 ? new point_t[size] : nullptr),
   mid_(getPolMid(pts, size))
 {
   if (size < 3) {
@@ -45,9 +45,9 @@ dirko::Polygon::~Polygon() noexcept
 }
 dirko::Polygon::Polygon(const Polygon &other)
 {
+  pts_ = new point_t[size_];
   size_ = other.size_;
   mid_ = other.mid_;
-  pts_ = new p_t[size_];
   for (size_t i = 0; i < size_; ++i) {
     pts_[i] = other.pts_[i];
   }
@@ -61,10 +61,11 @@ dirko::Polygon::Polygon(Polygon &&r) noexcept
 }
 dirko::Polygon &dirko::Polygon::operator=(const Polygon &other)
 {
+  point_t *tmp = new point_t[size_];
   delete[] pts_;
+  pts_ = tmp;
   size_ = other.size_;
   mid_ = other.mid_;
-  pts_ = new p_t[size_];
   for (size_t i = 0; i < size_; ++i) {
     pts_[i] = other.pts_[i];
   }
@@ -83,7 +84,7 @@ double dirko::Polygon::getArea() const noexcept
 {
   return getPolArea(pts_, size_);
 }
-dirko::rec_t dirko::Polygon::getFrameRect() const noexcept
+dirko::rectangle_t dirko::Polygon::getFrameRect() const noexcept
 {
   double maxx = pts_[0].x, minx = pts_[0].x;
   double maxy = pts_[0].y, miny = pts_[0].y;
@@ -106,7 +107,7 @@ void dirko::Polygon::move(double dx, double dy) noexcept
   mid_.x += dx;
   mid_.y += dy;
 }
-void dirko::Polygon::move(p_t point) noexcept
+void dirko::Polygon::move(point_t point) noexcept
 {
   double dx = point.x - mid_.x;
   double dy = point.y - mid_.y;

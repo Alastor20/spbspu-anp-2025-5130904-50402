@@ -1,6 +1,6 @@
 #include <stdexcept>
-#include "shapesUtil.hpp"
 #include <iostream>
+#include "shapesUtil.hpp"
 
 void dirko::Shape::doScale(double coef) noexcept
 {
@@ -13,22 +13,25 @@ void dirko::Shape::doScaleSafe(double coef)
   }
   scale_(coef);
 }
-void dirko::scaleFromPoint(Shape **shps, size_t size, p_t point, double coef)
+void dirko::scaleFromPoint(Shape **shps, size_t size, point_t point, double coef)
 {
+  if (coef <= 0) {
+    throw std::invalid_argument("Negative coef");
+  }
   for (size_t i = 0; i < size; ++i) {
-    rec_t fr = shps[i]->getFrameRect();
+    rectangle_t fr = shps[i]->getFrameRect();
     double dx = (fr.pos.x - point.x) * (coef - 1);
     double dy = (fr.pos.y - point.y) * (coef - 1);
     shps[i]->move(dx, dy);
-    shps[i]->doScaleSafe(coef);
+    shps[i]->doScale(coef);
   }
 }
-dirko::rec_t dirko::getTotalFrame(const Shape *const *shps, size_t size)
+dirko::rectangle_t dirko::getTotalFrame(const Shape *const *shps, size_t size)
 {
   if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
   }
-  rec_t frame = shps[0]->getFrameRect();
+  rectangle_t frame = shps[0]->getFrameRect();
   double left = frame.pos.x - frame.w / 2.0;
   double right = frame.pos.x + frame.w / 2.0;
   double bottom = frame.pos.y - frame.h / 2.0;
@@ -44,7 +47,7 @@ dirko::rec_t dirko::getTotalFrame(const Shape *const *shps, size_t size)
     bottom = std::min(b, bottom);
     top = std::max(t, top);
   }
-  rec_t total;
+  rectangle_t total;
   total.w = right - left;
   total.h = top - bottom;
   total.pos.x = (left + right) / 2.0;
@@ -58,13 +61,13 @@ std::ostream &dirko::output(std::ostream &os, const Shape *const *shps, size_t s
     double area = shps[i]->getArea();
     totalArea += area;
     os << "shape " << i + 1 << " area: " << area << "\n";
-    rec_t frame = shps[i]->getFrameRect();
+    rectangle_t frame = shps[i]->getFrameRect();
     os << "shape " << i + 1 << " frame x: " << frame.pos.x << "\n";
     os << "shape " << i + 1 << " frame y: " << frame.pos.y << "\n";
     os << "shape " << i + 1 << " frame width: " << frame.w << "\n";
     os << "shape " << i + 1 << " frame height: " << frame.h << "\n";
   }
-  rec_t totalFrame = getTotalFrame(shps, size);
+  rectangle_t totalFrame = getTotalFrame(shps, size);
   os << "Total area: " << totalArea << "\n";
   os << "Total frame x: " << totalFrame.pos.x << "\n";
   os << "Total frame y: " << totalFrame.pos.y << "\n";
