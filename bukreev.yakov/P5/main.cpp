@@ -14,63 +14,58 @@ namespace bukreev
 
   struct Shape
   {
-    virtual double getArea() const = 0;
-    virtual rectangle_t getFrameRect() const = 0;
-    virtual void move(point_t newPos) = 0;
-    virtual void move(double dX, double dY) = 0;
-    virtual void scale(double k) = 0;
+    virtual ~Shape() noexcept = default;
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const noexcept = 0;
+    virtual void move(point_t newPos) noexcept = 0;
+    virtual void move(double dX, double dY) noexcept = 0;
+    void scaleWithCheck(double k);
+    void scaleNoCheck(double k) noexcept;
+
+  protected:
+    virtual void scale(double k) noexcept = 0;
   };
 
-  struct Rectangle : Shape
+  struct Rectangle final: Shape
   {
-    Rectangle(point_t center, double width, double height):
-      mCenter(center),
-      mWidth(width),
-      mHeight(height)
-    {}
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t newPos) override;
-    void move(double dX, double dY) override;
-    void scale(double k) override;
+    Rectangle(point_t center, double width, double height) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t newPos) noexcept override;
+    void move(double dX, double dY) noexcept override;
+    void scale(double k) noexcept override;
 
   private:
-    point_t mCenter;
-    double mWidth, mHeight;
+    point_t m_Center;
+    double m_Width, m_Height;
   };
 
-  struct Xquare : Shape
+  struct Xquare final: Shape
   {
-    Xquare(point_t center, double diagWidth):
-      mCenter(center),
-      mDiagWidth(diagWidth)
-    {}
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t newPos) override;
-    void move(double dX, double dY) override;
-    void scale(double k) override;
+    Xquare(point_t center, double diagWidth) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t newPos) noexcept override;
+    void move(double dX, double dY) noexcept override;
+    void scale(double k) noexcept override;
 
   private:
-    point_t mCenter;
-    double mDiagWidth;
+    point_t m_Center;
+    double m_DiagWidth;
   };
 
-  struct Square : Shape
+  struct Square final: Shape
   {
-    Square(point_t center, double width):
-      mCenter(center),
-      mWidth(width)
-    {}
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t newPos) override;
-    void move(double dX, double dY) override;
-    void scale(double k) override;
+    Square(point_t center, double width) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t newPos) noexcept override;
+    void move(double dX, double dY) noexcept override;
+    void scale(double k) noexcept override;
 
   private:
-    point_t mCenter;
-    double mWidth;
+    point_t m_Center;
+    double m_Width;
   };
 
   void scaleShapes(Shape* const* shapes, size_t shapeCount, point_t base, double k);
@@ -86,10 +81,14 @@ int main()
   Rectangle rect({0, 0}, 100, 80);
   Xquare xqr({20, 30}, 48);
   Square sqr({-7, 14}, 20);
-  Shape* shapes[] = {&rect, &xqr, &sqr};
 
-  point_t base;
-  double k;
+  Shape* shapes[3];
+  shapes[0] = std::addressof(rect);
+  shapes[1] = std::addressof(xqr);
+  shapes[2] = std::addressof(sqr);
+
+  point_t base = {};
+  double k = 1;
 
   std::cout << "Enter scaling base: ";
   std::cin >> base.x >> base.y;
@@ -101,7 +100,7 @@ int main()
 
   std::cout << "Enter scaling rate: ";
   std::cin >> k;
-  if (!std::cin || k < 0)
+  if (!std::cin)
   {
     std::cerr << "Invalid scaling rate.\n";
     return 1;
@@ -110,7 +109,14 @@ int main()
   std::cout << "== BEFORE ==\n";
   printShapes(std::cout, shapes, 3);
 
-  scaleShapes(shapes, 3, base, k);
+  try
+  {
+    scaleShapes(shapes, 3, base, k);
+  }
+  catch (std::invalid_argument& e)
+  {
+    std::cerr << "Invalid scaling rate: " << e.what() << ".\n";
+  }
 
   std::cout << "== AFTER ==\n";
   printShapes(std::cout, shapes, 3);
@@ -118,6 +124,11 @@ int main()
 
 void bukreev::scaleShapes(Shape* const* shapes, size_t shapeCount, point_t base, double k)
 {
+  if (k < 0)
+  {
+    throw std::invalid_argument("Scaling rate should be non-negative");
+  }
+
   for (size_t i = 0; i < shapeCount; i++)
   {
     Shape* shape = shapes[i];
@@ -126,7 +137,7 @@ void bukreev::scaleShapes(Shape* const* shapes, size_t shapeCount, point_t base,
     double x = (pos.x - base.x) * k + base.x;
     double y = (pos.y - base.y) * k + base.x;
     shape->move({x, y});
-    shape->scale(k);
+    shape->scaleNoCheck(k);
   }
 }
 
@@ -185,72 +196,103 @@ bukreev::rectangle_t bukreev::getFrameRect(const Shape* const* shapes, size_t sh
   double y = (minBottom + maxTop) / 2;
   double w = maxRight - minLeft;
   double h = maxTop - minBottom;
-  return rectangle_t {{x, y}, w, h};
+  return {{x, y}, w, h};
 }
 
-double bukreev::Rectangle::getArea() const
+void bukreev::Shape::scaleWithCheck(double k)
 {
-  return mWidth * mHeight;
-}
-bukreev::rectangle_t bukreev::Rectangle::getFrameRect() const
-{
-  return rectangle_t{mCenter, mWidth, mHeight};
-}
-void bukreev::Rectangle::move(point_t newPos)
-{
-  mCenter = newPos;
-}
-void bukreev::Rectangle::move(double dX, double dY)
-{
-  mCenter.x += dX;
-  mCenter.y += dY;
-}
-void bukreev::Rectangle::scale(double k)
-{
-  mWidth *= k;
-  mHeight *= k;
+  if (k < 0)
+  {
+    throw std::invalid_argument("Scaling rate should be non-negative");
+  }
+
+  scale(k);
 }
 
-double bukreev::Xquare::getArea() const
+void bukreev::Shape::scaleNoCheck(double k) noexcept
 {
-  return (mDiagWidth * mDiagWidth) / 2;
-}
-bukreev::rectangle_t bukreev::Xquare::getFrameRect() const
-{
-  return rectangle_t {mCenter, mDiagWidth, mDiagWidth};
-}
-void bukreev::Xquare::move(point_t newPos)
-{
-  mCenter = newPos;
-}
-void bukreev::Xquare::move(double dX, double dY)
-{
-  mCenter.x += dX;
-  mCenter.y += dY;
-}
-void bukreev::Xquare::scale(double k)
-{
-  mDiagWidth *= k;
+  scale(k);
 }
 
-double bukreev::Square::getArea() const
+bukreev::Rectangle::Rectangle(point_t center, double width, double height) noexcept:
+  m_Center(center),
+  m_Width(width),
+  m_Height(height)
+{}
+
+double bukreev::Rectangle::getArea() const noexcept
 {
-  return mWidth * mWidth;
+  return m_Width * m_Height;
 }
-bukreev::rectangle_t bukreev::Square::getFrameRect() const
+bukreev::rectangle_t bukreev::Rectangle::getFrameRect() const noexcept
 {
-  return rectangle_t {mCenter, mWidth, mWidth};
+  return {m_Center, m_Width, m_Height};
 }
-void bukreev::Square::move(point_t newPos)
+void bukreev::Rectangle::move(point_t newPos) noexcept
 {
-  mCenter = newPos;
+  m_Center = newPos;
 }
-void bukreev::Square::move(double dX, double dY)
+void bukreev::Rectangle::move(double dX, double dY) noexcept
 {
-  mCenter.x += dX;
-  mCenter.y += dY;
+  m_Center.x += dX;
+  m_Center.y += dY;
 }
-void bukreev::Square::scale(double k)
+void bukreev::Rectangle::scale(double k) noexcept
 {
-  mWidth *= k;
+  m_Width *= k;
+  m_Height *= k;
+}
+
+bukreev::Xquare::Xquare(point_t center, double diagWidth) noexcept:
+  m_Center(center),
+  m_DiagWidth(diagWidth)
+{}
+
+double bukreev::Xquare::getArea() const noexcept
+{
+  return (m_DiagWidth * m_DiagWidth) / 2;
+}
+bukreev::rectangle_t bukreev::Xquare::getFrameRect() const noexcept
+{
+  return {m_Center, m_DiagWidth, m_DiagWidth};
+}
+void bukreev::Xquare::move(point_t newPos) noexcept
+{
+  m_Center = newPos;
+}
+void bukreev::Xquare::move(double dX, double dY) noexcept
+{
+  m_Center.x += dX;
+  m_Center.y += dY;
+}
+void bukreev::Xquare::scale(double k) noexcept
+{
+  m_DiagWidth *= k;
+}
+
+bukreev::Square::Square(point_t center, double width) noexcept:
+  m_Center(center),
+  m_Width(width)
+{}
+
+double bukreev::Square::getArea() const noexcept
+{
+  return m_Width * m_Width;
+}
+bukreev::rectangle_t bukreev::Square::getFrameRect() const noexcept
+{
+  return {m_Center, m_Width, m_Width};
+}
+void bukreev::Square::move(point_t newPos) noexcept
+{
+  m_Center = newPos;
+}
+void bukreev::Square::move(double dX, double dY) noexcept
+{
+  m_Center.x += dX;
+  m_Center.y += dY;
+}
+void bukreev::Square::scale(double k) noexcept
+{
+  m_Width *= k;
 }
