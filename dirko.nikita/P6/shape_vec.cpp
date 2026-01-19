@@ -61,7 +61,7 @@ dirko::Shape_vec &dirko::Shape_vec::operator=(const Shape_vec &other)
   return *this;
 }
 
-dirko::rec_t dirko::Shape_vec::getFrameRect() const noexcept
+dirko::rectangle_t dirko::Shape_vec::getFrameRect() const noexcept
 {
   return getTotalFrame(shps_, size_);
 }
@@ -80,7 +80,7 @@ void dirko::Shape_vec::move(double dx, double dy) noexcept
   }
 }
 
-void dirko::Shape_vec::move(p_t point) noexcept
+void dirko::Shape_vec::move(point_t point) noexcept
 {
   for (size_t i = 0; i < size_; ++i) {
     shps_[i]->move(point);

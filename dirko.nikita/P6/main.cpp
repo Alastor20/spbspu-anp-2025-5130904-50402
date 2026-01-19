@@ -8,7 +8,7 @@ int main()
   constexpr size_t pol_n = 5;
   dirko::Rectangle rec{5, 7, {3, 3}};
   dirko::Bubble bub{5, {2, 0}};
-  dirko::p_t pts[pol_n] = {{2, 2}, {2, 7}, {2.5, 8}, {3, 7}, {3, 2}};
+  dirko::point_t pts[pol_n] = {{2, 2}, {2, 7}, {2.5, 8}, {3, 7}, {3, 2}};
   dirko::Polygon pol(pol_n, pts);
   dirko::Shape_vec shps = dirko::Shape_vec();
   shps.append(std::addressof(rec));
@@ -16,7 +16,7 @@ int main()
   shps.append(std::addressof(pol));
   std::cout << "Before scale:\n\n";
   dirko::output(std::cout, shps.getConstIterator(), shps.size());
-  dirko::p_t point = {};
+  dirko::point_t point = {};
   double coef = 0;
   if (!(std::cin >> point.x >> point.y >> coef)) {
     std::cerr << "Cant read\n";

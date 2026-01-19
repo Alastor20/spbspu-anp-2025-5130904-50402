@@ -13,8 +13,8 @@ namespace dirko
     Shape_vec &operator=(const Shape_vec &);
     Shape_vec &operator=(Shape_vec &&);
     double getArea() const noexcept override;
-    rec_t getFrameRect() const noexcept override;
-    void move(p_t point) noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t point) noexcept override;
     void move(double dx, double dy) noexcept override;
     Shape *clone() const override;
     void doScale(double coef) noexcept;
