@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <memory>
+#include <limits>
 
 namespace pozdnyakov
 {
@@ -11,32 +11,21 @@ namespace pozdnyakov
 
   std::istream& readDimensions(std::istream& in, size_t& rows, size_t& cols)
   {
-    long r = 0;
-    long c = 0;
-
-    if (!(in >> r))
+    if (!(in >> rows))
     {
       return in;
     }
-    if (!(in >> c))
+    if (!(in >> cols))
     {
-      return in;
-    }
-    if (r < 0 || c < 0)
-    {
-      in.setstate(std::ios::failbit);
       return in;
     }
 
-    rows = static_cast< size_t >(r);
-    cols = static_cast< size_t >(c);
     return in;
   }
 
   std::istream& readMatrix(std::istream& in, int* data, size_t rows, size_t cols)
   {
     size_t total = rows * cols;
-
     for (size_t i = 0; i < total; i++)
     {
       if (!(in >> data[i]))
@@ -55,29 +44,36 @@ namespace pozdnyakov
     }
 
     size_t count = 0;
-    size_t maxDiag = rows + cols - 2;
 
-    for (size_t k = 0; k <= maxDiag; k++)
+    for (size_t startRow = 0; startRow < rows; ++startRow)
     {
-      bool exists = false;
       bool hasZero = false;
-
-      for (size_t i = 0; i < rows; i++)
+      for (size_t r = startRow, c = 0; r < rows && c < cols; ++r, ++c)
       {
-        size_t j = (k >= i) ? (k - i) : MAX_COLS;
-
-        if (j < cols)
+        if (data[r * cols + c] == 0)
         {
-          exists = true;
-          if (data[i * cols + j] == 0)
-          {
-            hasZero = true;
-            break;
-          }
+          hasZero = true;
+          break;
         }
       }
+      if (!hasZero)
+      {
+        count++;
+      }
+    }
 
-      if (exists && !hasZero)
+    for (size_t startCol = 1; startCol < cols; ++startCol)
+    {
+      bool hasZero = false;
+      for (size_t r = 0, c = startCol; r < rows && c < cols; ++r, ++c)
+      {
+        if (data[r * cols + c] == 0)
+        {
+          hasZero = true;
+          break;
+        }
+      }
+      if (!hasZero)
       {
         count++;
       }
@@ -93,16 +89,19 @@ namespace pozdnyakov
       return;
     }
 
-    size_t layers = (rows < cols ? rows : cols);
-    layers = (layers + 1) / 2;
+    size_t minDim = (rows < cols) ? rows : cols;
+    size_t layers = (minDim + 1) / 2;
 
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int inc = static_cast< int >(layer + 1);
+      int inc = 1;
 
-      for (size_t r = layer; r < rows - layer; r++)
+      size_t lastRow = rows - 1 - layer;
+      size_t lastCol = cols - 1 - layer;
+
+      for (size_t r = layer; r <= lastRow; r++)
       {
-        for (size_t c = layer; c < cols - layer; c++)
+        for (size_t c = layer; c <= lastCol; c++)
         {
           data[r * cols + c] += inc;
         }
@@ -113,35 +112,29 @@ namespace pozdnyakov
   std::ostream& writeMatrix(std::ostream& out, const int* data, size_t rows, size_t cols)
   {
     out << rows << ' ' << cols;
-
     size_t total = rows * cols;
-
     for (size_t i = 0; i < total; i++)
     {
       out << ' ' << data[i];
     }
-
+    out << '\n';
     return out;
   }
 
   bool validateArgs(const char* s)
   {
     char* endptr = nullptr;
-
     long num = std::strtol(s, std::addressof(endptr), 10);
     if (endptr == s || *endptr != '\0')
     {
       return false;
     }
-
     if (num != 1 && num != 2)
     {
       return false;
     }
-
     return true;
   }
-
 }
 
 int main(int argc, char* argv[])
@@ -150,13 +143,13 @@ int main(int argc, char* argv[])
 
   if (argc != 4)
   {
-    std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
+    std::cerr << "Not enough arguments\n";
     return 1;
   }
 
   if (!validateArgs(argv[1]))
   {
-    std::cerr << "Invalid first argument\n";
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
 
@@ -180,16 +173,11 @@ int main(int argc, char* argv[])
     return 2;
   }
 
-  if (rows == 0 || cols == 0)
+  if (rows == 0 && cols == 0)
   {
     std::ofstream out(outputFile);
-    if (!out.is_open())
-    {
-      std::cerr << "Cannot open output file\n";
-      return 3;
-    }
-    out << 0 << '\n';
-    out << 0 << ' ' << 0 << '\n';
+    if (!out.is_open()) return 3;
+    out << 0 << '\n' << 0 << ' ' << 0 << '\n';
     return 0;
   }
 
