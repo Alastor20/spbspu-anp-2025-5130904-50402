@@ -16,10 +16,10 @@ namespace pozdnyakov
   {
     for (size_t i = 0; str[i] != '\0'; ++i)
     {
-      if (std::isalpha(static_cast< unsigned char >(str[i])))
+      if (std::isalpha(static_cast<unsigned char>(str[i])))
       {
-        unsigned char uCh = static_cast< unsigned char >(str[i]);
-        char lowerCh = static_cast< char >(std::tolower(uCh));
+        unsigned char uCh = static_cast<unsigned char>(str[i]);
+        char lowerCh = static_cast<char>(std::tolower(uCh));
         map[lowerCh - 'a'] = true;
       }
     }
@@ -43,6 +43,12 @@ namespace pozdnyakov
 
     while (in.get(ch))
     {
+      if (ch == '\n')
+      {
+        delete[] str;
+        return nullptr;
+      }
+
       if (!check(ch))
       {
         str[size] = ch;
@@ -61,6 +67,10 @@ namespace pozdnyakov
     {
       if (check(ch))
       {
+        if (ch == '\n')
+        {
+          in.putback(ch);
+        }
         break;
       }
 
@@ -132,7 +142,7 @@ namespace pozdnyakov
     {
       if (present[i])
       {
-        dest[idx] = static_cast< char >('a' + i);
+        dest[idx] = static_cast<char>('a' + i);
         ++idx;
       }
     }
