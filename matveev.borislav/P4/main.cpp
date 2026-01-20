@@ -24,7 +24,7 @@ int main()
   {
     ++strLen;
   }
-  char* res = static_cast<char*>(std::malloc(strLen + 1));
+  char* res = static_cast< char* >(std::malloc(strLen + 1));
   if (res == nullptr)
   {
     std::free(str);
@@ -43,8 +43,8 @@ int main()
 char* matveev::getLine(std::istream& in, size_t& len)
 {
   size_t cap = 16;
-  size_t size = 0;
-  char* buf = static_cast<char*>(std::malloc(cap));
+  len = 0;
+  char* buf = static_cast< char* >(std::malloc(cap));
   if (buf == nullptr)
   {
     return nullptr;
@@ -57,10 +57,10 @@ char* matveev::getLine(std::istream& in, size_t& len)
   char c = '\0';
   while (in >> c && c != '\n')
   {
-    if (size + 1 >= cap)
+    if (len + 1 >= cap)
     {
       size_t newCap = cap * 2;
-      char* newBuf = static_cast<char*>(std::malloc(newCap));
+      char* newBuf = static_cast< char* >(std::malloc(newCap));
       if (newBuf == nullptr)
       {
         std::free(buf);
@@ -75,12 +75,12 @@ char* matveev::getLine(std::istream& in, size_t& len)
       buf = newBuf;
       cap = newCap;
     }
-    buf[size] = c;
-    size++;
+    buf[len] = c;
+    len++;
   }
-  buf[size] = '\0';
-  len = size;
-  if (wasSkip) {
+  buf[len] = '\0';
+  if (wasSkip)
+  {
     in >> std::skipws;
   }
   return buf;
@@ -90,7 +90,7 @@ char* matveev::rmLat(char* dest, const char* src)
 {
   size_t j = 0;
   for (size_t i = 0; src[i] != '\0'; ++i) {
-    if (!std::isalpha(static_cast<unsigned char>(src[i]))) {
+    if (!std::isalpha(static_cast< unsigned char >(src[i]))) {
       dest[j] = src[i];
       j++;
     }
