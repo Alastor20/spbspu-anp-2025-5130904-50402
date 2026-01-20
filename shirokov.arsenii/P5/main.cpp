@@ -15,6 +15,7 @@ namespace shirokov
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
+  void printTabs(size_t k);
   void printFrameInfo(const rectangle_t &frameRect, size_t indents);
   const size_t SIZE = 5;
 }
@@ -86,17 +87,17 @@ int main()
   }
 }
 
-void shirokov::scaleAboutPoint(shirokov::point_t target, double coefficient, shirokov::Shape *figure)
+void shirokov::scaleAboutPoint(point_t target, double coefficient, Shape *figure)
 {
   point_t point1 = figure->getFrameRect().pos;
   figure->move(target);
   point_t delta = {target.x - point1.x, target.y - point1.y};
-  figure->doScale(coefficient);
+  figure->safeScale(coefficient);
   point_t res = {target.x - delta.x * coefficient, target.y - delta.y * coefficient};
   figure->move(res);
 }
 
-double shirokov::getTotalArea(const shirokov::Shape *const *figures, size_t s)
+double shirokov::getTotalArea(const Shape *const *figures, size_t s)
 {
   double res = 0;
   for (size_t i = 0; i < s; ++i)
@@ -106,7 +107,7 @@ double shirokov::getTotalArea(const shirokov::Shape *const *figures, size_t s)
   return res;
 }
 
-shirokov::rectangle_t shirokov::getTotalFrameRect(const shirokov::Shape *const *figures, size_t s)
+shirokov::rectangle_t shirokov::getTotalFrameRect(const Shape *const *figures, size_t s)
 {
   rectangle_t frameRect = figures[0]->getFrameRect();
   double minX = frameRect.pos.x - frameRect.width / 2;
@@ -153,31 +154,24 @@ void shirokov::printInfo(const Shape *const *figures, size_t s)
   printFrameInfo(frameRect, 1);
 }
 
-void shirokov::printFrameInfo(const rectangle_t &frameRect, size_t k)
+void shirokov::printTabs(size_t k)
 {
-  char *indents = new char[2];
-  size_t cap = 2;
-  size_t s = 0;
   for (size_t i = 0; i < k; ++i)
   {
-    if (s + 1 >= cap)
-    {
-      char *tmp = new char[cap * 2];
-      for (size_t j = 0; j < s; ++j)
-      {
-        tmp[j] = indents[j];
-      }
-      delete[] indents;
-      indents = tmp;
-      cap *= 2;
-    }
-    indents[s++] = '\t';
+    std::cout << '\t';
   }
-  indents[s] = '\0';
-  std::cout << indents << "Width: " << frameRect.width << '\n';
-  std::cout << indents << "Height: " << frameRect.height << '\n';
-  std::cout << indents << "Center:\n";
-  std::cout << indents << "\tx: " << frameRect.pos.x << '\n';
-  std::cout << indents << "\ty: " << frameRect.pos.y << '\n';
-  delete[] indents;
+}
+
+void shirokov::printFrameInfo(const rectangle_t &frameRect, size_t k)
+{
+  printTabs(k);
+  std::cout << "Width: " << frameRect.width << '\n';
+  printTabs(k);
+  std::cout << "Height: " << frameRect.height << '\n';
+  printTabs(k);
+  std::cout << "Center:\n";
+  printTabs(k);
+  std::cout << "\tx: " << frameRect.pos.x << '\n';
+  printTabs(k);
+  std::cout << "\ty: " << frameRect.pos.y << '\n';
 }

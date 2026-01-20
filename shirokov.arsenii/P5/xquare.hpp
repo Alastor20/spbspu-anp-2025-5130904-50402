@@ -12,7 +12,7 @@ namespace shirokov
     double getArea() const noexcept override;
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t target) noexcept override;
-    void move(double x, double y) noexcept override;
+    void move(double dx, double dy) noexcept override;
 
   private:
     point_t center_, top_, bottom_;

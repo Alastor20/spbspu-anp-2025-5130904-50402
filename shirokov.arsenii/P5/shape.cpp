@@ -1,7 +1,7 @@
 #include "shape.hpp"
 #include <stdexcept>
 
-void shirokov::Shape::doScale(double coefficient)
+void shirokov::Shape::safeScale(double coefficient)
 {
   if (coefficient <= 0)
   {

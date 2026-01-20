@@ -32,12 +32,16 @@ void shirokov::Rectangle::move(point_t target) noexcept
   bottomLeft_ = {bottomLeft_.x - delta.x, bottomLeft_.y - delta.y};
 }
 
-void shirokov::Rectangle::move(double x, double y) noexcept
+void shirokov::Rectangle::move(double dx, double dy) noexcept
 {
-  point_t delta = {center_.x - x, center_.y - y};
-  center_ = {x, y};
-  topRight_ = {topRight_.x - delta.x, topRight_.y - delta.y};
-  bottomLeft_ = {bottomLeft_.x - delta.x, bottomLeft_.y - delta.y};
+  center_.x += dx;
+  center_.y += dy;
+
+  topRight_.x += dx;
+  topRight_.y += dy;
+
+  bottomLeft_.x += dx;
+  bottomLeft_.y += dy;
 }
 
 void shirokov::Rectangle::scale(double coefficient) noexcept

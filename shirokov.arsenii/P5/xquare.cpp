@@ -37,12 +37,16 @@ void shirokov::Xquare::move(point_t target) noexcept
   bottom_ = {bottom_.x - delta.x, bottom_.y - delta.y};
 }
 
-void shirokov::Xquare::move(double x, double y) noexcept
+void shirokov::Xquare::move(double dx, double dy) noexcept
 {
-  point_t delta = {center_.x - x, center_.y - y};
-  center_ = {x, y};
-  top_ = {top_.x - delta.x, top_.y - delta.y};
-  bottom_ = {bottom_.x - delta.x, bottom_.y - delta.y};
+  center_.x += dx;
+  center_.y += dy;
+
+  top_.x += dx;
+  top_.y += dy;
+
+  bottom_.x += dx;
+  bottom_.y += dy;
 }
 
 void shirokov::Xquare::scale(double coefficient) noexcept

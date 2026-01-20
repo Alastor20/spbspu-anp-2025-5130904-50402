@@ -10,10 +10,8 @@ namespace shirokov
     virtual double getArea() const noexcept = 0;
     virtual rectangle_t getFrameRect() const noexcept = 0;
     virtual void move(point_t target) noexcept = 0;
-    virtual void move(double x, double y) noexcept = 0;
-    void doScale(double coefficient);
-
-  private:
+    virtual void move(double dx, double dy) noexcept = 0;
+    void safeScale(double coefficient);
     virtual void scale(double coefficient) noexcept = 0;
   };
 }

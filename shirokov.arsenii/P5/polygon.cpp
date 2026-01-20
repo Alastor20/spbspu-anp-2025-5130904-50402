@@ -64,13 +64,14 @@ void shirokov::Polygon::move(point_t target) noexcept
   }
 }
 
-void shirokov::Polygon::move(double x, double y) noexcept
+void shirokov::Polygon::move(double dx, double dy) noexcept
 {
-  point_t delta = {center_.x - x, center_.y - y};
-  center_ = {x, y};
+  center_.x += dx;
+  center_.y += dy;
   for (size_t i = 0; i < s_; ++i)
   {
-    vertices_[i] = {vertices_[i].x - delta.x, vertices_[i].y - delta.y};
+    vertices_[i].x += dx;
+    vertices_[i].y += dy;
   }
 }
 
