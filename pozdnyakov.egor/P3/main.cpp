@@ -19,7 +19,6 @@ namespace pozdnyakov
     {
       return in;
     }
-
     return in;
   }
 
@@ -176,7 +175,11 @@ int main(int argc, char* argv[])
   if (rows == 0 && cols == 0)
   {
     std::ofstream out(outputFile);
-    if (!out.is_open()) return 3;
+    if (!out.is_open())
+    {
+      std::cerr << "Cannot open output file\n";
+      return 3;
+    }
     out << 0 << '\n' << 0 << ' ' << 0 << '\n';
     return 0;
   }
