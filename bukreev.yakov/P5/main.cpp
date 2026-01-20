@@ -33,6 +33,8 @@ namespace bukreev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t newPos) noexcept override;
     void move(double dX, double dY) noexcept override;
+
+  private:
     void scale(double k) noexcept override;
 
   private:
@@ -47,6 +49,8 @@ namespace bukreev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t newPos) noexcept override;
     void move(double dX, double dY) noexcept override;
+
+  private:
     void scale(double k) noexcept override;
 
   private:
@@ -61,6 +65,8 @@ namespace bukreev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t newPos) noexcept override;
     void move(double dX, double dY) noexcept override;
+
+  private:
     void scale(double k) noexcept override;
 
   private:
