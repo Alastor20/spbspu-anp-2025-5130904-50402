@@ -4,93 +4,93 @@
 #include <stdexcept>
 
 namespace lavrentev {
-const size_t n = 3;
+  const size_t n = 3;
 
-struct point_t {
-  double x, y;
-};
+  struct point_t {
+    double x, y;
+  };
 
-struct rectangle_t {
-  double width, height;
-  point_t pos;
-};
+  struct rectangle_t {
+    double width, height;
+    point_t pos;
+  };
 
-class Shape {
-public:
-  virtual ~Shape() noexcept = default;
-  virtual double getArea() const noexcept = 0;
-  virtual rectangle_t getFrameRect() const noexcept = 0;
-  virtual void move(const point_t &c) noexcept = 0;
-  virtual void move(double d_x, double d_y) noexcept = 0;
+  class Shape {
+  public:
+    virtual ~Shape() noexcept = default;
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const noexcept = 0;
+    virtual void move(point_t c) noexcept = 0;
+    virtual void move(double d_x, double d_y) noexcept = 0;
 
-  void scale(double coef);
+    void scale(double coef);
+    virtual void figureScaling(double coef) noexcept = 0;
+  };
 
-private:
-  virtual void scaleImpl(double coef) = 0;
-};
+  class Rectangle final: public Shape {
+  public:
+    explicit Rectangle(point_t pos, double width, double height);
 
-class Rectangle final: public Shape {
-public:
-  explicit Rectangle(point_t pos, double width, double height);
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t c) noexcept override;
+    void move(double d_x, double d_y) noexcept override;
 
-  double getArea() const noexcept override;
-  lavrentev::rectangle_t getFrameRect() const noexcept override;
-  void move(const lavrentev::point_t &c) noexcept override;
-  void move(double d_x, double d_y) noexcept override;
+    void figureScaling(double coef) noexcept override;
 
-private:
-  void scaleImpl(double coef) override;
+  private:
+    point_t pos_;
+    double width_, height_;
+  };
 
-  point_t pos_;
-  double width_, height_;
-};
+  class Rubber final: public Shape {
+  public:
+    explicit Rubber(point_t pos, point_t outCenter, double rPos, double rOut);
 
-class Rubber final: public Shape {
-public:
-  explicit Rubber(point_t pos, point_t outCenter, double rPos, double rOut);
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t c) noexcept override;
+    void move(double d_x, double d_y) noexcept override;
 
-  double getArea() const noexcept override;
-  lavrentev::rectangle_t getFrameRect() const noexcept override;
-  void move(const lavrentev::point_t &c) noexcept override;
-  void move(double d_x, double d_y) noexcept override;
+    void figureScaling(double coef) noexcept override;
 
-private:
-  void scaleImpl(double coef) override;
+  private:
+    point_t pos_;
+    point_t outCenter_;
+    double rPos_;
+    double rOut_;
+  };
 
-  point_t pos_;
-  point_t outCenter_;
-  double rPos_;
-  double rOut_;
-};
+  class Polygon final: public Shape {
+  public:
+    explicit Polygon(const point_t *vertexes, size_t n);
+    ~Polygon() noexcept;
 
-class Polygon final: public Shape {
-public:
-  explicit Polygon(point_t *vertexes, size_t n);
-  ~Polygon();
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t c) noexcept override;
+    void move(double d_x, double d_y) noexcept override;
 
-  double getArea() const noexcept override;
-  lavrentev::rectangle_t getFrameRect() const noexcept override;
-  void move(const lavrentev::point_t &c) noexcept override;
-  void move(double d_x, double d_y) noexcept override;
+    void figureScaling(double coef) noexcept override;
 
-private:
-  void scaleImpl(double coef) override;
+  private:
+    point_t pos_;
+    size_t n_;
+    point_t *vertexes_;
+  };
 
-  point_t pos_;
-  size_t n_;
-  point_t *vertexes_;
-};
-
-int polyPos(point_t &pos, size_t n, point_t *vertexes);
-rectangle_t fullFrame(Shape *const *figures, size_t n);
-void userShape(Shape **figures, point_t user_dot, double coef, const size_t n);
-void printInfo(Shape **figures);
+  int polyPos(point_t &pos, size_t n, const point_t *vertexes) noexcept;
+  rectangle_t fullFrame(const Shape *const *figures, size_t n) noexcept;
+  void userShape(Shape **figures, point_t user_dot, double coef, size_t n);
+  void printInfo(const Shape *const *figures, const size_t n) noexcept;
 }
 
 int main()
 {
-  size_t k = 7;
-  lavrentev::point_t *vrtxs = nullptr;
+  const size_t k = 7;  // <-- константа
+  const lavrentev::point_t vrtxs[] = {{1.2, 5.6}, {3.3, -4.7},
+      {1.1, 9.3}, {-5.5, -3.0},
+      {-7.3, -0.3}, {-2.1, 4.8}, {3.6, 8.3}};
 
   lavrentev::Shape *figures[lavrentev::n] = {nullptr, nullptr, nullptr};
   try {
@@ -101,11 +101,10 @@ int main()
     for (size_t i = 0; i < lavrentev::n; ++i) {
       delete figures[i];
     }
-    delete[] vrtxs;
     return 1;
   }
 
-  lavrentev::printInfo(figures);
+  lavrentev::printInfo(figures, lavrentev::n);
 
   double x, y, coef;
   std::cin >> x >> y >> coef;
@@ -118,7 +117,7 @@ int main()
   }
 
   try {
-    lavrentev::point_t user_dot = {x, y};
+    const lavrentev::point_t user_dot = {x, y};
     lavrentev::userShape(figures, user_dot, coef, lavrentev::n);
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
@@ -129,7 +128,7 @@ int main()
   }
 
   std::cout << "Новые данные: " << "\n\n";
-  lavrentev::printInfo(figures);
+  lavrentev::printInfo(figures, lavrentev::n);
 
   for (size_t i = 0; i < lavrentev::n; ++i) {
     delete figures[i];
@@ -137,11 +136,12 @@ int main()
   return 0;
 }
 
-void lavrentev::Shape::scale(double coef) {
+void lavrentev::Shape::scale(double coef)
+{
   if (coef <= 0) {
     throw std::invalid_argument("Coef must be positive");
   }
-  scaleImpl(coef);
+  figureScaling(coef);
 }
 
 lavrentev::Rectangle::Rectangle(point_t pos, double width, double height):
@@ -161,14 +161,10 @@ double lavrentev::Rectangle::getArea() const noexcept
 
 lavrentev::rectangle_t lavrentev::Rectangle::getFrameRect() const noexcept
 {
-  rectangle_t data;
-  data.height = height_;
-  data.width = width_;
-  data.pos = pos_;
-  return data;
+  return {width_, height_, pos_};
 }
 
-void lavrentev::Rectangle::move(const lavrentev::point_t &c) noexcept
+void lavrentev::Rectangle::move(lavrentev::point_t c) noexcept
 {
   pos_ = c;
 }
@@ -179,7 +175,7 @@ void lavrentev::Rectangle::move(double d_x, double d_y) noexcept
   pos_.y += d_y;
 }
 
-void lavrentev::Rectangle::scaleImpl(double coef)
+void lavrentev::Rectangle::figureScaling(double coef) noexcept
 {
   width_ *= coef;
   height_ *= coef;
@@ -203,47 +199,49 @@ double lavrentev::Rubber::getArea() const noexcept
 
 lavrentev::rectangle_t lavrentev::Rubber::getFrameRect() const noexcept
 {
-  lavrentev::rectangle_t ans;
-  ans.pos = outCenter_;
-  ans.height = rOut_ * 2;
-  ans.width = rOut_ * 2;
-  return ans;
+  return {rOut_ * 2, rOut_ * 2, outCenter_};
 }
 
-void lavrentev::Rubber::move(const lavrentev::point_t &c) noexcept
+void lavrentev::Rubber::move(lavrentev::point_t c) noexcept
 {
   pos_ = c;
 }
 
-void lavrentev::Rubber::move(double d_x, double d_y) noexcept {
+void lavrentev::Rubber::move(double d_x, double d_y) noexcept
+{
   pos_.x += d_x;
   pos_.y += d_y;
 }
 
-void lavrentev::Rubber::scaleImpl(double coef) {
+void lavrentev::Rubber::figureScaling(double coef) noexcept
+{
   rPos_ *= coef;
   rOut_ *= coef;
 }
 
-lavrentev::Polygon::Polygon(point_t *vertexes, size_t n):
+lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
   n_(n),
-  vertexes_(vertexes)
+  vertexes_(nullptr)
 {
   if (n_ <= 2) {
     throw std::invalid_argument("Invalid amount of vertexes");
   }
-  try {
-    vertexes_ = new lavrentev::point_t[n]{
-      {1.2, 5.6}, {3.3, -4.7},
-      {1.1, 9.3}, {-5.5, -3.0},
-      {-7.3, -0.3}, {-2.1, 4.8}, {3.6, 8.3}
-    };
-  } catch (std::bad_alloc &e) {
-    throw std::bad_alloc();
+  
+  if (vertexes == nullptr) {
+    throw std::invalid_argument("Vertexes array is null");
   }
-
+  
+  try {
+    vertexes_ = new point_t[n_];
+    for (size_t i = 0; i < n_; ++i) {
+      vertexes_[i] = vertexes[i];
+    }
+  } catch (std::bad_alloc &e) {
+    throw std::runtime_error("Failed to allocate memory for polygon");
+  }
+  
   point_t pos = {};
-  int k = polyPos(pos, n, vertexes_);
+  int k = polyPos(pos, n_, vertexes_);
   if (k == 1) {
     delete[] vertexes_;
     throw std::logic_error("Polygon not exists");
@@ -251,7 +249,7 @@ lavrentev::Polygon::Polygon(point_t *vertexes, size_t n):
   pos_ = pos;
 }
 
-lavrentev::Polygon::~Polygon()
+lavrentev::Polygon::~Polygon() noexcept
 {
   delete[] vertexes_;
 }
@@ -265,7 +263,7 @@ double lavrentev::Polygon::getArea() const noexcept
   }
   buf1 += vertexes_[n_ - 1].x * vertexes_[0].y;
   buf2 += vertexes_[n_ - 1].y * vertexes_[0].x;
-  s = 0.5 * abs(buf1 - buf2);
+  s = 0.5 * std::abs(buf1 - buf2);
   return s;
 }
 
@@ -298,17 +296,12 @@ lavrentev::rectangle_t lavrentev::Polygon::getFrameRect() const noexcept
   return ans;
 }
 
-void lavrentev::Polygon::move(const lavrentev::point_t &c) noexcept
+void lavrentev::Polygon::move(lavrentev::point_t c) noexcept
 {
   double dx = c.x - pos_.x;
   double dy = c.y - pos_.y;
 
-  pos_ = c;
-
-  for (size_t i = 0; i < n_; ++i) {
-    vertexes_[i].x += dx;
-    vertexes_[i].y += dy;
-  }
+  move(dx, dy);
 }
 
 void lavrentev::Polygon::move(double d_x, double d_y) noexcept
@@ -322,7 +315,7 @@ void lavrentev::Polygon::move(double d_x, double d_y) noexcept
   }
 }
 
-void lavrentev::Polygon::scaleImpl(double coef)
+void lavrentev::Polygon::figureScaling(double coef) noexcept
 {
   for (size_t i = 0; i < n_; ++i) {
     double d_x = vertexes_[i].x - pos_.x;
@@ -334,7 +327,7 @@ void lavrentev::Polygon::scaleImpl(double coef)
   }
 }
 
-int lavrentev::polyPos(point_t &pos, size_t n, point_t *vertexes)
+int lavrentev::polyPos(point_t &pos, size_t n, const point_t *vertexes) noexcept
 {
   if (n < 3) {
     return 1;
@@ -375,23 +368,15 @@ int lavrentev::polyPos(point_t &pos, size_t n, point_t *vertexes)
   return 0;
 }
 
-lavrentev::rectangle_t lavrentev::fullFrame(lavrentev::Shape *const *figures, size_t n)
+lavrentev::rectangle_t lavrentev::fullFrame(const lavrentev::Shape *const *figures, size_t n) noexcept
 {
   double left = 0.0, right = 0.0, up = 0.0, down = 0.0;
   for (size_t i = 0; i < n; ++i) {
     lavrentev::rectangle_t buf = figures[i]->getFrameRect();
-    if (buf.pos.x - buf.width * 0.5 < left) {
-      left = buf.pos.x - buf.width * 0.5;
-    }
-    if (buf.pos.x + buf.width * 0.5 > right) {
-      right = buf.pos.x + buf.width * 0.5;
-    }
-    if (buf.pos.y - buf.height * 0.5 < down) {
-      down = buf.pos.y - buf.height * 0.5;
-    }
-    if (buf.pos.y + buf.height * 0.5 > up) {
-      up = buf.pos.y + buf.height * 0.5;
-    }
+    left = std::min(buf.pos.x - buf.width * 0.5, left);
+    right = std::max(buf.pos.x + buf.width * 0.5, right);
+    down = std::min(buf.pos.y - buf.height * 0.5, down);
+    up = std::max(buf.pos.y + buf.height * 0.5, up);
   }
   lavrentev::rectangle_t ff;
   ff.height = up - down;
@@ -401,16 +386,8 @@ lavrentev::rectangle_t lavrentev::fullFrame(lavrentev::Shape *const *figures, si
   return ff;
 }
 
-void lavrentev::userShape(
-  lavrentev::Shape **figures,
-  point_t user_dot,
-  double coef,
-  const size_t n)
+void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t n)
 {
-  if (coef <= 0) {
-    throw std::invalid_argument("Coef must be positive");
-  }
-
   for (size_t i = 0; i < n; ++i) {
     point_t point1 = figures[i]->getFrameRect().pos;
     figures[i]->move(user_dot);
@@ -421,38 +398,32 @@ void lavrentev::userShape(
   }
 }
 
-void lavrentev::printInfo(lavrentev::Shape **figures)
+void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
 {
-  std::cout << "Площадь Rectangle: " << figures[0]->getArea() << '\n';
-  std::cout << "Площадь Rubber: " << figures[1]->getArea() << '\n';
-  std::cout << "Площадь Polygon " << figures[2]->getArea() << '\n';
-  double buf_1 = figures[0]->getArea();
-  double buf_2 = figures[1]->getArea();
-  double buf_3 = figures[2]->getArea();
-  std::cout << "Суммарная площадь: " << buf_1 + buf_2 + buf_3;
+  double bufs[n];
+  for (size_t i = 0; i < n; ++i) {
+    std::cout << "Площадь (" << i + 1 << "):" << figures[0]->getArea() << '\n';
+    bufs[i] = figures[i]->getArea();
+  }
+  double sum = 0;
+  for(size_t i = 0; i < n; ++i) {
+    sum += bufs[i];
+  }
+  std::cout << "Суммарная площадь: " << sum;
   std::cout << "\n\n";
 
-  lavrentev::rectangle_t rg = figures[0]->getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Rectangle:" << '\n';
-  std::cout << '\t' << "Центр: {" << rg.pos.x << ", " << rg.pos.y << '}' << '\n';
-  std::cout << '\t' << "Длина: " << rg.width << '\n';
-  std::cout << '\t' << "Высота: " << rg.height << '\n';
-
-  lavrentev::rectangle_t rug = figures[1]->getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Rubber:" << '\n';
-  std::cout << '\t' << "Центр: {" << rug.pos.x << ", " << rug.pos.y << '}' << '\n';
-  std::cout << '\t' << "Длина: " << rug.width << '\n';
-  std::cout << '\t' << "Высота: " << rug.height << '\n';
-
-  lavrentev::rectangle_t pg = figures[2]->getFrameRect();
-  std::cout << "Ограничивающий прямоугольник Polygon:" << '\n';
-  std::cout << '\t' << "Центр: {" << pg.pos.x << ", " << pg.pos.y << '}' << '\n';
-  std::cout << '\t' << "Длина: " << pg.width << '\n';
-  std::cout << '\t' << "Высота: " << pg.height << "\n\n";
-
-  lavrentev::rectangle_t ff = lavrentev::fullFrame(figures, lavrentev::n);
-  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
-  std::cout << '\t' << "Центр: {" << ff.pos.x << ", " << ff.pos.y << '}' << '\n';
-  std::cout << '\t' << "Длина: " << ff.width << '\n';
-  std::cout << '\t' << "Высота: " << ff.height << "\n\n";
+  for (size_t i = 0; i < n + 1; ++i) {
+    rectangle_t fig;
+    std::string s = "";
+    if (i != n) {
+      fig = figures[i]->getFrameRect();
+    } else {
+      fig = fullFrame(figures, n);
+      s = "Общий ";
+    }
+    std::cout << s << "Ограничивающий прямоугольник (" << i + 1 << "):" << '\n';
+    std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
+    std::cout << '\t' << "Длина: " << fig.width << '\n';
+    std::cout << '\t' << "Высота: " << fig.height << '\n';
+  }
 }
