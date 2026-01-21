@@ -400,9 +400,9 @@ void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t
 
 void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
 {
-  double bufs[n];
+  double* bufs = new double[n];
   for (size_t i = 0; i < n; ++i) {
-    std::cout << "Площадь (" << i + 1 << "):" << figures[0]->getArea() << '\n';
+    std::cout << "Площадь (" << i + 1 << "):" << figures[i]->getArea() << '\n';
     bufs[i] = figures[i]->getArea();
   }
   double sum = 0;
@@ -426,4 +426,6 @@ void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
     std::cout << '\t' << "Длина: " << fig.width << '\n';
     std::cout << '\t' << "Высота: " << fig.height << '\n';
   }
+
+  delete[] bufs;
 }
