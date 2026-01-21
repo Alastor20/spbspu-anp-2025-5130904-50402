@@ -18,7 +18,7 @@ int main()
     delete[] str1;
     return 1;
   }
-  const char* str2 = "example"; 
+  const char* str2 = "example";
   size_t has_sam = chernikov::hasSam(str1, str2);
   size_t len1 = std::strlen(str1);
   size_t len2 = std::strlen(str2);
