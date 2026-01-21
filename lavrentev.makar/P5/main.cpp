@@ -263,9 +263,9 @@ lavrentev::point_t lavrentev::Polygon::calculateCenter(size_t n, const point_t *
 }
 
 lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
-  vertexes_(copyAndValidateVertexes(vertexes, n)),
+  pos_(calculateCenter(n, vertexes)),
   n_(n),
-  pos_(calculateCenter(n, vertexes))
+  vertexes_(copyAndValidateVertexes(vertexes, n))
 {
 
 }
