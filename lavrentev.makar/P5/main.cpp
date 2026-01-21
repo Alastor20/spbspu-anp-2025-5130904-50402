@@ -244,7 +244,7 @@ lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *v
   }
 
   point_t dummyPos = {};
-  int k = polyPos(dummyPos, n, copy);
+  polyPos(dummyPos, n, copy);
 
   return copy;
 }
@@ -272,7 +272,7 @@ lavrentev::Polygon::~Polygon() noexcept
 
 double lavrentev::Polygon::getArea() const noexcept
 {
-  double buf1 = 0.0, buf2 = 0.0, s = 0.0;
+  double buf1 = 0.0, buf2 = 0.0;
   for (size_t i = 0; i < n_ - 1; ++i) {
     buf1 += (vertexes_[i].x * vertexes_[i + 1].y);
     buf2 += (vertexes_[i].y * vertexes_[i + 1].x);
