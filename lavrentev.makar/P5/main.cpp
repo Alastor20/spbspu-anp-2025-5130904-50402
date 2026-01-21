@@ -63,6 +63,9 @@ namespace lavrentev {
 
   class Polygon final: public Shape {
   public:
+    static point_t* copyAndValidateVertexes(const point_t *vertexes, size_t n);
+    static point_t calculateCenter(size_t n, const point_t *vertexes);
+
     explicit Polygon(const point_t *vertexes, size_t n);
     ~Polygon() noexcept;
 
@@ -87,7 +90,7 @@ namespace lavrentev {
 
 int main()
 {
-  const size_t k = 7;  // <-- константа
+  const size_t k = 7;
   const lavrentev::point_t vrtxs[] = {{1.2, 5.6}, {3.3, -4.7},
       {1.1, 9.3}, {-5.5, -3.0},
       {-7.3, -0.3}, {-2.1, 4.8}, {3.6, 8.3}};
@@ -219,11 +222,9 @@ void lavrentev::Rubber::figureScaling(double coef) noexcept
   rOut_ *= coef;
 }
 
-lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
-  n_(n),
-  vertexes_(nullptr)
+lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *vertexes, size_t n)
 {
-  if (n_ <= 2) {
+  if (n <= 2) {
     throw std::invalid_argument("Invalid amount of vertexes");
   }
 
@@ -231,22 +232,42 @@ lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
     throw std::invalid_argument("Vertexes array is null");
   }
 
+  point_t* copy = nullptr;
   try {
-    vertexes_ = new point_t[n_];
-    for (size_t i = 0; i < n_; ++i) {
-      vertexes_[i] = vertexes[i];
+    copy = new point_t[n];
+    for (size_t i = 0; i < n; ++i) {
+      copy[i] = vertexes[i];
     }
   } catch (std::bad_alloc &e) {
     throw std::runtime_error("Failed to allocate memory for polygon");
   }
 
-  point_t pos = {};
-  int k = polyPos(pos, n_, vertexes_);
+  point_t dummyPos = {};
+  int k = polyPos(dummyPos, n, copy);
   if (k == 1) {
-    delete[] vertexes_;
+    delete[] copy;
     throw std::logic_error("Polygon not exists");
   }
-  pos_ = pos;
+
+  return copy;
+}
+
+lavrentev::point_t lavrentev::Polygon::calculateCenter(size_t n, const point_t *vertexes)
+{
+  point_t pos = {};
+  int k = polyPos(pos, n, vertexes);
+  if (k == 1) {
+    throw std::logic_error("Failed to calculate polygon center");
+  }
+  return pos;
+}
+
+lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
+  vertexes_(copyAndValidateVertexes(vertexes, n)),
+  n_(n),
+  pos_(calculateCenter(n, vertexes))
+{
+
 }
 
 lavrentev::Polygon::~Polygon() noexcept
