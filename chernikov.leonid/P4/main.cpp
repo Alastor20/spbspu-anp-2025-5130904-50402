@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cstring>
-#include <cctype> 
+#include <cctype>
 namespace chernikov {
   char* getline(std::istream& in, size_t& size);
   size_t hasSam(const char* str1, const char* str2);
@@ -15,7 +15,7 @@ int main()
   size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, size1);
-    const char* literal_str = "example"; 
+    const char* literal_str = "example";
   } catch (const std::bad_alloc& e) {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
