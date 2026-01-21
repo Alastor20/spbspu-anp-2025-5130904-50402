@@ -10,30 +10,26 @@ namespace chernikov {
 int main()
 {
   char* str1 = nullptr;
-  char* str2 = nullptr;
   size_t size1 = 0;
-  size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, size1);
-    const char* literal_str = "example";
   } catch (const std::bad_alloc& e) {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
-    delete[] str2;
     return 1;
   }
+  const char* str2 = "example"; 
   size_t has_sam = chernikov::hasSam(str1, str2);
   size_t len1 = std::strlen(str1);
   size_t len2 = std::strlen(str2);
   size_t max_result_size = len1 + len2 + 1;
   char* uni_two = nullptr;
   try {
-    uni_two = new char[size1 + size2 + 1];
+    uni_two = new char[max_result_size];
     uni_two[0] = '\0';
   } catch (const std::bad_alloc& e) {
     std::cerr << "Memory allocation failed: " << e.what() << "\n";
     delete[] str1;
-    delete[] str2;
     return 1;
   }
   chernikov::uniTwo(uni_two, str1, str2);
@@ -41,7 +37,6 @@ int main()
   std::cout << "UNI_TWO: " << uni_two << '\n';
 
   delete[] str1;
-  delete[] str2;
   delete[] uni_two;
   return 0;
 }
