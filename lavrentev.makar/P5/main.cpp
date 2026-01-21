@@ -23,7 +23,7 @@ namespace lavrentev {
     virtual void move(point_t c) noexcept = 0;
     virtual void move(double d_x, double d_y) noexcept = 0;
 
-    void scale(double coef);
+    void scaleWithCheck(double coef);
     virtual void figureScaling(double coef) noexcept = 0;
   };
 
@@ -139,7 +139,7 @@ int main()
   return 0;
 }
 
-void lavrentev::Shape::scale(double coef)
+void lavrentev::Shape::scaleWithCheck(double coef)
 {
   if (coef <= 0) {
     throw std::invalid_argument("Coef must be positive");
@@ -413,7 +413,7 @@ void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t
     point_t point1 = figures[i]->getFrameRect().pos;
     figures[i]->move(user_dot);
     point_t delta = {user_dot.x - point1.x, user_dot.y - point1.y};
-    figures[i]->scale(coef);
+    figures[i]->figureScaling(coef);
     point_t res = {user_dot.x - delta.x * coef, user_dot.y - delta.y * coef};
     figures[i]->move(res);
   }
