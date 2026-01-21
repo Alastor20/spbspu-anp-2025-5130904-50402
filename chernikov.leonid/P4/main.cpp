@@ -4,7 +4,7 @@ namespace chernikov {
   char* getline(std::istream& in, size_t& size);
   size_t hasSam(const char* str1, const char* str2);
   void uniTwo(char* uni_two, const char* str1, const char* str2, size_t size1, size_t size2);
-
+}
 int main()
 {
   char* str1 = nullptr;
@@ -27,7 +27,7 @@ int main()
   }
   size_t has_sam = chernikov::hasSam(str1, str2);
   char* uni_two = nullptr;
-  size_t size_uni_two = size1 + size2;
+  size_t max_size = size1 + size2;
   try {
     uni_two = new char[size1 + size2 + 1];
     uni_two[0] = '\0';
@@ -127,4 +127,3 @@ void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2, size_t
   }
   uni_two[uni_index] = '\0';
 }
-
