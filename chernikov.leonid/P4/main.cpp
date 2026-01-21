@@ -27,7 +27,6 @@ int main()
   }
   size_t has_sam = chernikov::hasSam(str1, str2);
   char* uni_two = nullptr;
-  size_t max_size = size1 + size2;
   try {
     uni_two = new char[size1 + size2 + 1];
     uni_two[0] = '\0';
