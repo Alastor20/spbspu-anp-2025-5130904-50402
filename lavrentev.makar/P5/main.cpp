@@ -63,9 +63,6 @@ namespace lavrentev {
 
   class Polygon final: public Shape {
   public:
-    static point_t* copyAndValidateVertexes(const point_t *vertexes, size_t n);
-    static point_t calculateCenter(size_t n, const point_t *vertexes);
-
     explicit Polygon(const point_t *vertexes, size_t n);
     ~Polygon() noexcept;
 
@@ -80,12 +77,16 @@ namespace lavrentev {
     point_t pos_;
     size_t n_;
     point_t *vertexes_;
+
+    point_t* copyAndValidateVertexes(const point_t *vertexes, size_t n);
+    point_t calculateCenter(size_t n, const point_t *vertexes);
   };
 
   int polyPos(point_t &pos, size_t n, const point_t *vertexes) noexcept;
   rectangle_t fullFrame(const Shape *const *figures, size_t n) noexcept;
   void userShape(Shape **figures, point_t user_dot, double coef, size_t n);
   void printInfo(const Shape *const *figures, const size_t n) noexcept;
+  void totalRect(const Shape *const *figures) noexcept;
 }
 
 int main()
@@ -100,7 +101,7 @@ int main()
     figures[0] = new lavrentev::Rectangle({3, 3}, 8, 5);
     figures[1] = new lavrentev::Rubber({-7, -2}, {-5, 0}, 3.5, 9);
     figures[2] = new lavrentev::Polygon(vrtxs, k);
-  } catch (...) {
+  } catch (const std::exception&) {
     for (size_t i = 0; i < lavrentev::n; ++i) {
       delete figures[i];
     }
@@ -244,10 +245,6 @@ lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *v
 
   point_t dummyPos = {};
   int k = polyPos(dummyPos, n, copy);
-  if (k == 1) {
-    delete[] copy;
-    throw std::logic_error("Polygon not exists");
-  }
 
   return copy;
 }
@@ -266,9 +263,7 @@ lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
   pos_(calculateCenter(n, vertexes)),
   n_(n),
   vertexes_(copyAndValidateVertexes(vertexes, n))
-{
-
-}
+{}
 
 lavrentev::Polygon::~Polygon() noexcept
 {
@@ -284,37 +279,19 @@ double lavrentev::Polygon::getArea() const noexcept
   }
   buf1 += vertexes_[n_ - 1].x * vertexes_[0].y;
   buf2 += vertexes_[n_ - 1].y * vertexes_[0].x;
-  s = 0.5 * std::abs(buf1 - buf2);
-  return s;
+  return 0.5 * std::abs(buf1 - buf2);
 }
 
 lavrentev::rectangle_t lavrentev::Polygon::getFrameRect() const noexcept
 {
   point_t l_u = vertexes_[0], r_b = vertexes_[0];
   for (size_t i = 0; i < n_; ++i) {
-    if (vertexes_[i].x < l_u.x) {
-      l_u.x = vertexes_[i].x;
-    }
-    if (vertexes_[i].y > l_u.y) {
-      l_u.y = vertexes_[i].y;
-    }
-    if (vertexes_[i].x > r_b.x) {
-      r_b.x = vertexes_[i].x;
-    }
-    if (vertexes_[i].y < r_b.y) {
-      r_b.y = vertexes_[i].y;
-    }
+    l_u.x = std::min(vertexes_[i].x, l_u.x);
+    l_u.y = std::max(vertexes_[i].y, l_u.y);
+    r_b.x = std::max(vertexes_[i].x, r_b.x);
+    r_b.y = std::min(vertexes_[i].y, r_b.y);
   }
-  rectangle_t ans;
-  double w = r_b.x - l_u.x;
-  double h = l_u.y - r_b.y;
-  point_t p;
-  p.x = (r_b.x + l_u.x) * 0.5;
-  p.y = (r_b.y + l_u.y) * 0.5;
-  ans.pos = p;
-  ans.width = w;
-  ans.height = h;
-  return ans;
+  return {r_b.x - l_u.x, l_u.y - r_b.y, {(r_b.x + l_u.x) * 0.5, (r_b.y + l_u.y) * 0.5}};
 }
 
 void lavrentev::Polygon::move(lavrentev::point_t c) noexcept
@@ -413,7 +390,7 @@ void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t
     point_t point1 = figures[i]->getFrameRect().pos;
     figures[i]->move(user_dot);
     point_t delta = {user_dot.x - point1.x, user_dot.y - point1.y};
-    figures[i]->figureScaling(coef);
+    figures[i]->scaleWithCheck(coef);
     point_t res = {user_dot.x - delta.x * coef, user_dot.y - delta.y * coef};
     figures[i]->move(res);
   }
@@ -421,32 +398,32 @@ void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t
 
 void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
 {
-  double* bufs = new double[n];
+  double sum = 0;
   for (size_t i = 0; i < n; ++i) {
     std::cout << "Площадь (" << i + 1 << "):" << figures[i]->getArea() << '\n';
-    bufs[i] = figures[i]->getArea();
+    sum += figures[i]->getArea();
   }
-  double sum = 0;
-  for(size_t i = 0; i < n; ++i) {
-    sum += bufs[i];
-  }
+
   std::cout << "Суммарная площадь: " << sum;
   std::cout << "\n\n";
 
-  for (size_t i = 0; i < n + 1; ++i) {
-    rectangle_t fig;
-    std::string s = "";
-    if (i != n) {
-      fig = figures[i]->getFrameRect();
-    } else {
-      fig = fullFrame(figures, n);
-      s = "Общий ";
-    }
-    std::cout << s << "Ограничивающий прямоугольник (" << i + 1 << "):" << '\n';
+  std::string s;
+  for (size_t i = 0; i < n; ++i) {
+    rectangle_t fig = figures[i]->getFrameRect();
+    std::cout << "Ограничивающий прямоугольник (" << i + 1 << "):" << '\n';
     std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
     std::cout << '\t' << "Длина: " << fig.width << '\n';
     std::cout << '\t' << "Высота: " << fig.height << '\n';
   }
 
-  delete[] bufs;
+  totalRect(figures);
+}
+
+void lavrentev::totalRect(const Shape *const *figures) noexcept
+{
+  rectangle_t fig = fullFrame(figures, n);
+  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
+  std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
+  std::cout << '\t' << "Длина: " << fig.width << '\n';
+  std::cout << '\t' << "Высота: " << fig.height << '\n';
 }
