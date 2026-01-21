@@ -226,11 +226,11 @@ lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
   if (n_ <= 2) {
     throw std::invalid_argument("Invalid amount of vertexes");
   }
-  
+
   if (vertexes == nullptr) {
     throw std::invalid_argument("Vertexes array is null");
   }
-  
+
   try {
     vertexes_ = new point_t[n_];
     for (size_t i = 0; i < n_; ++i) {
@@ -239,7 +239,7 @@ lavrentev::Polygon::Polygon(const point_t *vertexes, size_t n):
   } catch (std::bad_alloc &e) {
     throw std::runtime_error("Failed to allocate memory for polygon");
   }
-  
+
   point_t pos = {};
   int k = polyPos(pos, n_, vertexes_);
   if (k == 1) {
