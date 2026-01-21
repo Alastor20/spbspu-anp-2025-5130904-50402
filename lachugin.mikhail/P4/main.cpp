@@ -125,6 +125,7 @@ namespace lachugin
     {
       in >> std::skipws;
     }
+
     return data;
   }
 }
