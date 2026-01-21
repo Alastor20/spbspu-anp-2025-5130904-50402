@@ -1,9 +1,11 @@
 #include <iostream>
 #include <iomanip>
+#include <cstring>
+#include <cctype> 
 namespace chernikov {
   char* getline(std::istream& in, size_t& size);
   size_t hasSam(const char* str1, const char* str2);
-  void uniTwo(char* uni_two, const char* str1, const char* str2, size_t size1, size_t size2);
+  void uniTwo(char* uni_two, const char* str1, const char* str2);
 }
 int main()
 {
@@ -13,23 +15,7 @@ int main()
   size_t size2 = 0;
   try {
     str1 = chernikov::getline(std::cin, size1);
-    if (str1[0] == '\0') {
-      std::cerr << "Error: empty input\n";
-      delete[] str1;
-      return 1;
-    }
-    if (size1 == 1 && str1[0] == '\0') {
-      std::cerr << "Memory allocation or string allocation error";
-      delete[] str1;
-      return 1;
-    }
-    str2 = chernikov::getline(std::cin, size2);
-    if (str2[0] == '\0') {
-      std::cerr << "Error: empty input\n";
-      delete[] str1;
-      delete[] str2;
-      return 1;
-    }
+    const char* literal_str = "example"; 
   } catch (const std::bad_alloc& e) {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
@@ -37,6 +23,9 @@ int main()
     return 1;
   }
   size_t has_sam = chernikov::hasSam(str1, str2);
+  size_t len1 = std::strlen(str1);
+  size_t len2 = std::strlen(str2);
+  size_t max_result_size = len1 + len2 + 1;
   char* uni_two = nullptr;
   try {
     uni_two = new char[size1 + size2 + 1];
@@ -47,11 +36,10 @@ int main()
     delete[] str2;
     return 1;
   }
-  chernikov::uniTwo(uni_two, str1, str2, size1, size2);
+  chernikov::uniTwo(uni_two, str1, str2);
   std::cout << "HAS-SAM: " << has_sam << '\n';
   std::cout << "UNI_TWO: " << uni_two << '\n';
 
-  std::cout << "\n";
   delete[] str1;
   delete[] str2;
   delete[] uni_two;
@@ -112,9 +100,9 @@ size_t chernikov::hasSam(const char* str1, const char* str2) {
   }
   return 0;
 }
-void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2, size_t size1, size_t size2) {
-  size_t len1 = size1;
-  size_t len2 = size2;
+void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2) {
+  size_t len1 = std::strlen(str1);
+  size_t len2 = std::strlen(str2);
   size_t min_len = (len1 < len2) ? len1 : len2;
   size_t diff = 0;
   const char* longer_str = nullptr;
