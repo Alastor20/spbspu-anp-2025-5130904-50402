@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-shirokov::Polygon::Polygon(const point_t *vertices, size_t s): 
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s):
   s_(s),
   vertices_(new point_t[s])
 {
