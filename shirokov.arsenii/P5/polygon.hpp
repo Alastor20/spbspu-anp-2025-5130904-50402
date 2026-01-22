@@ -16,7 +16,6 @@ namespace shirokov
     void move(double dx, double dy) noexcept override;
     void scale(double coefficient) noexcept override;
     point_t getCenter();
-    double getSignedArea();
 
   private:
     size_t s_;

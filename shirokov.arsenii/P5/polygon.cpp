@@ -11,7 +11,7 @@ shirokov::Polygon::Polygon(const point_t *vertices, size_t s): s_(s), vertices_(
   }
 }
 
-double shirokov::Polygon::getSignedArea()
+double shirokov::Polygon::getArea() const noexcept
 {
   double area = 0;
   for (size_t i = 0; i < s_; ++i)
@@ -48,11 +48,6 @@ shirokov::point_t shirokov::Polygon::getCenter()
   cy /= 6 * signedDoubleArea;
 
   return {cx, cy};
-}
-
-double shirokov::Polygon::getArea() const noexcept
-{
-  return getArea();
 }
 
 shirokov::rectangle_t shirokov::Polygon::getFrameRect() const noexcept
