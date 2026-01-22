@@ -4,15 +4,13 @@ shirokov::Rectangle::Rectangle(point_t center, double width, double height) noex
   center_(center),
   bottomLeft_({center.x - width / 2, center.y - height / 2}),
   topRight_({center.x + width / 2, center.y + height / 2})
-{
-}
+{}
 
 shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight) noexcept:
   center_({(topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2}),
   bottomLeft_(bottomLeft),
   topRight_(topRight)
-{
-}
+{}
 
 double shirokov::Rectangle::getArea() const noexcept
 {
