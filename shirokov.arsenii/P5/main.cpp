@@ -12,6 +12,8 @@
 namespace shirokov
 {
   void scaleAboutPoint(const point_t &target, double coefficient, Shape *figure);
+  void unsafeScaleAboutPoint(const point_t &target, double coefficient, Shape *figure);
+  void scaleAboutPoint(const point_t &target, double coefficient, Shape *const *figures, size_t s);
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
@@ -61,22 +63,18 @@ int main()
     }
     return 1;
   }
-
-  for (size_t i = 0; i < shirokov::SIZE; ++i)
+  try
   {
-    try
+    shirokov::scaleAboutPoint(target, coefficient, figures, shirokov::SIZE);
+  }
+  catch (const std::logic_error &e)
+  {
+    std::cerr << e.what() << '\n';
+    for (size_t i = 0; i < shirokov::SIZE; ++i)
     {
-      shirokov::scaleAboutPoint(target, coefficient, figures[i]);
+      delete figures[i];
     }
-    catch (const std::logic_error &e)
-    {
-      std::cerr << e.what() << '\n';
-      for (size_t i = 0; i < shirokov::SIZE; ++i)
-      {
-        delete figures[i];
-      }
-      return 3;
-    }
+    return 3;
   }
   std::cout << "After scaling:\n";
   shirokov::printInfo(figures, shirokov::SIZE);
@@ -95,6 +93,28 @@ void shirokov::scaleAboutPoint(const point_t &target, double coefficient, Shape 
   figure->safeScale(coefficient);
   point_t res = {target.x - delta.x * coefficient, target.y - delta.y * coefficient};
   figure->move(res);
+}
+
+void shirokov::unsafeScaleAboutPoint(const point_t &target, double coefficient, Shape *figure)
+{
+  point_t point1 = figure->getFrameRect().pos;
+  figure->move(target);
+  point_t delta = {target.x - point1.x, target.y - point1.y};
+  figure->scale(coefficient);
+  point_t res = {target.x - delta.x * coefficient, target.y - delta.y * coefficient};
+  figure->move(res);
+}
+
+void shirokov::scaleAboutPoint(const point_t &target, double coefficient, Shape *const *figures, size_t s)
+{
+  if (coefficient <= 0)
+  {
+    throw std::logic_error("The coefficient must be positive");
+  }
+  for (size_t i = 0; i < s; ++i)
+  {
+    unsafeScaleAboutPoint(target, coefficient, figures[i]);
+  }
 }
 
 double shirokov::getTotalArea(const Shape *const *figures, size_t s)
