@@ -4,13 +4,13 @@
 #include <cctype>
 namespace chernikov
 {
-  char* getline(std::istream& in, size_t& len);
-  size_t hasSam(const char* str1, const char* str2);
-  void uniTwo(char* uni_two, const char* str1, const char* str2, size_t len1, size_t len2);
+  char *getline(std::istream &in, size_t &len);
+  size_t hasSam(const char *str1, const char *str2);
+  void uniTwo(char *uni_two, const char *str1, const char *str2, size_t len1, size_t len2);
 }
 int main()
 {
-  char* str1 = nullptr;
+  char *str1 = nullptr;
   size_t len1 = 0;
   try
   {
@@ -22,30 +22,30 @@ int main()
       return 1;
     }
   }
-  catch (const std::bad_alloc& e)
+  catch (const std::bad_alloc &e)
   {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
     return 1;
   }
-  const char* str2 = "example";
+  const char *str2 = "example";
   size_t has_sam = chernikov::hasSam(str1, str2);
   size_t len2 = std::strlen(str2);
   size_t max_result_size = len1 + len2 + 1;
-  char* uni_two = nullptr;
+  char *uni_two = nullptr;
   try
   {
     uni_two = new char[max_result_size];
     uni_two[max_result_size - 1] = '\0';
   }
-  catch (const std::bad_alloc& e)
+  catch (const std::bad_alloc &e)
   {
     std::cerr << "Memory allocationfailed: " << e.what() << "\n";
     delete[] str1;
     return 1;
   }
   chernikov::uniTwo(uni_two, str1, str2, len1, len2);
-  std::cout << "HAS-SAM: " << std::boolalpha << static_cast<bool>(has_sam) << '\n';
+  std::cout << "HAS-SAM: " << std::boolalpha << has_sam << '\n';
   std::cout << "UNI_TWO: " << uni_two << '\n';
 
   delete[] str1;
@@ -53,7 +53,7 @@ int main()
   return 0;
 }
 
-char* chernikov::getline(std::istream& in, size_t& len)
+char *chernikov::getline(std::istream &in, size_t &len)
 {
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws)
@@ -62,12 +62,12 @@ char* chernikov::getline(std::istream& in, size_t& len)
   }
   char ch;
   len = 0;
-  char* data = nullptr;
+  char *data = nullptr;
   try
   {
     while (in.good() && in >> ch && ch != '\n')
     {
-      char* new_data = new char[len + 2];
+      char *new_data = new char[len + 2];
       for (size_t i = 0; i < len; ++i)
       {
         new_data[i] = data[i];
@@ -79,7 +79,7 @@ char* chernikov::getline(std::istream& in, size_t& len)
       len++;
     }
   }
-  catch (const std::bad_alloc& e)
+  catch (const std::bad_alloc &e)
   {
     delete[] data;
     if (is_skipws)
@@ -107,7 +107,7 @@ char* chernikov::getline(std::istream& in, size_t& len)
   }
   return data;
 }
-size_t chernikov::hasSam(const char* str1, const char* str2)
+size_t chernikov::hasSam(const char *str1, const char *str2)
 {
   for (size_t i = 0; str1[i] != '\0'; ++i)
   {
@@ -121,11 +121,11 @@ size_t chernikov::hasSam(const char* str1, const char* str2)
   }
   return 0;
 }
-void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2, size_t len1, size_t len2)
+void chernikov::uniTwo(char *uni_two, const char *str1, const char *str2, size_t len1, size_t len2)
 {
   size_t min_len = (len1 < len2) ? len1 : len2;
   size_t diff = 0;
-  const char* longer_str = nullptr;
+  const char *longer_str = nullptr;
   if (len1 > len2)
   {
     diff = len1 - len2;
