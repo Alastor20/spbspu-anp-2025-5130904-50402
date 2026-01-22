@@ -132,7 +132,7 @@ namespace lachugin
 
 int main()
 {
-  size_t s = lachugin::startSize;
+  size_t s = 0;
   char* str = lachugin::getline(std::cin, s);
   if (!str || s == 0)
   {
