@@ -86,7 +86,7 @@ namespace lavrentev {
   rectangle_t fullFrame(const Shape *const *figures, size_t n) noexcept;
   void userShape(Shape **figures, point_t user_dot, double coef, size_t n);
   void printInfo(const Shape *const *figures, const size_t n) noexcept;
-  void printRect(const rectangle_t fig) noexcept;
+  void printRect(rectangle_t fig) noexcept;
 }
 
 int main()
@@ -234,14 +234,9 @@ lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *v
   }
 
   point_t* copy = nullptr;
-  try {
-    copy = new point_t[n];
-    for (size_t i = 0; i < n; ++i) {
-      copy[i] = vertexes[i];
-    }
-  } catch (const std::exception &e) {
-    std::cerr << "Failed to allocate memory for polygon";
-    throw;
+  copy = new point_t[n];
+  for (size_t i = 0; i < n; ++i) {
+    copy[i] = vertexes[i];
   }
 
   return copy;
@@ -409,7 +404,6 @@ void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
   std::cout << "Суммарная площадь: " << sum;
   std::cout << "\n\n";
 
-  std::string s;
   for (size_t i = 0; i < n; ++i) {
     std::cout << "Ограничивающий прямоугольник (" << i + 1 << "):" << '\n';
     printRect(figures[i]->getFrameRect());
@@ -419,7 +413,7 @@ void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
   printRect(fullFrame(figures, n));
 }
 
-void lavrentev::printRect(const rectangle_t fig) noexcept
+void lavrentev::printRect(rectangle_t fig) noexcept
 {
   std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
   std::cout << '\t' << "Длина: " << fig.width << '\n';
