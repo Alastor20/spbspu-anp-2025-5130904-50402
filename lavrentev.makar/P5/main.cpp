@@ -233,8 +233,7 @@ lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *v
     throw std::invalid_argument("Vertexes array is null");
   }
 
-  point_t* copy = nullptr;
-  copy = new point_t[n];
+  point_t* copy = new point_t[n];
   for (size_t i = 0; i < n; ++i) {
     copy[i] = vertexes[i];
   }
