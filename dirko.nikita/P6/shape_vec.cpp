@@ -1,9 +1,9 @@
+#include "shape_vec.hpp"
 #include <cstddef>
 #include <ctime>
 #include <memory>
 #include <stdexcept>
 #include <utility>
-#include "shape_vec.hpp"
 
 dirko::Shape_vec::Shape_vec():
   shps_(nullptr),
