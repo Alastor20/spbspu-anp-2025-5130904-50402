@@ -3,11 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-shirokov::Polygon::Polygon(const point_t *vertices, size_t s):
-  s_(s),
-  vertices_(new point_t[s]),
-  signedDoubleArea(setSignedArea(vertices, s)),
-  center_(setCenter(vertices, s))
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s): s_(s), vertices_(new point_t[s])
 {
   for (size_t i = 0; i < s; ++i)
   {
@@ -15,33 +11,36 @@ shirokov::Polygon::Polygon(const point_t *vertices, size_t s):
   }
 }
 
-double shirokov::Polygon::setSignedArea(const point_t *vertices, size_t s)
+double shirokov::Polygon::getSignedArea()
 {
-  for (size_t i = 0; i < s; ++i)
+  double area = 0;
+  for (size_t i = 0; i < s_; ++i)
   {
-    double xi = vertices[i].x;
-    double yi = vertices[i].y;
-    size_t j = (i + 1) % s;
-    double xj = vertices[j].x;
-    double yj = vertices[j].y;
+    double xi = vertices_[i].x;
+    double yi = vertices_[i].y;
+    size_t j = (i + 1) % s_;
+    double xj = vertices_[j].x;
+    double yj = vertices_[j].y;
     double cross = xi * yj - xj * yi;
-    signedDoubleArea += cross;
+    area += cross;
   }
-  signedDoubleArea *= 0.5;
-  return signedDoubleArea;
+  area *= 0.5;
+  return std::abs(area);
 }
 
-shirokov::point_t shirokov::Polygon::setCenter(const point_t *vertices, size_t s)
+shirokov::point_t shirokov::Polygon::getCenter()
 {
   double cx = 0, cy = 0;
-  for (size_t i = 0; i < s; ++i)
+  double signedDoubleArea = 0;
+  for (size_t i = 0; i < s_; ++i)
   {
-    double xi = vertices[i].x;
-    double yi = vertices[i].y;
-    size_t j = (i + 1) % s;
-    double xj = vertices[j].x;
-    double yj = vertices[j].y;
+    double xi = vertices_[i].x;
+    double yi = vertices_[i].y;
+    size_t j = (i + 1) % s_;
+    double xj = vertices_[j].x;
+    double yj = vertices_[j].y;
     double cross = xi * yj - xj * yi;
+    signedDoubleArea += cross;
     cx += (xi + xj) * cross;
     cy += (yi + yj) * cross;
   }
@@ -53,7 +52,7 @@ shirokov::point_t shirokov::Polygon::setCenter(const point_t *vertices, size_t s
 
 double shirokov::Polygon::getArea() const noexcept
 {
-  return std::abs(signedDoubleArea);
+  return getArea();
 }
 
 shirokov::rectangle_t shirokov::Polygon::getFrameRect() const noexcept
@@ -74,8 +73,8 @@ shirokov::rectangle_t shirokov::Polygon::getFrameRect() const noexcept
 
 void shirokov::Polygon::move(point_t target) noexcept
 {
+  const point_t center_ = getCenter();
   point_t delta = {center_.x - target.x, center_.y - target.y};
-  center_ = target;
   for (size_t i = 0; i < s_; ++i)
   {
     vertices_[i] = {vertices_[i].x - delta.x, vertices_[i].y - delta.y};
@@ -84,8 +83,6 @@ void shirokov::Polygon::move(point_t target) noexcept
 
 void shirokov::Polygon::move(double dx, double dy) noexcept
 {
-  center_.x += dx;
-  center_.y += dy;
   for (size_t i = 0; i < s_; ++i)
   {
     vertices_[i].x += dx;
@@ -95,6 +92,7 @@ void shirokov::Polygon::move(double dx, double dy) noexcept
 
 void shirokov::Polygon::scale(double coefficient) noexcept
 {
+  const point_t center_ = getCenter();
   for (size_t i = 0; i < s_; ++i)
   {
     vertices_[i] = {center_.x + coefficient * (vertices_[i].x - center_.x),

@@ -15,14 +15,12 @@ namespace shirokov
     void move(point_t target) noexcept override;
     void move(double dx, double dy) noexcept override;
     void scale(double coefficient) noexcept override;
+    point_t getCenter();
+    double getSignedArea();
 
   private:
     size_t s_;
     point_t *vertices_;
-    double signedDoubleArea;
-    point_t center_;
-    point_t setCenter(const point_t *vertices, size_t s);
-    double setSignedArea(const point_t *vertices, size_t s);
   };
 }
 
