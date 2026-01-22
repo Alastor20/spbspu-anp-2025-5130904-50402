@@ -86,7 +86,7 @@ namespace lavrentev {
   rectangle_t fullFrame(const Shape *const *figures, size_t n) noexcept;
   void userShape(Shape **figures, point_t user_dot, double coef, size_t n);
   void printInfo(const Shape *const *figures, const size_t n) noexcept;
-  void totalRect(const Shape *const *figures) noexcept;
+  void printRect(const rectangle_t fig) noexcept;
 }
 
 int main()
@@ -168,7 +168,7 @@ lavrentev::rectangle_t lavrentev::Rectangle::getFrameRect() const noexcept
   return {width_, height_, pos_};
 }
 
-void lavrentev::Rectangle::move(lavrentev::point_t c) noexcept
+void lavrentev::Rectangle::move(point_t c) noexcept
 {
   pos_ = c;
 }
@@ -206,7 +206,7 @@ lavrentev::rectangle_t lavrentev::Rubber::getFrameRect() const noexcept
   return {rOut_ * 2, rOut_ * 2, outCenter_};
 }
 
-void lavrentev::Rubber::move(lavrentev::point_t c) noexcept
+void lavrentev::Rubber::move(point_t c) noexcept
 {
   pos_ = c;
 }
@@ -239,12 +239,10 @@ lavrentev::point_t* lavrentev::Polygon::copyAndValidateVertexes(const point_t *v
     for (size_t i = 0; i < n; ++i) {
       copy[i] = vertexes[i];
     }
-  } catch (std::bad_alloc &e) {
-    throw std::runtime_error("Failed to allocate memory for polygon");
+  } catch (const std::exception &e) {
+    std::cerr << "Failed to allocate memory for polygon";
+    throw;
   }
-
-  point_t dummyPos = {};
-  polyPos(dummyPos, n, copy);
 
   return copy;
 }
@@ -294,7 +292,7 @@ lavrentev::rectangle_t lavrentev::Polygon::getFrameRect() const noexcept
   return {r_b.x - l_u.x, l_u.y - r_b.y, {(r_b.x + l_u.x) * 0.5, (r_b.y + l_u.y) * 0.5}};
 }
 
-void lavrentev::Polygon::move(lavrentev::point_t c) noexcept
+void lavrentev::Polygon::move(point_t c) noexcept
 {
   double dx = c.x - pos_.x;
   double dy = c.y - pos_.y;
@@ -366,17 +364,17 @@ int lavrentev::polyPos(point_t &pos, size_t n, const point_t *vertexes) noexcept
   return 0;
 }
 
-lavrentev::rectangle_t lavrentev::fullFrame(const lavrentev::Shape *const *figures, size_t n) noexcept
+lavrentev::rectangle_t lavrentev::fullFrame(const Shape *const *figures, size_t n) noexcept
 {
   double left = 0.0, right = 0.0, up = 0.0, down = 0.0;
   for (size_t i = 0; i < n; ++i) {
-    lavrentev::rectangle_t buf = figures[i]->getFrameRect();
+    rectangle_t buf = figures[i]->getFrameRect();
     left = std::min(buf.pos.x - buf.width * 0.5, left);
     right = std::max(buf.pos.x + buf.width * 0.5, right);
     down = std::min(buf.pos.y - buf.height * 0.5, down);
     up = std::max(buf.pos.y + buf.height * 0.5, up);
   }
-  lavrentev::rectangle_t ff;
+  rectangle_t ff;
   ff.height = up - down;
   ff.width = right - left;
   ff.pos.y = (up + down) * 0.5;
@@ -386,11 +384,15 @@ lavrentev::rectangle_t lavrentev::fullFrame(const lavrentev::Shape *const *figur
 
 void lavrentev::userShape(Shape **figures, point_t user_dot, double coef, size_t n)
 {
+  if (coef <= 0) {
+    throw std::invalid_argument("Coef must be positive");
+  }
+
   for (size_t i = 0; i < n; ++i) {
     point_t point1 = figures[i]->getFrameRect().pos;
     figures[i]->move(user_dot);
     point_t delta = {user_dot.x - point1.x, user_dot.y - point1.y};
-    figures[i]->scaleWithCheck(coef);
+    figures[i]->figureScaling(coef);
     point_t res = {user_dot.x - delta.x * coef, user_dot.y - delta.y * coef};
     figures[i]->move(res);
   }
@@ -409,20 +411,16 @@ void lavrentev::printInfo(const Shape *const *figures, const size_t n) noexcept
 
   std::string s;
   for (size_t i = 0; i < n; ++i) {
-    rectangle_t fig = figures[i]->getFrameRect();
     std::cout << "Ограничивающий прямоугольник (" << i + 1 << "):" << '\n';
-    std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
-    std::cout << '\t' << "Длина: " << fig.width << '\n';
-    std::cout << '\t' << "Высота: " << fig.height << '\n';
+    printRect(figures[i]->getFrameRect());
   }
 
-  totalRect(figures);
+  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
+  printRect(fullFrame(figures, n));
 }
 
-void lavrentev::totalRect(const Shape *const *figures) noexcept
+void lavrentev::printRect(const rectangle_t fig) noexcept
 {
-  rectangle_t fig = fullFrame(figures, n);
-  std::cout << "Общий ограничивающий прямоугольник:" << '\n';
   std::cout << '\t' << "Центр: {" << fig.pos.x << ", " << fig.pos.y << '}' << '\n';
   std::cout << '\t' << "Длина: " << fig.width << '\n';
   std::cout << '\t' << "Высота: " << fig.height << '\n';
