@@ -1,7 +1,7 @@
 #ifndef SHAPE_VEC
 #define SHAPE_VEC
 #include <cstddef>
-#include <shapesUtil.hpp>
+#include "../common/shapesUtil.hpp"
 namespace dirko
 {
   struct Shape_vec final: Shape

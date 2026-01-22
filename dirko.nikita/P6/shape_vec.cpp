@@ -20,14 +20,13 @@ dirko::Shape_vec::~Shape_vec() noexcept
 }
 
 dirko::Shape_vec::Shape_vec(const Shape_vec &other):
-  shps_(other.size_ > 0 ? new Shape *[other.size_]() : nullptr),
+  shps_(other.size_ > 0 ? new Shape *[other.cap_]() : nullptr),
   size_(0),
-  cap_(size_)
+  cap_(other.cap_)
 {
   try {
-    for (size_t i = 0; i < other.size_; ++i) {
-      shps_[i] = other.shps_[i]->clone();
-      ++size_;
+    for (; size_ < other.size_; ++size_) {
+      shps_[size_] = other.shps_[size_]->clone();
     }
   } catch (...) {
     clear();
@@ -46,6 +45,7 @@ dirko::Shape_vec::Shape_vec(Shape_vec &&other):
 dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other)
 {
   if (this != std::addressof(other)) {
+    clear();
     shps_ = other.shps_;
     other.shps_ = nullptr;
     size_ = other.size_;
@@ -113,13 +113,12 @@ void dirko::Shape_vec::add(const Shape *elem, size_t index)
 {
   if (cap_ == size_) {
     if (cap_ == 0) {
-      cap_ = 20;
+      cap_ = 10;
     } else {
       cap_ *= 2;
     }
     reserve(cap_);
   }
-  shps_[size_ + 1] = shps_[size_];
   for (size_t i = size_; i > 0; --i) {
     if (i > index) {
       shps_[i] = shps_[i - 1];
@@ -233,6 +232,7 @@ void dirko::Shape_vec::reserve(size_t newCap)
   for (size_t i = 0; i < size_; ++i) {
     tmp[i] = shps_[i];
   }
+  delete[] shps_;
   shps_ = tmp;
   cap_ = newCap;
 }
