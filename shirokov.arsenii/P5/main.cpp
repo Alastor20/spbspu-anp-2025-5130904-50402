@@ -11,7 +11,7 @@
 
 namespace shirokov
 {
-  void scaleAboutPoint(point_t target, double coefficient, Shape *figure);
+  void scaleAboutPoint(const point_t &target, double coefficient, Shape *figure);
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
@@ -87,7 +87,7 @@ int main()
   }
 }
 
-void shirokov::scaleAboutPoint(point_t target, double coefficient, Shape *figure)
+void shirokov::scaleAboutPoint(const point_t &target, double coefficient, Shape *figure)
 {
   point_t point1 = figure->getFrameRect().pos;
   figure->move(target);

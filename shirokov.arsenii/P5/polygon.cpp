@@ -1,36 +1,54 @@
 #include "polygon.hpp"
+#include "pods.hpp"
 #include <algorithm>
 #include <cstdlib>
 
 shirokov::Polygon::Polygon(const point_t *vertices, size_t s):
-  center_({0, 0}),
-  vertices_(new point_t[s]),
   s_(s),
-  signedDoubleArea(0)
+  vertices_(new point_t[s]),
+  signedDoubleArea(setSignedArea(vertices, s)),
+  center_(setCenter(vertices, s))
 {
   for (size_t i = 0; i < s; ++i)
   {
     vertices_[i] = vertices[i];
   }
+}
 
+double shirokov::Polygon::setSignedArea(const point_t *vertices, size_t s)
+{
+  for (size_t i = 0; i < s; ++i)
+  {
+    double xi = vertices[i].x;
+    double yi = vertices[i].y;
+    size_t j = (i + 1) % s;
+    double xj = vertices[j].x;
+    double yj = vertices[j].y;
+    double cross = xi * yj - xj * yi;
+    signedDoubleArea += cross;
+  }
+  signedDoubleArea *= 0.5;
+  return signedDoubleArea;
+}
+
+shirokov::point_t shirokov::Polygon::setCenter(const point_t *vertices, size_t s)
+{
   double cx = 0, cy = 0;
   for (size_t i = 0; i < s; ++i)
   {
-    double xi = vertices_[i].x;
-    double yi = vertices_[i].y;
-    size_t j = (i + 1) % s_;
-    double xj = vertices_[j].x;
-    double yj = vertices_[j].y;
+    double xi = vertices[i].x;
+    double yi = vertices[i].y;
+    size_t j = (i + 1) % s;
+    double xj = vertices[j].x;
+    double yj = vertices[j].y;
     double cross = xi * yj - xj * yi;
-    signedDoubleArea += cross;
     cx += (xi + xj) * cross;
     cy += (yi + yj) * cross;
   }
-  signedDoubleArea *= 0.5;
   cx /= 6 * signedDoubleArea;
   cy /= 6 * signedDoubleArea;
 
-  center_ = {cx, cy};
+  return {cx, cy};
 }
 
 double shirokov::Polygon::getArea() const noexcept

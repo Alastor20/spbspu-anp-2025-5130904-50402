@@ -13,10 +13,10 @@ namespace shirokov
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t target) noexcept override;
     void move(double dx, double dy) noexcept override;
+    void scale(double coefficient) noexcept override;
 
   private:
     point_t center_, bottomLeft_, topRight_;
-    void scale(double coefficient) noexcept override;
   };
 }
 
