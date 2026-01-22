@@ -54,6 +54,14 @@ dirko::rectangle_t dirko::getTotalFrame(const Shape *const *shps, size_t size)
   total.pos.y = (bottom + top) / 2.0;
   return total;
 }
+std::ostream &dirko::outRect(std::ostream &os, rectangle_t frame)
+{
+  os << "frame x: " << frame.pos.x << "\n";
+  os << "frame y: " << frame.pos.y << "\n";
+  os << "frame width: " << frame.w << "\n";
+  os << "frame height: " << frame.h;
+  return os;
+}
 std::ostream &dirko::output(std::ostream &os, const Shape *const *shps, size_t size)
 {
   double totalArea = 0.0;
@@ -62,16 +70,10 @@ std::ostream &dirko::output(std::ostream &os, const Shape *const *shps, size_t s
     totalArea += area;
     os << "shape " << i + 1 << " area: " << area << "\n";
     rectangle_t frame = shps[i]->getFrameRect();
-    os << "shape " << i + 1 << " frame x: " << frame.pos.x << "\n";
-    os << "shape " << i + 1 << " frame y: " << frame.pos.y << "\n";
-    os << "shape " << i + 1 << " frame width: " << frame.w << "\n";
-    os << "shape " << i + 1 << " frame height: " << frame.h << "\n";
+    outRect(os, frame) << '\n';
   }
   rectangle_t totalFrame = getTotalFrame(shps, size);
   os << "Total area: " << totalArea << "\n";
-  os << "Total frame x: " << totalFrame.pos.x << "\n";
-  os << "Total frame y: " << totalFrame.pos.y << "\n";
-  os << "Total frame width: " << totalFrame.w << "\n";
-  os << "Total frame height: " << totalFrame.h << "\n";
+  outRect(os, totalFrame) << '\n';
   return os;
 }

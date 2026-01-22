@@ -1,6 +1,6 @@
+#include "extendSize.hpp"
 #include <cstdlib>
 #include <cstring>
-#include "extendSize.hpp"
 
 char *dirko::extendSize(const char *str, size_t size)
 {

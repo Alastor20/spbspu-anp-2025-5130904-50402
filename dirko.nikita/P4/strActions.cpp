@@ -1,5 +1,5 @@
-#include <cctype>
 #include "strActions.hpp"
+#include <cctype>
 
 const char *dirko::find(const char *start, const char *end, char target)
 {

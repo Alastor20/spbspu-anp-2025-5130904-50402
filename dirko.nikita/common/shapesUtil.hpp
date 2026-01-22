@@ -30,5 +30,6 @@ namespace dirko
   void scaleFromPoint(Shape **shps, size_t size, point_t point, double coef);
   rectangle_t getTotalFrame(const Shape *const *shps, size_t size);
   std::ostream &output(std::ostream &os, const Shape *const *shps, size_t size);
+  std::ostream &outRect(std::ostream &os, rectangle_t frame);
 }
 #endif

@@ -1,5 +1,5 @@
-#include <iostream>
 #include "getLine.hpp"
+#include <iostream>
 #include "extendSize.hpp"
 
 char *dirko::getLine(std::istream &in, size_t &size)

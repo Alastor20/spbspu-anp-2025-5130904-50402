@@ -1,5 +1,5 @@
-#include <stdexcept>
 #include "shapes.hpp"
+#include <stdexcept>
 
 double dirko::getPolArea(const point_t *pts, size_t size)
 {
