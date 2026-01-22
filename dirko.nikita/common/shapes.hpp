@@ -1,7 +1,7 @@
 #ifndef SHAPES
 #define SHAPES
 #include <cmath>
-#include "shapesUtil.hpp"
+#include <shapesUtil.hpp>
 namespace dirko
 {
   const double PI = std::acos(-1.0);
