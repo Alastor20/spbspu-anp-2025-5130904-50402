@@ -21,13 +21,13 @@ int main()
       delete[] str1;
       return 1;
     }
-  } 
+  }
   catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
     return 1;
-  } 
+  }
   catch (const std::ios_base::failure& e)
   {
     std::cerr << "Input stream error: " << e.what() << "\n";
@@ -43,7 +43,7 @@ int main()
   {
     uni_two = new char[max_result_size];
     uni_two[max_result_size - 1] = '\0';
-  } 
+  }
   catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocationfailed: " << e.what() << "\n";
@@ -84,7 +84,7 @@ char* chernikov::getline(std::istream& in, size_t& len)
       data = new_data;
       len++;
     }
-  } 
+  }
   catch (const std::bad_alloc& e)
   {
     delete[] data;
@@ -135,7 +135,7 @@ void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2, size_t
   {
     diff = len1 - len2;
     longer_str = str1;
-  } 
+  }
   else if (len2 > len1)
   {
     diff = len2 - len1;
