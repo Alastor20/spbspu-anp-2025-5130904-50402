@@ -1,7 +1,7 @@
-#include "shape_vec.hpp"
 #include <shapes.hpp>
 #include <iostream>
 #include <memory>
+#include "shape_vec.hpp"
 
 int main()
 {
