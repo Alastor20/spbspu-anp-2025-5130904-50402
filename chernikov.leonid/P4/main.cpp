@@ -35,7 +35,7 @@ int main()
   try
   {
     uni_two = new char[max_result_size];
-    uni_two[max_result_size] = '\0';
+    uni_two[max_result_size - 1] = '\0';
   } catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocationfailed: " << e.what() << "\n";
