@@ -1,12 +1,12 @@
 #include "rectangle.hpp"
 
-shirokov::Rectangle::Rectangle(point_t center, double width, double height) noexcept:
+shirokov::Rectangle::Rectangle(const point_t &center, double width, double height) noexcept:
   center_(center),
   bottomLeft_({center.x - width / 2, center.y - height / 2}),
   topRight_({center.x + width / 2, center.y + height / 2})
 {}
 
-shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight) noexcept:
+shirokov::Rectangle::Rectangle(const point_t &bottomLeft, const point_t &topRight) noexcept:
   center_({(topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2}),
   bottomLeft_(bottomLeft),
   topRight_(topRight)
@@ -22,7 +22,7 @@ shirokov::rectangle_t shirokov::Rectangle::getFrameRect() const noexcept
   return {topRight_.x - bottomLeft_.x, topRight_.y - bottomLeft_.y, center_};
 }
 
-void shirokov::Rectangle::move(point_t target) noexcept
+void shirokov::Rectangle::move(const point_t &target) noexcept
 {
   point_t delta = {center_.x - target.x, center_.y - target.y};
   center_ = target;

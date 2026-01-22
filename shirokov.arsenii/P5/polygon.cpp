@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <cstdlib>
 
-shirokov::Polygon::Polygon(const point_t *vertices, size_t s): s_(s), vertices_(new point_t[s])
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s): 
+  s_(s),
+  vertices_(new point_t[s])
 {
   for (size_t i = 0; i < s; ++i)
   {
@@ -66,7 +68,7 @@ shirokov::rectangle_t shirokov::Polygon::getFrameRect() const noexcept
   return {width, height, pos};
 }
 
-void shirokov::Polygon::move(point_t target) noexcept
+void shirokov::Polygon::move(const point_t &target) noexcept
 {
   const point_t center_ = getCenter();
   point_t delta = {center_.x - target.x, center_.y - target.y};
@@ -90,8 +92,9 @@ void shirokov::Polygon::scale(double coefficient) noexcept
   const point_t center_ = getCenter();
   for (size_t i = 0; i < s_; ++i)
   {
-    vertices_[i] = {center_.x + coefficient * (vertices_[i].x - center_.x),
-                    center_.y + coefficient * (vertices_[i].y - center_.y)};
+    double tempX = center_.x + coefficient * (vertices_[i].x - center_.x);
+    double tempY = center_.y + coefficient * (vertices_[i].y - center_.y);
+    vertices_[i] = {tempX, tempY};
   }
 }
 

@@ -161,15 +161,15 @@ void shirokov::printInfo(const Shape *const *figures, size_t s)
   {
     std::cout << "\tFigure " << i + 1 << ": " << figures[i]->getArea() << '\n';
   }
-  std::cout << "Total area: " << shirokov::getTotalArea(figures, s) << '\n';
+  std::cout << "Total area: " << getTotalArea(figures, s) << '\n';
   std::cout << "Frame rect of figures:\n";
   for (size_t i = 0; i < s; ++i)
   {
-    shirokov::rectangle_t frameRect = figures[i]->getFrameRect();
+    rectangle_t frameRect = figures[i]->getFrameRect();
     std::cout << "\tFigure " << i + 1 << ": \n";
     printFrameInfo(frameRect, 2);
   }
-  shirokov::rectangle_t frameRect = shirokov::getTotalFrameRect(figures, s);
+  rectangle_t frameRect = getTotalFrameRect(figures, s);
   std::cout << "Total frame rect: \n";
   printFrameInfo(frameRect, 1);
 }

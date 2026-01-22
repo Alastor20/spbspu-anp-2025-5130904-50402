@@ -7,11 +7,11 @@ namespace shirokov
 {
   struct Rectangle final: Shape
   {
-    Rectangle(point_t center, double width, double height) noexcept;
-    Rectangle(point_t bottomLeft, point_t topRight) noexcept;
+    Rectangle(const point_t &center, double width, double height) noexcept;
+    Rectangle(const point_t &bottomLeft, const point_t &topRight) noexcept;
     double getArea() const noexcept override;
     rectangle_t getFrameRect() const noexcept override;
-    void move(point_t target) noexcept override;
+    void move(const point_t &target) noexcept override;
     void move(double dx, double dy) noexcept override;
     void scale(double coefficient) noexcept override;
 

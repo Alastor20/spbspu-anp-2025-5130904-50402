@@ -7,11 +7,11 @@ namespace shirokov
 {
   struct Xquare final: Shape
   {
-    Xquare(point_t center, double side) noexcept;
-    Xquare(point_t top, point_t bottom) noexcept;
+    Xquare(const point_t &center, double side) noexcept;
+    Xquare(const point_t &top, const point_t &bottom) noexcept;
     double getArea() const noexcept override;
     rectangle_t getFrameRect() const noexcept override;
-    void move(point_t target) noexcept override;
+    void move(const point_t &target) noexcept override;
     void move(double dx, double dy) noexcept override;
     void scale(double coefficient) noexcept override;
 

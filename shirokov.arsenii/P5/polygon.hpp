@@ -12,14 +12,14 @@ namespace shirokov
     ~Polygon() noexcept;
     double getArea() const noexcept override;
     rectangle_t getFrameRect() const noexcept override;
-    void move(point_t target) noexcept override;
+    void move(const point_t &target) noexcept override;
     void move(double dx, double dy) noexcept override;
     void scale(double coefficient) noexcept override;
-    point_t getCenter();
 
   private:
     size_t s_;
     point_t *vertices_;
+    point_t getCenter();
   };
 }
 
