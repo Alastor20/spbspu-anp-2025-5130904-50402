@@ -119,16 +119,10 @@ void dirko::Shape_vec::add(const Shape *elem, size_t index)
     }
     reserve(cap_);
   }
-  for (size_t i = size_; i > 0; --i) {
-    if (i > index) {
-      shps_[i] = shps_[i - 1];
-    } else if (i == index) {
-      shps_[i] = elem->clone();
-    }
+  for (size_t i = size_; i > index; --i) {
+    shps_[i] = shps_[i - 1];
   }
-  if (index == 0) {
-    shps_[0] = elem->clone();
-  }
+  shps_[index] = elem->clone();
   ++size_;
 }
 
