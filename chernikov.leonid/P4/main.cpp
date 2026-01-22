@@ -28,12 +28,6 @@ int main()
     delete[] str1;
     return 1;
   }
-  catch (const std::ios_base::failure& e)
-  {
-    std::cerr << "Input stream error: " << e.what() << "\n";
-    delete[] str1;
-    return 1;
-  }
   const char* str2 = "example";
   size_t has_sam = chernikov::hasSam(str1, str2);
   size_t len2 = std::strlen(str2);
@@ -51,7 +45,7 @@ int main()
     return 1;
   }
   chernikov::uniTwo(uni_two, str1, str2, len1, len2);
-  std::cout << "HAS-SAM: " << has_sam << '\n';
+  std::cout << "HAS-SAM: " << std::boolalpha << static_cast<bool>(has_sam) << '\n';
   std::cout << "UNI_TWO: " << uni_two << '\n';
 
   delete[] str1;
@@ -97,7 +91,8 @@ char* chernikov::getline(std::istream& in, size_t& len)
   if (!in.good() || in.eof())
   {
     len = 0;
-    char* data = new char[1];
+    delete[] data;
+    data = new char[1];
     data[0] = '\0';
     return data;
   }
