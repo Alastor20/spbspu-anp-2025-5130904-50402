@@ -5,13 +5,15 @@ shirokov::Xquare::Xquare(point_t center, double side) noexcept:
   center_(center),
   top_({center.x, center.y + side / std::sqrt(2)}),
   bottom_({center.x, center.y - side / std::sqrt(2)})
-{}
+{
+}
 
 shirokov::Xquare::Xquare(point_t top, point_t bottom) noexcept:
   center_({(top.x + bottom.x) / 2, (top.y + bottom.y) / 2}),
   top_(top),
   bottom_(bottom)
-{}
+{
+}
 
 double shirokov::Xquare::getArea() const noexcept
 {
@@ -22,9 +24,7 @@ double shirokov::Xquare::getArea() const noexcept
 shirokov::rectangle_t shirokov::Xquare::getFrameRect() const noexcept
 {
   double width = top_.y - bottom_.y;
-  double height = width;
-  point_t pos = center_;
-  return {width, height, pos};
+  return {width, width, center_};
 }
 
 void shirokov::Xquare::move(point_t target) noexcept
