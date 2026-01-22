@@ -15,6 +15,11 @@ int main()
   try
   {
     str1 = chernikov::getline(std::cin, len1);
+    if (str1 == nullptr || str1[0] == '\0') {
+      std::cerr << "Error: empty input\n";
+      delete[] str1;
+      return 1;
+    }
   } catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
