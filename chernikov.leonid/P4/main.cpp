@@ -17,7 +17,7 @@ int main()
     str1 = chernikov::getline(std::cin, len1);
     if (str1[0] == '\0')
     {
-      std::cerr << "Error: empty input\n";
+      std::cerr << "Error: empty inputt\n";
       delete[] str1;
       return 1;
     }
