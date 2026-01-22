@@ -15,17 +15,19 @@ int main()
   try
   {
     str1 = chernikov::getline(std::cin, len1);
-    if (str1 == nullptr || str1[0] == '\0') {
+    if (str1[0] == '\0') {
       std::cerr << "Error: empty input\n";
       delete[] str1;
       return 1;
     }
-  } catch (const std::bad_alloc& e)
+  } 
+  catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocation or string allocation error" << e.what() << "\n";
     delete[] str1;
     return 1;
-  } catch (const std::ios_base::failure& e)
+  } 
+  catch (const std::ios_base::failure& e)
   {
     std::cerr << "Input stream error: " << e.what() << "\n";
     delete[] str1;
@@ -33,7 +35,6 @@ int main()
   }
   const char* str2 = "example";
   size_t has_sam = chernikov::hasSam(str1, str2);
-  len1 = std::strlen(str1);
   size_t len2 = std::strlen(str2);
   size_t max_result_size = len1 + len2 + 1;
   char* uni_two = nullptr;
@@ -41,7 +42,8 @@ int main()
   {
     uni_two = new char[max_result_size];
     uni_two[max_result_size - 1] = '\0';
-  } catch (const std::bad_alloc& e)
+  } 
+  catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory allocationfailed: " << e.what() << "\n";
     delete[] str1;
@@ -58,17 +60,6 @@ int main()
 
 char* chernikov::getline(std::istream& in, size_t& len)
 {
-  if (in.bad())
-  {
-    throw std::ios_base::failure("Input stream error");
-  }
-  if (!in.good() || in.eof())
-  {
-    len = 0;
-    char* data = new char[1];
-    data[0] = '\0';
-    return data;
-  }
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws)
   {
@@ -92,7 +83,8 @@ char* chernikov::getline(std::istream& in, size_t& len)
       data = new_data;
       len++;
     }
-  } catch (const std::bad_alloc& e)
+  } 
+  catch (const std::bad_alloc& e)
   {
     delete[] data;
     if (is_skipws)
@@ -100,6 +92,13 @@ char* chernikov::getline(std::istream& in, size_t& len)
       in >> std::skipws;
     }
     throw;
+  }
+  if (!in.good() || in.eof())
+  {
+    len = 0;
+    char* data = new char[1];
+    data[0] = '\0';
+    return data;
   }
   if (data == nullptr)
   {
@@ -135,7 +134,8 @@ void chernikov::uniTwo(char* uni_two, const char* str1, const char* str2, size_t
   {
     diff = len1 - len2;
     longer_str = str1;
-  } else if (len2 > len1)
+  } 
+  else if (len2 > len1)
   {
     diff = len2 - len1;
     longer_str = str2;
