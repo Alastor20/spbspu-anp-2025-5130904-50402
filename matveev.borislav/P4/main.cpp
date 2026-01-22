@@ -30,7 +30,7 @@ int main()
 
   matveev::rmLat(res, str);
   std::cout << res << "\n";
-  std::cout << matveev::hasRep(str) << "\n";
+  std::cout << std::boolalpha << static_cast< bool >(matveev::hasRep(str)) << "\n";
   std::free(res);
   std::free(str);
   return 0;
@@ -87,7 +87,7 @@ char* matveev::rmLat(char* dest, const char* src)
   size_t j = 0;
   for (size_t i = 0; src[i] != '\0'; ++i)
   {
-    if (!std::isalpha(reinterpret_cast< unsigned char >(src[i])))
+    if (!std::isalpha(static_cast< unsigned char >(src[i])))
     {
       dest[j] = src[i];
       j++;
