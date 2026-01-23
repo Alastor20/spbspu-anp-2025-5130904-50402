@@ -30,7 +30,7 @@ int main()
 
   matveev::rmLat(res, str);
   std::cout << res << "\n";
-  std::cout << std::boolalpha << static_cast< bool >(matveev::hasRep(str)) << "\n";
+  std::cout << std::boolalpha << matveev::hasRep(str) << "\n";
   std::free(res);
   std::free(str);
   return 0;
