@@ -91,6 +91,7 @@ namespace lachugin
     {
       in >> std::noskipws;
     }
+
     s = 0;
     char hlpChar = ' ';
     while (hlpChar != '\n')
