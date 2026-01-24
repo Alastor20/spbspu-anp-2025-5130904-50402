@@ -3,7 +3,6 @@
 #include <cstdlib>
 namespace sogdanov
 {
-  const size_t SIZE = 10000;
   std::istream & readMatrix(std::ifstream & input, int * mtx, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows * cols ; i++) {
@@ -20,8 +19,7 @@ namespace sogdanov
     }
     int * rowMin = reinterpret_cast< int * >(malloc(rows * sizeof(int)));
     if (rowMin == nullptr) {
-      std::cerr << "Memory allocation failed\n";
-      return 2;
+      return -1;
     }
     for (size_t i = 0; i < rows; ++i) {
       int minValue = mtx[i * cols];
@@ -76,17 +74,11 @@ namespace sogdanov
     }
     return maxSum;
   }
-  int static_mtx[SIZE] = {};
-  int * createMatrix(int num, size_t rows, size_t cols)
+  int * createMatrix(size_t rows, size_t cols)
   {
-    if (num  == 1) {
-      return static_mtx;
-    } else if (num == 2) {
-      return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
-    }
-    return nullptr;
+    return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
   }
-  void rm (char num, int * mtx)
+  void rm(long num, int * mtx)
   {
     if (num == 2 && mtx != nullptr) {
       free(mtx);
@@ -107,11 +99,11 @@ int main(int argc, char ** argv)
   char * end = nullptr;
   long num = std::strtol(argv[1], std::addressof(end), 10);
   if (num != 1 && num != 2) {
-    std::cerr <<"First argument is out of range\n";
+    std::cerr << "First argument is out of range\n";
     return 1;
   }
-  if (* end != '\0' || end == argv[1]) {
-    std::cerr <<"First argument is not a number\n";
+  if (*end != '\0' || end == argv[1]) {
+    std::cerr << "First argument is not a number\n";
     return 1;
   }
   std::ifstream input(argv[2]);
@@ -130,7 +122,14 @@ int main(int argc, char ** argv)
     std::cerr << "Incorrect Matrix Sizes\n";
     return 2;
   }
-  int * mtx = sogdanov::createMatrix(num, rows, cols);
+  const int SIZE = 10000;
+  int mtx_on_stack[SIZE] = {};
+  int * mtx = nullptr;
+  if (num == 1) {
+    mtx = mtx_on_stack;
+  } else if (num == 2) {
+    mtx = sogdanov::createMatrix(rows, cols);
+  }
   if (mtx == nullptr) {
     std::cerr << "Memory allocation failed\n";
     return 2;
@@ -143,12 +142,17 @@ int main(int argc, char ** argv)
   }
   int extra;
   if (input >> extra) {
-    std::cerr <<"Too many elements in input file\n";
+    std::cerr << "Too many elements in input file\n";
     sogdanov::rm(num, mtx);
     return 2;
   }
   int res1 = sogdanov::maxSumSdg(mtx, rows, cols);
   int res2 = sogdanov::cntSdlPnt(mtx, rows, cols);
+  if (res2 < 0) {
+    std::cerr << "Memory allocation failed\n";
+    sogdanov::rm(num,mtx);
+    return 2;
+  }
   sogdanov::rm(num, mtx);
   std::ofstream output(argv[3]);
   if (!output) {
