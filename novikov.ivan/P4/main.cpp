@@ -89,6 +89,7 @@ namespace novikov {
         extend(&str, size, capacity);
         if (size + 1 >= capacity) {
           free(str);
+          str = nullptr;
           break;
         }
         free(old_str);
