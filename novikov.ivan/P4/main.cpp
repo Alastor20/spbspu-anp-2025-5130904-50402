@@ -56,8 +56,7 @@ namespace novikov {
 
   void extend(char ** str, size_t size, size_t & capacity)
   {
-    char * temp = nullptr;
-    temp = reinterpret_cast< char * >(malloc(capacity * 2));
+    char * temp = reinterpret_cast< char * >(malloc(capacity * 2));
     if (temp == nullptr) {
       return;
     }
@@ -89,7 +88,6 @@ namespace novikov {
         char * old_str = str;
         extend(&str, size, capacity);
         if (size + 1 >= capacity) {
-          std::cerr << "Failed to allocate memory\n";
           free(str);
           break;
         }
