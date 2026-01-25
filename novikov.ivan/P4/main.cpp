@@ -84,10 +84,10 @@ namespace novikov {
       return nullptr;
     }
     while (in) {
-      if (size + 1 >= capacity) {
+      if (size + 1 == capacity) {
         char * old_str = str;
         extend(&str, size, capacity);
-        if (size + 1 >= capacity) {
+        if (size + 1 == capacity) {
           free(str);
           str = nullptr;
           break;
