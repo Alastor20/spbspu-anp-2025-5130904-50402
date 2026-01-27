@@ -51,8 +51,10 @@ char* matveev::getLine(std::istream& in, size_t& len)
     in >> std::noskipws;
   }
   char c = '\0';
+  bool read = false;
   while (in >> c && c != '\n')
   {
+    read = true;
     if (len + 1 >= cap)
     {
       size_t newCap = cap * 2;
@@ -73,6 +75,15 @@ char* matveev::getLine(std::istream& in, size_t& len)
     }
     buf[len] = c;
     len++;
+  }
+  if (!read && (in.eof() || in.fail()))
+  {
+    std::free(buf);
+    if (wasSkip)
+    {
+      in >> std::skipws;
+    }
+    return nullptr;
   }
   buf[len] = '\0';
   if (wasSkip)
