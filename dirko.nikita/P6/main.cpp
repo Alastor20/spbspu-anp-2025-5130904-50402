@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <shapes.hpp>
-#include "shape_vec.hpp"
+#include "output.hpp"
 
 int main()
 {
@@ -15,7 +15,7 @@ int main()
   shps.append(std::addressof(bub));
   shps.append(std::addressof(pol));
   std::cout << "Before scale:\n\n";
-  dirko::output(std::cout, shps.getConstIterator(), shps.size());
+  dirko::output(std::cout, shps);
   dirko::point_t point = {};
   double coef = 0;
   if (!(std::cin >> point.x >> point.y >> coef)) {
@@ -27,11 +27,11 @@ int main()
     return 1;
   }
   try {
-    dirko::scaleFromPoint(shps.getIterator(), shps.size(), point, coef);
+    dirko::scaleFromPoint(shps, point, coef);
   } catch (std::invalid_argument &e) {
     std::cerr << e.what() << '\n';
     return 1;
   }
   std::cout << "\n\nAfter scale:\n\n";
-  dirko::output(std::cout, shps.getConstIterator(), shps.size());
+  dirko::output(std::cout, shps);
 }

@@ -14,6 +14,7 @@ dirko::Shape_vec::Shape_vec():
 dirko::Shape_vec::~Shape_vec() noexcept
 {
   clear();
+  size_ = 0;
 }
 
 dirko::Shape_vec::Shape_vec(const Shape_vec &other):
@@ -27,6 +28,7 @@ dirko::Shape_vec::Shape_vec(const Shape_vec &other):
     }
   } catch (...) {
     clear();
+    size_ = 0;
     throw;
   }
 }
@@ -54,7 +56,7 @@ dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other) noexcept
 dirko::Shape_vec &dirko::Shape_vec::operator=(const Shape_vec &other)
 {
   Shape_vec tmp(other);
-  std::swap(tmp, *this);
+  swap(tmp);
   return *this;
 }
 
@@ -95,7 +97,7 @@ double dirko::Shape_vec::getArea() const noexcept
 
 dirko::Shape *dirko::Shape_vec::clone() const
 {
-  throw std::runtime_error("DO NOT USE DIRECTLY ON SHAPE_VEC");
+  return new Shape_vec(*this);
 }
 
 void dirko::Shape_vec::append(const Shape *elem)
@@ -123,11 +125,11 @@ void dirko::Shape_vec::add(const Shape *elem, size_t index)
   ++size_;
 }
 
-dirko::Shape &dirko::Shape_vec::last() const noexcept
+dirko::Shape &dirko::Shape_vec::last() noexcept
 {
   return get(size_ - 1);
 }
-dirko::Shape &dirko::Shape_vec::first() const noexcept
+dirko::Shape &dirko::Shape_vec::first() noexcept
 {
   return get(0);
 }
@@ -139,7 +141,7 @@ const dirko::Shape &dirko::Shape_vec::firstConst() const noexcept
 {
   return getConst(0);
 }
-dirko::Shape &dirko::Shape_vec::at(size_t index) const
+dirko::Shape &dirko::Shape_vec::at(size_t index)
 {
   if (index >= size_) {
     throw std::invalid_argument("Out of bounds");
@@ -153,7 +155,7 @@ const dirko::Shape &dirko::Shape_vec::atConst(size_t index) const
   }
   return *shps_[index];
 }
-dirko::Shape &dirko::Shape_vec::get(size_t index) const noexcept
+dirko::Shape &dirko::Shape_vec::get(size_t index) noexcept
 {
   return *shps_[index];
 }
@@ -196,7 +198,6 @@ void dirko::Shape_vec::clear() noexcept
     delete shps_[i];
   }
   delete[] shps_;
-  size_ = 0;
 }
 size_t dirko::Shape_vec::size() const noexcept
 {
@@ -226,4 +227,11 @@ void dirko::Shape_vec::reserve(size_t newCap)
   delete[] shps_;
   shps_ = tmp;
   cap_ = newCap;
+}
+
+void dirko::Shape_vec::swap(Shape_vec &other) noexcept
+{
+  std::swap(size_, other.size_);
+  std::swap(cap_, other.cap_);
+  std::swap(shps_, other.shps_);
 }

@@ -39,6 +39,7 @@ namespace dirko
     size_t capasity() const noexcept;
     void shrink();
     void reserve(size_t newCap);
+    void swap(Shape_vec &other) noexcept;
 
   private:
     Shape **shps_;
