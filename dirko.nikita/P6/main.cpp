@@ -1,6 +1,6 @@
-#include <shapes.hpp>
 #include <iostream>
 #include <memory>
+#include <shapes.hpp>
 #include "shape_vec.hpp"
 
 int main()

@@ -13,10 +13,7 @@ dirko::Shape_vec::Shape_vec():
 
 dirko::Shape_vec::~Shape_vec() noexcept
 {
-  for (size_t i = 0; i < size_; ++i) {
-    delete shps_[i];
-  }
-  delete[] shps_;
+  clear();
 }
 
 dirko::Shape_vec::Shape_vec(const Shape_vec &other):
@@ -34,7 +31,7 @@ dirko::Shape_vec::Shape_vec(const Shape_vec &other):
   }
 }
 
-dirko::Shape_vec::Shape_vec(Shape_vec &&other):
+dirko::Shape_vec::Shape_vec(Shape_vec &&other) noexcept:
   shps_(other.shps_),
   size_(other.size_),
   cap_(other.cap_)
@@ -42,7 +39,7 @@ dirko::Shape_vec::Shape_vec(Shape_vec &&other):
   other.shps_ = nullptr;
 }
 
-dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other)
+dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other) noexcept
 {
   if (this != std::addressof(other)) {
     clear();
@@ -229,12 +226,4 @@ void dirko::Shape_vec::reserve(size_t newCap)
   delete[] shps_;
   shps_ = tmp;
   cap_ = newCap;
-}
-const dirko::Shape *const *dirko::Shape_vec::getConstIterator() const noexcept
-{
-  return shps_;
-}
-dirko::Shape **dirko::Shape_vec::getIterator() const noexcept
-{
-  return shps_;
 }
