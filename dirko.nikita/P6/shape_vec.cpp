@@ -55,8 +55,10 @@ dirko::Shape_vec &dirko::Shape_vec::operator=(Shape_vec &&other) noexcept
 
 dirko::Shape_vec &dirko::Shape_vec::operator=(const Shape_vec &other)
 {
-  Shape_vec tmp(other);
-  swap(tmp);
+  if (this != std::addressof(other)) {
+    Shape_vec tmp(other);
+    swap(tmp);
+  }
   return *this;
 }
 
