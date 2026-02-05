@@ -6,7 +6,7 @@
 namespace dirko
 {
   void scaleFromPoint(Shape_vec &shps, point_t point, double coef);
-  std::ostream &output(std::ostream &os, Shape_vec shps);
+  std::ostream &output(std::ostream &os, const Shape_vec &shps);
 }
 
 #endif

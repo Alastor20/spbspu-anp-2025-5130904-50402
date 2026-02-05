@@ -15,12 +15,12 @@ void dirko::scaleFromPoint(Shape_vec &shps, point_t point, double coef)
   }
 }
 
-std::ostream &dirko::output(std::ostream &os, Shape_vec shps)
+std::ostream &dirko::output(std::ostream &os, const Shape_vec &shps)
 {
   for (size_t i = 0; i < shps.size(); ++i) {
-    double area = shps.get(i).getArea();
+    double area = shps.getConst(i).getArea();
     os << "shape " << i + 1 << " area: " << area << "\n";
-    rectangle_t frame = shps.get(i).getFrameRect();
+    rectangle_t frame = shps.getConst(i).getFrameRect();
     outRect(os, frame) << '\n';
   }
   os << "Total area: " << shps.getArea() << "\n";
