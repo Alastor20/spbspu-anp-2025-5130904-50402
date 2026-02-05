@@ -16,7 +16,7 @@ namespace dirko
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t point) noexcept override;
     void move(double dx, double dy) noexcept override;
-    Shape *clone() const override;
+    Shape_vec *clone() const override;
     void doScale(double coef) noexcept;
     void doScaleSafe(double coef);
     void append(const Shape *elem);

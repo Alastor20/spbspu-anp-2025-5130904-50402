@@ -97,7 +97,7 @@ double dirko::Shape_vec::getArea() const noexcept
   return area;
 }
 
-dirko::Shape *dirko::Shape_vec::clone() const
+dirko::Shape_vec *dirko::Shape_vec::clone() const
 {
   return new Shape_vec(*this);
 }
